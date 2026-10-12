@@ -1,6 +1,9 @@
 from time import * ; from random import * ; from colorama import *
 class chara:
-    def __init__(self,nom,classe,vie,magika,mana,degat,arme,argent):
+    '''
+    Classe pour la création du personnage contenant (pour l'instant) son nom, sa vie, sa classe, son type de magie, son mana et son multiplicateur de dégat
+    '''
+    def __init__(self, nom, classe, vie, magika, mana, degat, arme, dura_arme, lvl, xp, argent):
         self.nom=nom
         self.classe=classe
         self.vie=vie
@@ -8,33 +11,41 @@ class chara:
         self.mana=mana
         self.degat=degat
         self.arme=arme
+        self.lvl=lvl
+        self.xp=xp
+        self.dura=dura_arme
         self.argent=argent
 
 class mobs:
-    def __init__(self, nom, race, magika, degat, argent):
+    def __init__(self, nom, pv, race, magika, mana, degat, argent, xp):
         self.nom=nom
         self.race=race
         self.magika=magika
         self.degat=degat
         self.argent=argent
+        self.pv=pv
+        self.xp=xp
+        self.mana=mana
 
 class arme:
-    def __init__(self, nom, degat, durabilite):
+    def __init__(self, nom, degat, durabilite, prix):
         self.nom=nom
         self.degat=degat
         self.dura=durabilite
+        self.prix=prix
 
 # mon bullshit d'amour
 
 ()
 
 # default weapon
-null_sword=arme("null sword",0,0)
-starter_sword=arme("Épée basique", 1, 20)
-starter_bow=arme("Arc basique", 1, 20)
-starter_staff=arme("Sceptre basique", 1, 20)
-starter_music=arme("Luthe basique", 1, 20)
-starter_cook=arme("Couteau à pain", 1, 20)
+
+null_sword=arme("null sword",6969,1000,6969)
+starter_sword=arme("Épée basique", 1, 25,50)
+starter_bow=arme("Arc basique", 1, 25, 50)
+starter_staff=arme("Sceptre basique", 1, 0, 50)
+starter_music=arme("Luthe basique", 1, 25, 50)
+starter_cook=arme("Couteau à pain", 1, 25, 50)
 
 # tier 1 weapon
 
@@ -43,23 +54,36 @@ starter_cook=arme("Couteau à pain", 1, 20)
 # tier 2 weapon
 
 
+
 #ultimate weapon
 
-Ferdi_sword=arme("L'épée de Fertiplouf", 10, 1)
+Ferdi_sword=arme("L'épée de Fertiplouf", 10, 1, 50)
 
 # personnages
-Nath=chara("Nathaniel", 3, 80, 4, 150, 1.1, starter_staff.nom, randint(0,250))
-Andy=chara("Andy", 0, 100, 2, 100, 1, starter_music.nom, randint(0,250))
-Ferdi=chara("Ferdinand", 1, 150, 3, 75, 10, Ferdi_sword.nom, randint(0,250))
-Ethan=chara("Éthan", 0, 20, 1, 80, 0.7, starter_cook.nom, randint(0,250))
+
+Nath=chara("Nathaniel", 3, 80, 4, 150, starter_staff.degat, starter_staff.nom, starter_staff.dura, 1, 0, randint(25,150))
+Andy=chara("Andy", 0, 100, 2, 100, starter_music.degat, starter_music.nom, starter_music.dura, 1, 0, randint(25,150))
+Ferdi=chara("Ferdinand", 1, 150, 3, 75, Ferdi_sword.degat, Ferdi_sword.nom, Ferdi_sword.dura, 1, 0, 0)
+Ethan=chara("Éthan", 0, 120, 1, 80, starter_cook.degat, starter_cook.nom, starter_cook.dura, 1, 0, randint(25,150))
 
 # mobs
 
+goblin=mobs("Goblin Racketteur", 45, 'goblin',0, 100,1.2,10,5)
+balai=mobs("Balais Possédé", 60, 'objet', 0, 100, 1.5, 17, 7)
+mannequin=mobs("Mannequin de Combat", 90, 'objet', 0, 100, 1.75 , 25, 10)
 
+Chevalier=mobs("Chevalier de la Craie", 100, 'humain', 0, 150, 1.75, 50, 15)
+mimik=mobs("Mimique Gourmand", 120, 'objet', 0, 150, 1.6, 60, 17)
+
+garde=mobs('Garde du Tableau Noir', 200, 'esprit', 0, 200, 2, 100, 20)
+loup=mobs('Loup des Ombres', 150, 'esprit', 0, 200, 2.2, 120, 25)
+cake=mobs('Gâteau Mutant', 250, 'esprit', 0, 200, 1.8, 135, 30)
+
+Arnaud=mobs("M. Arnaud", 5000, 'humain', 0, 1000, 2, 50000, 300)
 
 # variable stock
-a=0;temp=""
-List_player=[]
+
+a=0 ; temp="" ; totalheal=0 ; diff=1 ; List_player=[] ; list_ferdi=[Ferdi] ; bossfinal=Arnaud
 
 #############################################################
 #                                                           #
@@ -97,7 +121,7 @@ while temp!="oui":
     if temp!="oui":
         type=int(input(Fore.BLUE +"Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divine\n"))
 
-character=chara(name,laclasse,100,type,100,1,null_sword.nom,randint(0,250))
+character=chara(name,laclasse,100,type,100,1,null_sword, 0, 1, 0, randint(25,150))
 List_player=[character, Nath, Andy, Ferdi]
 
 if laclasse==1:         # classe -> mêlée
