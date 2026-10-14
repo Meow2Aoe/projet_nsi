@@ -3,6 +3,7 @@ totalheal=0
 a=0
 list_enemi=[]
 diff=1
+buy=0
 class chara:
     '''
     Classe pour la création du personnage contenant (pour l'instant) son nom, sa vie, sa classe, son type de magie, son mana et son multiplicateur de dégat
@@ -38,20 +39,44 @@ class arme:
         self.dura=durabilite
         self.prix=prix
 
+class objet:
+    def __init__(self, nom, quantite):
+        self.nom=nom
+        self.quantite=quantite
+
 null_sword=arme("null sword",6969,1000,6969)
 starter_sword=arme("Épée basique", 1, 25,50)
 starter_bow=arme("Arc basique", 1, 25, 50)
-starter_staff=arme("Sceptre basique", 1, 0, 50)
+starter_staff=arme("Sceptre basique", 1, 25, 50)
 starter_music=arme("Luthe basique", 1, 25, 50)
 starter_cook=arme("Couteau à pain", 1, 25, 50)
 Ferdi_sword=arme("L'épée de Fertiplouf", 10, 1, 50)
 
+tier1_sword=arme("Katana de Yone", 1, 25,50)
+tier1_bow=arme("...", 1, 25, 50)
+tier1_staff=arme("...", 1, 0, 50)
+tier1_music=arme("...", 1, 25, 50)
+tier1_cook=arme("Couteau à beurre", 1, 25, 50)
+
+tier2_sword=arme("Rapière du dieu Arès", 1, 25,50)
+tier2_bow=arme("Arc de la déese d'Arthémis", 1, 25, 50)
+tier2_staff=arme("Aghanim's scepter", 1, 0, 50)
+tier2_music=arme("Harpe de Apollon", 1, 25, 50)
+tier2_cook=arme("Mbappe's Dagger", 1, 25, 50)
+
+ultimate_sword=arme("...", 5, 25,50)
+ultimate_bow=arme("M4A1", 5, 25, 50)
+ultimate_staff=arme("...", 5, 0, 50)
+ultimate_music=arme("Méga Ukulele", 5, 25, 50)
+ultimate_cook=arme("Baguette de Pain Traditionnelle Française", 5, 25, 50)
+
+
 # character creator
 name=str(input("Entrez le nom du personnage : "))
 laclasse=int(input("Choississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n"))
-type=int(input("Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divin\n"))
+typee=int(input("Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divin\n"))
 
-character=chara(name,laclasse,100,type,100,1,null_sword, 0, 1, 0, randint(25,150))
+character=chara(name,laclasse,100,typee,100,1,null_sword, 0, 1, 0, randint(25,150))
 if laclasse==1:         # classe -> mêlée
     character.vie+=25
     character.mana-=25
@@ -69,7 +94,6 @@ if laclasse==3:         # classe -> mage
     character.degat*=1.1
     character.arme=starter_staff.nom
     character.dura=starter_staff.dura
-
 
 Nath=chara("Nathaniel", 3, 80, 4, 150, starter_staff.degat, starter_staff.nom, starter_staff.dura, 1, 0, randint(25,150))
 Andy=chara("Andy", 0, 100, 2, 100, starter_music.degat, starter_music.nom, starter_music.dura, 1, 0, randint(25,150))
@@ -120,6 +144,7 @@ def lookup_arme(List_player):
 
 def lvlup():
     for i in List_player:
+        print(i.xp)
         while i.xp>=100:
             i.lvl+=0.2
             i.xp-=100
@@ -298,12 +323,12 @@ def shop_heal():
 
 def armurerie():
     print("-----------------------------------\nKilliann le forgeron : Bonjour. Vous avez b'soin d'quoi ?")
-    shop=int(input("1 = " + character.nom + "\n2 = Nath\n3 = Andy\n4 = Ethan\n-----------------------------------"))
+    shop=int(input("1 = " + character.nom + "\n2 = Nath\n3 = Andy\n4 = Ethan\n-----------------------------------\n"))
     if shop==1:
         if laclasse==1:     # mêlée
             achat=int(input("1 = " + tier1_sword.nom + '  ->  ' + str(tier1_sword.prix) +
-            "2 = " + tier2_sword.nom + "  ->  " + str(tier2_sword.prix) + 
-            "3 = " + ultimate_sword.nom + "  ->  " + str(ultimate_sword.prix)))
+            "\n2 = " + tier2_sword.nom + "  ->  " + str(tier2_sword.prix) + 
+            "\n3 = " + ultimate_sword.nom + "  ->  " + str(ultimate_sword.prix)+ "\n")) 
             if achat==1:
                 if character.argent>=tier1_sword.prix:
                     character.arme=tier1_sword.nom
@@ -327,8 +352,8 @@ def armurerie():
                     print("Vous n'avez pas assez d'argent pour acheter ceci")
         elif laclasse==2:   # ranger
             achat=int(input("1 = " + tier1_bow.nom + '  ->  ' + str(tier1_bow.prix) +
-            "2 = " + tier2_bow.nom + "  ->  " + str(tier2_bow.prix) + 
-            "3 = " + ultimate_bow.nom + "  ->  " + str(ultimate_bow.prix)))
+            "\n2 = " + tier2_bow.nom + "  ->  " + str(tier2_bow.prix) + 
+            "\n3 = " + ultimate_bow.nom + "  ->  " + str(ultimate_bow.prix) + "\n"))
             if achat==1:
                 if character.argent>=tier1_bow.prix:
                     character.arme=tier1_bow.nom
@@ -352,8 +377,8 @@ def armurerie():
                     print("Vous n'avez pas assez d'argent pour acheter ceci")
         elif laclasse==3:   # mage
             achat=int(input("1 = " + tier1_staff.nom + '  ->  ' + str(tier1_staff.prix) +
-            "2 = " + tier2_staff.nom + "  ->  " + str(tier2_staff.prix) + 
-            "3 = " + ultimate_staff.nom + "  ->  " + str(ultimate_staff.prix)))
+            "\n2 = " + tier2_staff.nom + "  ->  " + str(tier2_staff.prix) + 
+            "\n3 = " + ultimate_staff.nom + "  ->  " + str(ultimate_staff.prix) + "\n"))
             if achat==1:
                 if character.argent>=tier1_staff.prix:
                     character.arme=tier1_staff.nom
@@ -375,10 +400,10 @@ def armurerie():
                     character.degat=ultimate_staff.degat
                 else:
                     print("Vous n'avez pas assez d'argent pour acheter ceci")
-    elif buy==2:
+    elif shop==2:
         achat=int(input("1 = " + tier1_staff.nom + '  ->  ' + str(tier1_staff.prix) +
-            "2 = " + tier2_staff.nom + "  ->  " + str(tier2_staff.prix) + 
-            "3 = " + ultimate_staff.nom + "  ->  " + str(ultimate_staff.prix)))
+            "\n2 = " + tier2_staff.nom + "  ->  " + str(tier2_staff.prix) + 
+            "\n3 = " + ultimate_staff.nom + "  ->  " + str(ultimate_staff.prix) + "\n"))
         if achat==1:
             if character.argent>=tier1_staff.prix:
                 character.arme=tier1_staff.nom
@@ -388,9 +413,9 @@ def armurerie():
                     print("Vous n'avez pas assez d'argent pour acheter ceci")
         if achat==2:
             if character.argent>=tier2_staff.prix:
-                character.arme=tier1_staff.nom
-                character.dura=tier1_staff.dura
-                character.degat=tier1_staff.degat
+                character.arme=tier2_staff.nom
+                character.dura=tier2_staff.dura
+                character.degat=tier2_staff.degat
             else:
                 print("Vous n'avez pas assez d'argent pour acheter ceci")
         if achat==3:
@@ -400,10 +425,56 @@ def armurerie():
                 character.degat=ultimate_staff.degat
             else:
                 print("Vous n'avez pas assez d'argent pour acheter ceci")
-    elif buy==3:
-        print()
-    elif buy==4:
-        print()
+    elif shop==3:
+        achat=int(input("1 = " + tier1_music.nom + '  ->  ' + str(tier1_music.prix) +
+            "\n2 = " + tier2_music.nom + "  ->  " + str(tier2_music.prix) + 
+            "\n3 = " + ultimate_music.nom + "  ->  " + str(ultimate_music.prix) + "\n"))
+        if achat==1:
+            if character.argent>=tier1_music.prix:
+                character.arme=tier1_music.nom
+                character.dura=tier1_music.dura
+                character.degat=tier1_music.degat
+            else:
+                    print("Vous n'avez pas assez d'argent pour acheter ceci")
+        if achat==2:
+            if character.argent>=tier2_music.prix:
+                character.arme=tier2_music.nom
+                character.dura=tier2_music.dura
+                character.degat=tier2_music.degat
+            else:
+                print("Vous n'avez pas assez d'argent pour acheter ceci")
+        if achat==3:
+            if character.argent>=ultimate_music.prix:    
+                character.arme=ultimate_music.nom
+                character.dura=ultimate_music.dura
+                character.degat=ultimate_music.degat
+            else:
+                print("Vous n'avez pas assez d'argent pour acheter ceci")
+    elif shop==4:
+        achat=int(input("1 = " + tier1_cook.nom + '  ->  ' + str(tier1_cook.prix) +
+            "\n2 = " + tier2_cook.nom + "  ->  " + str(tier2_cook.prix) + 
+            "\n3 = " + ultimate_cook.nom + "  ->  " + str(ultimate_cook.prix) + "\n"))
+        if achat==1:
+            if character.argent>=tier1_cook.prix:
+                character.arme=tier1_cook.nom
+                character.dura=tier1_cook.dura
+                character.degat=tier1_cook.degat
+            else:
+                    print("Vous n'avez pas assez d'argent pour acheter ceci")
+        if achat==2:
+            if character.argent>=tier2_cook.prix:
+                character.arme=tier2_cook.nom
+                character.dura=tier2_cook.dura
+                character.degat=tier2_cook.degat
+            else:
+                print("Vous n'avez pas assez d'argent pour acheter ceci")
+        if achat==3:
+            if character.argent>=ultimate_cook.prix:    
+                character.arme=ultimate_cook.nom
+                character.dura=ultimate_cook.dura
+                character.degat=ultimate_cook.degat
+            else:
+                print("Vous n'avez pas assez d'argent pour acheter ceci")
 
 
 
