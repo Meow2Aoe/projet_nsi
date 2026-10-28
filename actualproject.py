@@ -796,7 +796,7 @@ if laclasse==3:         # classe -> mage
     character.arme=starter_staff.nom
     character.degat=starter_staff.degat
     character.dura=starter_staff.dura
-if character.nom=="Reaper":
+if character.nom.lower()=="Reaper".lower():
     if laclasse==4:         # la classe secrète (reaper)
         character.degat=1
         character.arme=shadow_scythe.nom
