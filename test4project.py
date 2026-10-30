@@ -82,12 +82,12 @@ ultimate_cook=arme("Baguette de Pain Traditionnelle Française", 5, 50, 1250)
 Ferdi_sword=arme("L'épée de Fertiplouf", 10, 6969, 50)
 shadow_scythe=arme("Faux des ombres", 25, 100, 0)
 
-potion_heal1=objet("Fiole de soin", 1, 15, "Basique", 1)
-potion_heal2=objet("Potion de soin", 0, 25, "Rare", 2)
-potion_heal3=objet("Patch de soin", 1, 50, "Épique", 3)
-potion_mana1=objet("Fiole de mana", 0, 15, "Basique", 4)
-potion_mana2=objet("Potion de mana", 1, 25, "Rare", 5)
-potion_mana3=objet("Patch de mana", 0, 50, "Épique", 6)
+potion_heal1=objet("Fiole de soin", 2, 15, "Basique", 1)
+potion_heal2=objet("Potion de soin", 2, 25, "Rare", 2)
+potion_heal3=objet("Patch de soin", 2, 50, "Épique", 3)
+potion_mana1=objet("Fiole de mana", 2, 15, "Basique", 4)
+potion_mana2=objet("Potion de mana", 2, 25, "Rare", 5)
+potion_mana3=objet("Patch de mana", 2, 50, "Épique", 6)
 
 bp=[potion_heal1,potion_heal2,potion_heal3,potion_mana1,potion_mana2,potion_mana3]
 
@@ -96,30 +96,29 @@ name=str(input("Entrez le nom du personnage : "))
 laclasse=int(input("Choississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n"))
 typee=int(input("Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divin\n"))
 
-character=chara(name, laclasse, 100, typee, 100, null_sword.degat, null_sword.nom, null_sword.dura, 1, 0, randint(25,150))
+character=chara(name, laclasse, 100, typee, 100, null_sword.degat, null_sword.nom, null_sword.dura, 1, 0, 5000)
 if laclasse==1:         # classe -> mêlée
     character.vie+=25
     character.mana-=25
-    character.degat*=1.3
     character.arme=starter_sword.nom
     character.degat=starter_sword.degat
     character.dura=starter_sword.dura
+    character.degat*=1.3
 if laclasse==2:         # classe -> ranger
     character.vie-=15
-    character.degat*=1.25
     character.arme=starter_bow.nom
     character.degat=starter_bow.degat
     character.dura=starter_bow.dura
+    character.degat*=1.25
 if laclasse==3:         # classe -> mage
     character.vie-=35
     character.mana+=50
-    character.degat*=1.1
     character.arme=starter_staff.nom
     character.degat=starter_staff.degat
     character.dura=starter_staff.dura
+    character.degat*=1.1
 if character.nom.lower()=="Reaper".lower():
     if laclasse==4:         # la classe secrète (reaper)
-        character.degat=1
         character.arme=shadow_scythe.nom
         character.degat=shadow_scythe.degat
         character.dura=shadow_scythe.dura
@@ -420,6 +419,7 @@ def boss_fight(IsArnaudDead):
                     print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
                 cible=attack_ethan(enemi,List_player,bp)
                 print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
+
         if totalpv(List_player)>0:
             for i in List_player:
                 i.xp+=enemi.xp
@@ -436,6 +436,11 @@ def boss_fight(IsArnaudDead):
 
 
 def attack_arnaud(enemi, List_player, bp):
+    for i in List_player:
+        if i.vie<=0:
+            List_player.remove(i)
+        elif character.vie<=0:
+            gameover()
     perso=choice(List_player)
     temp_objet=None
     objet_vole_ce_tour=None
@@ -479,7 +484,11 @@ def attack_arnaud(enemi, List_player, bp):
 
 
 def attack_ethan(enemi, List_player):
-    if 500<enemi.pv<=750:        # phase 1
+    if 500<enemi.pv<=750:       # phase 1
+        pass
+    if 250<enemi.pv<=500:       # phase 2
+        pass
+    if enemi.pv<250:            # phase 3
         pass
 
 def gameover():
@@ -752,7 +761,7 @@ List_player=[character, Andy, Nath] ; stade_equipe=1
 boss_fight(IsArnaudDead=0)
 
 '''
-Boss Fight
+Boss Fight - Arnaud
 Phase 1 : 1500 hp
     - Attaque basique(15hp)
     - Boost les dégats
@@ -766,4 +775,15 @@ Phase 3 : 300hp
     - Enlève tout les objets
     - Attaque tout le monde ++ (30hp)
     - Possibilité de se rendre (1 des fins du jeu)
+'''
+'''
+Boss fight - Ethan
+Phase 1 : 750 hp
+    - Attaque basique (15hp)
+    - Passe 1 tour d'un allié
+Phase 2 : 500 hp
+    - 
+    -
+Phase 3 : 250 hp
+    - Rien
 '''

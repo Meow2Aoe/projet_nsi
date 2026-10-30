@@ -18,7 +18,7 @@ class chara:
 
 class mobs:
     '''
-    Classe pour la création des mobs 
+    Classe pour la création des mobs : nom, pv, race (abandonné tbh), son type de magie (aussi mdrr), * de degat, argent drop et xp drop
     '''
     def __init__(self, nom, pv, race, magika, mana, degat, argent, xp):
         self.nom=nom
