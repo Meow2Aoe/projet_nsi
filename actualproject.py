@@ -3,18 +3,23 @@ class chara:
     '''
     Classe pour la création du personnage contenant son nom, sa classe, sa vie, son type de magie, son mana et son * de dégat, le nom de l'arme, sa dura, le niveau, son xp et son argent
     '''
-    def __init__(self, nom, classe, vie, magika, mana, degat, arme, dura_arme, lvl, xp, argent):
+    def __init__(self, nom, classe, vie, vie_max, magika, mana, degat, arme, dura_arme, lvl, xp, argent):
         self.nom=nom
         self.classe=classe
-        self.vie=vie
+        self.vie_base=vie
+        self.lvl=lvl
+        self.vie_max=self.get_maxvie()
+        self.vie=self.vie_max
         self.magika=magika
         self.mana=mana
         self.degat=degat
         self.arme=arme
-        self.lvl=lvl
         self.xp=xp
         self.dura=dura_arme
         self.argent=argent
+
+    def get_maxvie(self):
+        return int(self.vie_base*(1+0.15*(self.lvl-1)))
 
 class mobs:
     '''
@@ -69,37 +74,12 @@ def rdm_enemi():
     if diff==12:
         enemi=mini_boss1
     if diff==1:
-        enemi1=randint(0,2)
-        if enemi1==0:
-            enemi=goblin
-        elif enemi1==1:
-            enemi=balai
-        elif enemi1==2:
-            enemi=mannequin
+        enemi=choice(diff1)
     if diff==2:
-        enemi1=randint(0,4)
-        if enemi1==0:
-            enemi=goblin
-        elif enemi1==1:
-            enemi=balai
-        elif enemi1==2:
-            enemi=mannequin
-        elif enemi1==3:
-            enemi=Chevalier
-        elif enemi1==4:
-            enemi=mimik
+        enemi=choice(diff2)
     if diff==3:
-        enemi1=randint(0,4)
-        if enemi1==0:
-            enemi=garde
-        elif enemi1==1:
-            enemi=cake
-        elif enemi1==2:
-            enemi=loup
-        elif enemi1==3:
-            enemi=Chevalier
-        elif enemi1==4:
-            enemi=mimik
+        enemi=choice(diff3)
+    enemi.pv=enemi.pv_max
     return enemi
 
 # FONCTION CALCUL TOTAL DU HEAL DE L'ÉQUIPE
@@ -278,7 +258,7 @@ def attack_enemi(enemi, List_player):
     for i in List_player:
         if i.vie<=0:
             List_player.remove(i)
-        elif character.vie<=0:
+        elif i.nom==character.nom and i.vie<0:
             gameover()
     perso=choice(List_player)
     perso.vie-=5*enemi.degat
@@ -289,12 +269,12 @@ def lvlup():
         while i.xp>=100:
             i.degat+=0.5
             i.lvl+=1
-            i.vie*=1.15
+            i.vie=i.get_maxvie()
             i.xp-=100
             print("Félicitation ! " + i.nom + " a augmenté d'un niveau, il est maintenant niveau " + str(i.lvl)+ ".")
             return i
 
-# FONCTION POUR L'AMURERIE
+# FONCTION POUR L'AMURERIEcharacter.vie_max=character.vie
 # ELLE EST HORRIBLE JE SAIS 
 # LA PLIER/CACHER ELLE PREND TROP DE PLACE POUR RIEN
 def armurerie():
@@ -700,10 +680,10 @@ shadow_scythe=arme("Faux des ombres", 50, 100, 0)
 
 # personnages
 
-Nath=chara("Nathaniel", 3, 80, 4, 150, starter_staff.degat, starter_staff.nom, starter_staff.dura, 1, 0, randint(25,150))
-Andy=chara("Andy", 0, 100, 2, 100, starter_music.degat, starter_music.nom, starter_music.dura, 1, 0, randint(25,150))
-Ferdi=chara("Ferdinand", 1, 150, 3, 75, Ferdi_sword.degat, Ferdi_sword.nom, Ferdi_sword.dura, 1, 0, 0)
-Ethan=chara("Éthan", 0, 120, 1, 80, starter_cook.degat+1, starter_cook.nom, starter_cook.dura, 1, 0, randint(25,150))
+Nath=chara("Nathaniel", 3, 80, 80, 4, 150, starter_staff.degat, starter_staff.nom, starter_staff.dura, 1, 0, randint(25,150))
+Andy=chara("Andy", 0, 100, 100, 2, 100, starter_music.degat, starter_music.nom, starter_music.dura, 1, 0, randint(25,150))
+Ferdi=chara("Ferdinand", 1, 150, 150, 3, 75, Ferdi_sword.degat, Ferdi_sword.nom, Ferdi_sword.dura, 1, 0, 0)
+Ethan=chara("Éthan", 0, 120, 120, 1, 80, starter_cook.degat+1, starter_cook.nom, starter_cook.dura, 1, 0, randint(25,150))
 
 # mobs
 
@@ -711,16 +691,20 @@ garde_1=mobs("Garde d'Arnaud", 30, 'humain', 0, 100, 0.85, 10, 15)
 garde_2=mobs("Garde d'Arnaud", 75, 'humain', 0, 100, 1.5, 20, 20)
 mini_boss1=mobs("Garde Runique d'Arnaud", 500, 'humain', 0, 500, 2.5, 1000, 100)
 
+
 goblin=mobs("Goblin Racketteur", 45, 'goblin',0, 100,1.2,10,15)
 balai=mobs("Balais Possédé", 60, 'objet', 0, 100, 1.5, 17, 17)
 mannequin=mobs("Mannequin de Combat", 90, 'objet', 0, 100, 1.75 , 25, 20)
+diff1=[goblin,balai,mannequin]
 
 Chevalier=mobs("Chevalier de la Craie", 100, 'humain', 0, 150, 1.75, 50, 25)
 mimik=mobs("Mimique Gourmand", 120, 'objet', 0, 150, 1.6, 60, 27)
+diff2=[goblin,balai,mannequin,Chevalier,mimik]
 
 garde=mobs('Garde du Tableau Noir', 200, 'esprit', 0, 200, 2, 100, 30)
 loup=mobs('Loup des Ombres', 150, 'esprit', 0, 200, 2.2, 120, 35)
 cake=mobs('Gâteau Mutant', 250, 'esprit', 0, 200, 1.8, 135, 40)
+diff3=[Chevalier,mimik,garde,loup,cake]
 
 Arnaud=mobs("M. Arnaud", 1500, 'humain', 0, 1000, 1, 50000, 500)
 
@@ -738,7 +722,7 @@ bp=[potion_heal1, potion_heal2, potion_heal3, potion_mana1, potion_mana2, potion
 # variable stock
 
 a=0 ; temp="" ; totalheal=0 ; diff=1 ; List_player=[] ; list_ferdi=[Ferdi] ; buy=0 ; shop=0 ; stade_equipe=0 ; freetime = 0
-maxheal_Andy=Andy.vie ; maxheal_Nath=Nath.vie ; maxheal_Ethan=Ethan.vie ; IsArnaudDead=0
+
 
 #############################################################
 #                                                           #
@@ -774,34 +758,36 @@ while temp!="oui":
     if temp!="oui":
         type=int(input(Fore.WHITE +"Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divine\n"))
 
-character=chara(name, laclasse, 100, type, 100, null_sword.degat, null_sword.nom, null_sword.dura, 1, 0, randint(25,150))
+character=chara(name, laclasse, 100, 100,type, 100, null_sword.degat, null_sword.nom, null_sword.dura, 1, 0, randint(25,150))
 
 if laclasse==1:         # classe -> mêlée
-    character.vie+=25
+    character.vie_base+=25
     character.mana-=25
-    character.degat*=1.3
     character.arme=starter_sword.nom
     character.degat=starter_sword.degat
     character.dura=starter_sword.dura
+    character.degat*=1.3
 if laclasse==2:         # classe -> ranger
-    character.vie-=15
-    character.degat*=1.25
+    character.vie_base-=15
     character.arme=starter_bow.nom
     character.degat=starter_bow.degat
     character.dura=starter_bow.dura
+    character.degat*=1.25
 if laclasse==3:         # classe -> mage
-    character.vie-=35
+    character.vie_base-=35
     character.mana+=50
-    character.degat*=1.1
     character.arme=starter_staff.nom
     character.degat=starter_staff.degat
     character.dura=starter_staff.dura
+    character.degat*=1.1
 if character.nom.lower()=="Reaper".lower():
     if laclasse==4:         # la classe secrète (reaper)
-        character.degat=1
+        character.vie_base=250
         character.arme=shadow_scythe.nom
         character.degat=shadow_scythe.degat
         character.dura=shadow_scythe.dura
+character.vie_max=character.get_maxvie()
+character.vie=character.vie_max
 
 print(Fore.GREEN + "Grand Sage : Bien, bien... " + character.nom + " votre nouvelle vie va enfin pouvoir commencer !" + Fore.WHITE + "\nNarrateur : Le grand sage disparait de votre rêve et vous vous rendormez.")
 
@@ -1313,22 +1299,22 @@ print(Fore.WHITE + "Narrateur : Le combat commence. Les gardes tentent d'encercl
 List_player=[character,Andy,Nath] ; stade_equipe=1 ; diff=11
 fight()
 
-print("Narrateur : Après le combat, les soldats prennent la fuite."); input()
-print("Ferdinand : Nous aurions dû en garder un pour lui poser des questions."); input()
-print(character.nom + " : Tu pouvais simplement le retenir."); input()
-print("Ferdinand : Je l'ai retenu.") ; input()
-print(character.nom + " : Tu l'as envoyé contre une colonne.") ; input()
-print("Ferdinand : Il s'est retenu tout seul après.") ; input()
-print("Narrateur : Nathaniel ferme la porte de la chapelle et pose le livre sur un autel.") ; input()
-print("Nathaniel : Je suppose que je vous dois des explications.") ; input()
-print(character.nom + " : Tu pourrais commencer par ton nom.") ; input()
-print("Nathaniel : Nathaniel. Prêtre, archiviste et, apparemment, fugitif.") ; input()
-print("Ferdinand : Ferdinand. Combattant.") ; input()
+print(Fore.WHITE + "Narrateur : Après le combat, les soldats prennent la fuite."); input()
+print(Fore.YELLOW + "Ferdinand : Nous aurions dû en garder un pour lui poser des questions."); input()
+print(Fore.BLUE + character.nom + " : Tu pouvais simplement le retenir."); input()
+print(Fore.YELLOW + "Ferdinand : Je l'ai retenu.") ; input()
+print(Fore.BLUE + character.nom + " : Tu l'as envoyé contre une colonne.") ; input()
+print(Fore.YELLOW + "Ferdinand : Il s'est retenu tout seul après.") ; input()
+print(Fore.WHITE + "Narrateur : Nathaniel ferme la porte de la chapelle et pose le livre sur un autel.") ; input()
+print(Fore.RED + "Nathaniel : Je suppose que je vous dois des explications.") ; input()
+print(Fore.BLUE + character.nom + " : Tu pourrais commencer par ton nom.") ; input()
+print(Fore.RED + "Nathaniel : Nathaniel. Prêtre, archiviste et, apparemment, fugitif.") ; input()
+print(Fore.YELLOW + "Ferdinand : Ferdinand. Combattant.") ; input()
 print(Fore.LIGHTBLACK_EX + "Andy : Andy. Musicien, artiste et victime permanente de la censure.") ; input()
-print(character.nom + " : " + character.nom + ". Voyageur, apparemment aimant les ennuis.") ; input()
-print("Nathaniel : Vous formez un groupe très inhabituel.") ; input()
+print(Fore.BLUE + character.nom + " : " + character.nom + ". Voyageur, apparemment aimant les ennuis.") ; input()
+print(Fore.RED + "Nathaniel : Vous formez un groupe très inhabituel.") ; input()
 print(Fore.LIGHTBLACK_EX + "Andy : Nous avons déjà entendu pire.") ; input()
-print(character.nom + " : Par qui ?") ; input()
+print(Fore.BLUE + character.nom + " : Par qui ?") ; input()
 print(Fore.LIGHTBLACK_EX + "Andy : Par le public de mon dernier concert."); input()
 
 #############################################################
@@ -1338,34 +1324,34 @@ print(Fore.LIGHTBLACK_EX + "Andy : Par le public de mon dernier concert."); inpu
 #                                                           #
 #############################################################
 
-print("Narrateur : Nathaniel ouvre le vieux livre. Les pages sont couvertes de symboles, de cartes et de notes écrites à plusieurs époques."); input()
-print("Nathaniel : Ce que je vais vous révéler ne doit pas sortir de cette chapelle. Il y a plusieurs siècles, les souverains de Monte Cristo possédaient un artefact appelé le Coeur de bedrock."); input()
-print(character.nom + " : Un bijou ?"); input()
-print("Nathaniel : Un artefact ancien. Il serait capable d'influencer la volonté des autres."); input()
-print("Ferdinand : Comme leur dire quoi faire ?"); input()
+print(Fore.WHITE + "Narrateur : Nathaniel ouvre le vieux livre. Les pages sont couvertes de symboles, de cartes et de notes écrites à plusieurs époques."); input()
+print(Fore.RED + "Nathaniel : Ce que je vais vous révéler ne doit pas sortir de cette chapelle. Il y a plusieurs siècles, les souverains de Monte Cristo possédaient un artefact appelé le Coeur de bedrock."); input()
+print(Fore.BLUE + character.nom + " : Un bijou ?"); input()
+print(Fore.RED + "Nathaniel : Un artefact ancien. Il serait capable d'influencer la volonté des autres."); input()
+print(Fore.YELLOW + "Ferdinand : Comme leur dire quoi faire ?"); input()
 
-print("Nathaniel : Plus que cela. Certains textes parlent d'une simple suggestion. D'autres évoquent un contrôle presque total."); input()
+print(Fore.RED + "Nathaniel : Plus que cela. Certains textes parlent d'une simple suggestion. D'autres évoquent un contrôle presque total."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Donc une sorte de couronne magique qui transforme son propriétaire en dictateur ?"); input()
-print("Nathaniel : Ce n'est pas exactement une couronne."); input()
+print(Fore.RED + "Nathaniel : Ce n'est pas exactement une couronne."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je comprends. Le problème est qu'il manque un chapeau."); input()
-print("Nathaniel : Ce n'est pas le moment."); input()
+print(Fore.RED + "Nathaniel : Ce n'est pas le moment."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : C'est rarement le moment, avec toi."); input()
-print("Narrateur : Nathaniel tourne une page."); input()
-print("Nathaniel : Le Coeur n'agit pas de la même façon sur tout le monde. Il amplifie ce qui existe déjà chez son porteur. Une personne généreuse pourrait vouloir protéger les autres. Une personne dominatrice pourrait vouloir les contrôler."); input()
-print(character.nom + " : Et Arnaud veut le trouver."); input()
-print("Nathaniel : Oui. Depuis des mois, ses hommes fouillent les anciennes forteresses, les cryptes et les bibliothèques royales."); input()
-print("Ferdinand : Pourquoi personne ne l'arrête ?"); input()
-print("Nathaniel : Parce qu'Arnaud contrôle l'armée. Et parce que les habitants ne savent pas ce qu'il recherche."); input()
+print(Fore.WHITE + "Narrateur : Nathaniel tourne une page."); input()
+print(Fore.RED + "Nathaniel : Le Coeur n'agit pas de la même façon sur tout le monde. Il amplifie ce qui existe déjà chez son porteur. Une personne généreuse pourrait vouloir protéger les autres. Une personne dominatrice pourrait vouloir les contrôler."); input()
+print(Fore.BLUE + character.nom + " : Et Arnaud veut le trouver."); input()
+print(Fore.RED + "Nathaniel : Oui. Depuis des mois, ses hommes fouillent les anciennes forteresses, les cryptes et les bibliothèques royales."); input()
+print(Fore.YELLOW + "Ferdinand : Pourquoi personne ne l'arrête ?"); input()
+print(Fore.RED + "Nathaniel : Parce qu'Arnaud contrôle l'armée. Et parce que les habitants ne savent pas ce qu'il recherche."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Et parce qu'une bonne partie des gens préfère ne pas finir dans une cellule."); input()
-print("Nathaniel : Exactement."); input()
-print("Narrateur : Il referme un instant le livre."); input()
-print("Nathaniel : Vous devez comprendre quelque chose. Arnaud n'a pas commencé comme un tyran aux yeux de tous. Il a pris le pouvoir après une guerre. Il a promis la stabilité. Beaucoup de gens l'ont soutenu."); input()
-print(character.nom + " : Et ensuite ?"); input()
-print("Nathaniel : Il a progressivement supprimé toute opposition. Il a réécrit l'histoire et fait disparaître les témoins."); input()
-print("Ferdinand : Il a donc menti à tout le monde."); input()
-print("Nathaniel : Les mensonges les plus dangereux sont souvent ceux qui commencent par une vérité."); input()
+print(Fore.RED + "Nathaniel : Exactement."); input()
+print(Fore.WHITE + "Narrateur : Il referme un instant le livre."); input()
+print(Fore.RED + "Nathaniel : Vous devez comprendre quelque chose. Arnaud n'a pas commencé comme un tyran aux yeux de tous. Il a pris le pouvoir après une guerre. Il a promis la stabilité. Beaucoup de gens l'ont soutenu."); input()
+print(Fore.BLUE + character.nom + " : Et ensuite ?"); input()
+print(Fore.RED + "Nathaniel : Il a progressivement supprimé toute opposition. Il a réécrit l'histoire et fait disparaître les témoins."); input()
+print(Fore.YELLOW + "Ferdinand : Il a donc menti à tout le monde."); input()
+print(Fore.RED + "Nathaniel : Les mensonges les plus dangereux sont souvent ceux qui commencent par une vérité."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je vais noter ça. Ça ferait une excellente phrase dans une chanson."); input()
-print("Nathaniel : À condition de ne pas en faire un refrain de cinq minutes."); input()
+print(Fore.RED + "Nathaniel : À condition de ne pas en faire un refrain de cinq minutes."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je ne promets rien.") ; input()
 
 #############################################################
@@ -1375,34 +1361,34 @@ print(Fore.LIGHTBLACK_EX + "Andy : Je ne promets rien.") ; input()
 #                                                           #
 #############################################################
 
-print("Narrateur : Nathaniel sort une carte ancienne."); input()
-print("Nathaniel : La famille royale a disparu il y a quinze ans. Les documents officiels affirment que le roi a trahi son peuple et provoqué la guerre civile."); input()
-print(character.nom + " : Tu n'y crois pas ?"); input()
-print("Nathaniel : Les registres ont été modifiés. Certaines dates ne correspondent pas. Des signatures ont été copiées. Des pages entières ont été arrachées."); input()
-print("Ferdinand : Tu peux le prouver ?"); input()
-print("Nathaniel : Pas encore. Mais une dernière référence mentionne un témoin : un ancien conseiller royal qui aurait survécu à la guerre."); input()
-print(character.nom + " : Où est-il ?"); input()
-print("Nathaniel : Je l'ignore. Les archives ne donnent aucun nom, seulement un lieu : les anciennes archives de la capitale."); input()
+print(Fore.WHITE + "Narrateur : Nathaniel sort une carte ancienne."); input()
+print(Fore.RED + "Nathaniel : La famille royale a disparu il y a quinze ans. Les documents officiels affirment que le roi a trahi son peuple et provoqué la guerre civile."); input()
+print(Fore.BLUE + character.nom + " : Tu n'y crois pas ?"); input()
+print(Fore.RED + "Nathaniel : Les registres ont été modifiés. Certaines dates ne correspondent pas. Des signatures ont été copiées. Des pages entières ont été arrachées."); input()
+print(Fore.YELLOW + "Ferdinand : Tu peux le prouver ?"); input()
+print(Fore.RED + "Nathaniel : Pas encore. Mais une dernière référence mentionne un témoin : un ancien conseiller royal qui aurait survécu à la guerre."); input()
+print(Fore.BLUE + character.nom + " : Où est-il ?"); input()
+print(Fore.RED + "Nathaniel : Je l'ignore. Les archives ne donnent aucun nom, seulement un lieu : les anciennes archives de la capitale."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Donc nous devons aller dans un bâtiment rempli de gardes pour chercher des documents qu'on nous interdit de lire."); input()
-print(character.nom + " : En résumé, oui."); input()
+print(Fore.BLUE + character.nom + " : En résumé, oui."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je préfère les quêtes où l'objectif est de retrouver un chat."); input()
-print("Ferdinand : Tu sais retrouver un chat ?"); input()
+print(Fore.YELLOW + "Ferdinand : Tu sais retrouver un chat ?"); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Non, mais je peux chanter pour l'attirer."); input()
-print("Ferdinand : Et si ça ne marche pas ?"); input()
+print(Fore.YELLOW + "Ferdinand : Et si ça ne marche pas ?"); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je lui laisse un avis négatif."); input()
-print("Narrateur : Nathaniel déroule un autre parchemin."); input()
-print("Nathaniel : Les archives mentionnent aussi une vieille boulangerie située près de la capitale. Elle aurait servi de refuge aux messagers royaux pendant la guerre."); input()
-print(character.nom + " : Pourquoi une boulangerie ?"); input()
-print("Nathaniel : Les messagers devaient pouvoir se déplacer sans attirer l'attention. Un livreur de pain était moins suspect qu'un soldat transportant des documents."); input()
-print("Ferdinand : Et il y avait du pain ?"); input()
-print("Nathaniel : Probablement."); input()
-print("Ferdinand : Alors c'était une bonne stratégie."); input()
-print(character.nom + " : Nous allons chercher les documents. Ensuite, nous trouverons le sceau royal."); input()
-print("Nathaniel : Attendez. Je n'ai pas encore accepté de vous accompagner."); input()
-print("Narrateur : Silence."); input()
+print(Fore.WHITE + "Narrateur : Nathaniel déroule un autre parchemin."); input()
+print(Fore.RED + "Nathaniel : Les archives mentionnent aussi une vieille boulangerie située près de la capitale. Elle aurait servi de refuge aux messagers royaux pendant la guerre."); input()
+print(Fore.BLUE + character.nom + " : Pourquoi une boulangerie ?"); input()
+print(Fore.RED + "Nathaniel : Les messagers devaient pouvoir se déplacer sans attirer l'attention. Un livreur de pain était moins suspect qu'un soldat transportant des documents."); input()
+print(Fore.YELLOW + "Ferdinand : Et il y avait du pain ?"); input()
+print(Fore.RED + "Nathaniel : Probablement."); input()
+print(Fore.YELLOW + "Ferdinand : Alors c'était une bonne stratégie."); input()
+print(Fore.BLUE + character.nom + " : Nous allons chercher les documents. Ensuite, nous trouverons le sceau royal."); input()
+print(Fore.RED + "Nathaniel : Attendez. Je n'ai pas encore accepté de vous accompagner."); input()
+print(Fore.WHITE + "Narrateur : Silence."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Ah. C'est vrai. Nous venons de décider de toute votre vie sans vous demander votre avis."); input()
-print("Ferdinand : C'est plus rapide."); input()
-print("Nathaniel : Je vois cela."); input()
+print(Fore.YELLOW + "Ferdinand : C'est plus rapide."); input()
+print(Fore.RED + "Nathaniel : Je vois cela."); input()
 
 #############################################################
 #                                                           #
@@ -1411,31 +1397,31 @@ print("Nathaniel : Je vois cela."); input()
 #                                                           #
 #############################################################
 
-print("Narrateur : Nathaniel observe le groupe."); input()
-print("Nathaniel : Vous savez que vous risquez votre vie en vous opposant à Arnaud. Pourquoi continuer ?"); input()
+print(Fore.WHITE + "Narrateur : Nathaniel observe le groupe."); input()
+print(Fore.RED + "Nathaniel : Vous savez que vous risquez votre vie en vous opposant à Arnaud. Pourquoi continuer ?"); input()
 
 choix = int(input("Quelle est votre motivation ?\n1 = « Personne ne devrait vivre sous la peur. »\n2 = « Je veux découvrir la vérité sur le royaume. »\n3 = « Je veux devenir assez puissant pour qu'on ne puisse plus me menacer. »\n"))
 
 if choix == 1:
-    print(character.nom + " : Il fait arrêter des innocents. Quelqu'un doit l'arrêter."); input()
-    print("Nathaniel : Une réponse simple. Mais parfois, les réponses simples sont les plus difficiles à suivre."); input()
-    print(character.nom + " : Tu viens avec nous ?"); input()
-    print("Nathaniel : Oui. Je ne peux pas continuer à protéger des livres pendant que les gens qui les ont écrits sont oubliés."); input()
-    print("Narrateur : Nathaniel rejoint le groupe avec conviction."); input()
+    print(Fore.BLUE + character.nom + " : Il fait arrêter des innocents. Quelqu'un doit l'arrêter."); input()
+    print(Fore.RED + "Nathaniel : Une réponse simple. Mais parfois, les réponses simples sont les plus difficiles à suivre."); input()
+    print(Fore.BLUE + character.nom + " : Tu viens avec nous ?"); input()
+    print(Fore.RED + "Nathaniel : Oui. Je ne peux pas continuer à protéger des livres pendant que les gens qui les ont écrits sont oubliés."); input()
+    print(Fore.WHITE + "Narrateur : Nathaniel rejoint le groupe avec conviction."); input()
 
 elif choix == 2:
-    print(character.nom + " : Je ne supporte pas qu'on nous cache ce qui s'est passé. Si Arnaud ment sur son passé, je veux savoir pourquoi."); input()
-    print("Nathaniel : La vérité peut être dangereuse. Mais l'ignorance l'est parfois davantage."); input()
-    print(character.nom + " : Alors, cherchons-la."); input()
-    print("Nathaniel : Très bien. Je vous accompagnerai. Mais je vous préviens : je ne laisserai personne détruire les archives pour obtenir une victoire facile."); input()
-    print("Narrateur : Nathaniel rejoint le groupe pour enquêter."); input()
+    print(Fore.BLUE + character.nom + " : Je ne supporte pas qu'on nous cache ce qui s'est passé. Si Arnaud ment sur son passé, je veux savoir pourquoi."); input()
+    print(Fore.RED + "Nathaniel : La vérité peut être dangereuse. Mais l'ignorance l'est parfois davantage."); input()
+    print(Fore.BLUE + character.nom + " : Alors, cherchons-la."); input()
+    print(Fore.RED + "Nathaniel : Très bien. Je vous accompagnerai. Mais je vous préviens : je ne laisserai personne détruire les archives pour obtenir une victoire facile."); input()
+    print(Fore.WHITE + "Narrateur : Nathaniel rejoint le groupe pour enquêter."); input()
 
 elif choix == 3:
-    print(character.nom + " : Je ne veux plus jamais être impuissant. Je veux être capable de me défendre."); input()
-    print("Nathaniel : Je comprends cette peur. Mais prends garde à ne pas devenir ce que tu combats."); input()
-    print(character.nom + " : Je sais faire la différence."); input()
-    print("Nathaniel : Je l'espère."); input()
-    print("Narrateur : Nathaniel rejoint le groupe, mais il surveillera attentivement les décisions de " + character.nom + "."); input()
+    print(Fore.BLUE + character.nom + " : Je ne veux plus jamais être impuissant. Je veux être capable de me défendre."); input()
+    print(Fore.RED + "Nathaniel : Je comprends cette peur. Mais prends garde à ne pas devenir ce que tu combats."); input()
+    print(Fore.BLUE + character.nom + " : Je sais faire la différence."); input()
+    print(Fore.RED + "Nathaniel : Je l'espère."); input()
+    print(Fore.WHITE + "Narrateur : Nathaniel rejoint le groupe, mais il surveillera attentivement les décisions de " + character.nom + "."); input()
 
 #############################################################
 #                                                           #
@@ -1444,25 +1430,25 @@ elif choix == 3:
 #                                                           #
 #############################################################
 
-print("Narrateur : La nuit tombe. Nathaniel range les documents dans une sacoche."); input()
-print("Nathaniel : Nous devons partir avant le lever du soleil. Les gardes reviendront."); input()
-print("Ferdinand : Je peux rester ici et les attendre."); input()
-print(character.nom + " : Non."); input()
-print("Ferdinand : Pourquoi ?"); input()
-print(character.nom + " : Parce qu'ils reviendraient à cinquante."); input()
-print("Ferdinand : Je peux en combattre cinquante."); input()
+print(Fore.WHITE + "Narrateur : La nuit tombe. Nathaniel range les documents dans une sacoche."); input()
+print(Fore.RED + "Nathaniel : Nous devons partir avant le lever du soleil. Les gardes reviendront."); input()
+print(Fore.YELLOW + "Ferdinand : Je peux rester ici et les attendre."); input()
+print(Fore.BLUE + character.nom + " : Non."); input()
+print(Fore.YELLOW + "Ferdinand : Pourquoi ?"); input()
+print(Fore.BLUE + character.nom + " : Parce qu'ils reviendraient à cinquante."); input()
+print(Fore.YELLOW + "Ferdinand : Je peux en combattre cinquante."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Et les cinquante et unième ?"); input()
-print("Ferdinand : Je lui demanderai d'attendre son tour."); input()
-print("Narrateur : Nathaniel secoue la tête, amusé malgré lui."); input()
-print("Nathaniel : La boulangerie se trouve à une demi-journée de marche. Nous y trouverons peut-être les preuves dont nous avons besoin."); input()
-print(character.nom + " : Et si nous ne trouvons rien ?"); input()
-print("Nathaniel : Alors nous aurons traversé la campagne pour visiter une vieille boulangerie."); input()
+print(Fore.YELLOW + "Ferdinand : Je lui demanderai d'attendre son tour."); input()
+print(Fore.WHITE + "Narrateur : Nathaniel secoue la tête, amusé malgré lui."); input()
+print(Fore.RED + "Nathaniel : La boulangerie se trouve à une demi-journée de marche. Nous y trouverons peut-être les preuves dont nous avons besoin."); input()
+print(Fore.BLUE + character.nom + " : Et si nous ne trouvons rien ?"); input()
+print(Fore.RED + "Nathaniel : Alors nous aurons traversé la campagne pour visiter une vieille boulangerie."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Enfin une quête avec une récompense qui m'intéresse."); input()
-print("Narrateur : Le groupe quitte la chapelle. Avant de fermer la porte, Nathaniel se retourne une dernière fois vers l'autel."); input()
-print("Nathaniel : Si Arnaud recherche le Coeur de Bedrock, c'est qu'il sait quelque chose que nous ignorons."); input()
-print(character.nom + " : Quoi donc ?"); input()
-print("Nathaniel : Peut-être que l'artefact n'a jamais été détruit."); input()
-print("Narrateur : La porte se referme."); input()
+print(Fore.WHITE + "Narrateur : Le groupe quitte la chapelle. Avant de fermer la porte, Nathaniel se retourne une dernière fois vers l'autel."); input()
+print(Fore.RED + "Nathaniel : Si Arnaud recherche le Coeur de Bedrock, c'est qu'il sait quelque chose que nous ignorons."); input()
+print(Fore.BLUE + character.nom + " : Quoi donc ?"); input()
+print(Fore.RED + "Nathaniel : Peut-être que l'artefact n'a jamais été détruit."); input()
+print(Fore.WHITE + "Narrateur : La porte se referme."); input()
 
 farm=2
 while farm!=1:
@@ -1484,34 +1470,34 @@ print(Fore.WHITE + "Narrateur : Après ce temps libre, les joyeux lurons allère
 #                                                           #
 #############################################################
 
-print("Narrateur : Lieu : Une ancienne boulangerie à l'extérieur de la capitale."); input()
+print(Fore.WHITE + "Narrateur : Lieu : Une ancienne boulangerie à l'extérieur de la capitale."); input()
 
-print("Narrateur : Le groupe suit la carte de Nathaniel. La route devient plus étroite et les habitations se font rares."); input()
+print(Fore.WHITE + "Narrateur : Le groupe suit la carte de Nathaniel. La route devient plus étroite et les habitations se font rares."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Nous marchons depuis des heures."); input()
-print("Ferdinand : Une demi-journée, c'est normal."); input()
+print(Fore.YELLOW + "Ferdinand : Une demi-journée, c'est normal."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : J'ai mal aux pieds."); input()
-print("Ferdinand : Tu aurais dû prendre de meilleures chaussures."); input()
+print(Fore.YELLOW + "Ferdinand : Tu aurais dû prendre de meilleures chaussures."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je suis musicien. Mes pieds sont conçus pour marcher jusqu'à une scène, pas jusqu'à une ruine."); input()
-print(character.nom + " : Tu as des chaussures tout à fait normales."); input()
+print(Fore.BLUE + character.nom + " : Tu as des chaussures tout à fait normales."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : C'est ce que tu crois. Elles ont une âme artistique."); input()
-print("Nathaniel : Les chaussures n'ont pas d'âme."); input()
+print(Fore.RED + "Nathaniel : Les chaussures n'ont pas d'âme."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Voilà pourquoi tu n'as jamais écrit de chanson célèbre."); input()
-print("Narrateur : Au détour d'un chemin, une vieille bâtisse apparaît. Le toit est partiellement effondré, mais une fine fumée s'échappe de la cheminée."); input()
-print(character.nom + " : La boulangerie ?"); input()
-print("Nathaniel : C'est bien l'endroit indiqué sur la carte."); input()
-print("Ferdinand : Il y a de la fumée."); input()
+print(Fore.WHITE + "Narrateur : Au détour d'un chemin, une vieille bâtisse apparaît. Le toit est partiellement effondré, mais une fine fumée s'échappe de la cheminée."); input()
+print(Fore.BLUE + character.nom + " : La boulangerie ?"); input()
+print(Fore.RED + "Nathaniel : C'est bien l'endroit indiqué sur la carte."); input()
+print(Fore.YELLOW + "Ferdinand : Il y a de la fumée."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Ce qui signifie soit qu'il y a quelqu'un, soit que le bâtiment a développé une activité criminelle."); input()
-print(character.nom + " : Comment un bâtiment pourrait-il devenir criminel ?"); input()
+print(Fore.BLUE + character.nom + " : Comment un bâtiment pourrait-il devenir criminel ?"); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je ne veux pas limiter ses ambitions."); input()
-print("Narrateur : Le groupe s'approche de la porte."); input()
-print("Ferdinand : Je frappe ?"); input()
-print(character.nom + " : Non."); input()
-print("Ferdinand : Je frappe doucement ?"); input()
-print(character.nom + " : Non plus."); input()
-print("Ferdinand : Tu es difficile."); input()
-print("Narrateur : " + character.nom + " frappe normalement. Une voix répond de l'intérieur."); input()
-print("Inconnu : Entrez. La porte n'est pas verrouillée."); input()
-print("Narrateur : Le groupe échange un regard, puis entre.") ; input()
+print(Fore.WHITE + "Narrateur : Le groupe s'approche de la porte."); input()
+print(Fore.YELLOW + "Ferdinand : Je frappe ?"); input()
+print(Fore.BLUE + character.nom + " : Non."); input()
+print(Fore.YELLOW + "Ferdinand : Je frappe doucement ?"); input()
+print(Fore.BLUE + character.nom + " : Non plus."); input()
+print(Fore.YELLOW + "Ferdinand : Tu es difficile."); input()
+print(Fore.WHITE + "Narrateur : " + character.nom + " frappe normalement. Une voix répond de l'intérieur."); input()
+print(Fore.MAGENTA + "Inconnu : Entrez. La porte n'est pas verrouillée."); input()
+print(Fore.WHITE + "Narrateur : Le groupe échange un regard, puis entre.") ; input()
 
 #############################################################
 #                                                           #
@@ -1520,53 +1506,53 @@ print("Narrateur : Le groupe échange un regard, puis entre.") ; input()
 #                                                           #
 #############################################################
 
-print("Narrateur : À l'intérieur, un jeune homme est assis près d'un four éteint. Il lit une lettre, calme et parfaitement à l'aise."); input()
-print("Inconnu : Vous êtes en retard."); input()
-print(character.nom + " : Pardon ?"); input()
-print("Inconnu : Je vous attendais."); input()
+print(Fore.WHITE + "Narrateur : À l'intérieur, un jeune homme est assis près d'un four éteint. Il lit une lettre, calme et parfaitement à l'aise."); input()
+print(Fore.MAGENTA + "Inconnu : Vous êtes en retard."); input()
+print(Fore.BLUE + character.nom + " : Pardon ?"); input()
+print(Fore.MAGENTA + "Inconnu : Je vous attendais."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : C'est une phrase qu'on entend rarement dans un endroit où personne ne devrait vivre."); input()
-print("Narrateur : L'homme replie sa lettre et se lève."); input()
-print("Inconnu : Ethan. Enchanté."); input()
-print(character.nom + " : Comment savais-tu que nous viendrions ?"); input()
-print("Ethan : Je ne le savais pas. Mais quelqu'un qui suit une vieille carte finit généralement par arriver ici."); input()
-print("Nathaniel : Qui t'a donné cette information ?"); input()
-print("Ethan : Disons que j'ai des connaissances."); input()
-print("Ferdinand : Tu es un espion ?"); input()
-print("Ethan : Si j'étais un espion, est-ce que je te le dirais ?"); input()
-print("Ferdinand : Probablement pas."); input()
-print("Ethan : Alors tu progresses."); input()
-print("Narrateur : Andy étouffe un rire."); input()
+print(Fore.WHITE + "Narrateur : L'homme replie sa lettre et se lève."); input()
+print(Fore.MAGENTA + "Inconnu : Ethan. Enchanté."); input()
+print(Fore.BLUE + character.nom + " : Comment savais-tu que nous viendrions ?"); input()
+print(Fore.MAGENTA + "Ethan : Je ne le savais pas. Mais quelqu'un qui suit une vieille carte finit généralement par arriver ici."); input()
+print(Fore.RED + "Nathaniel : Qui t'a donné cette information ?"); input()
+print(Fore.MAGENTA + "Ethan : Disons que j'ai des connaissances."); input()
+print(Fore.YELLOW + "Ferdinand : Tu es un espion ?"); input()
+print(Fore.MAGENTA + "Ethan : Si j'étais un espion, est-ce que je te le dirais ?"); input()
+print(Fore.YELLOW + "Ferdinand : Probablement pas."); input()
+print(Fore.MAGENTA + "Ethan : Alors tu progresses."); input()
+print(Fore.WHITE + "Narrateur : Andy étouffe un rire."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je l'aime bien. Il a la même manière de parler que moi."); input()
-print(character.nom + " : Tu veux dire qu'il parle comme s'il savait tout ?"); input()
+print(Fore.BLUE + character.nom + " : Tu veux dire qu'il parle comme s'il savait tout ?"); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Non. Comme s'il savait exactement ce qu'il faut dire pour que les autres pensent qu'il sait tout."); input()
-print("Ethan : Une nuance importante."); input()
+print(Fore.MAGENTA + "Ethan : Une nuance importante."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Tu vois ? Il comprend mon art."); input()
-print("Narrateur : Ethan remarque le livre de Nathaniel."); input()
-print("Ethan : Vous cherchez les archives royales."); input()
-print(character.nom + " : Comment le sais-tu ?"); input()
-print("Ethan : Parce que les gardes d'Arnaud ont fouillé cette boulangerie il y a deux jours. Ils cherchaient exactement la même chose."); input()
-print("Nathaniel : Et qu'ont-ils trouvé ?"); input()
-print("Ethan : Rien. Les documents sont cachés sous le four."); input()
-print("Narrateur : Ferdinand s'avance immédiatement."); input()
-print("Ferdinand : Enfin, une mission utile."); input()
-print(character.nom + " : Attends."); input()
-print("Ferdinand : Quoi ?"); input()
-print(character.nom + " : Tu vas encore tout casser."); input()
-print("Ferdinand : Je n'ai rien cassé depuis le marché."); input()
+print(Fore.WHITE + "Narrateur : Ethan remarque le livre de Nathaniel."); input()
+print(Fore.MAGENTA + "Ethan : Vous cherchez les archives royales."); input()
+print(Fore.BLUE + character.nom + " : Comment le sais-tu ?"); input()
+print(Fore.MAGENTA + "Ethan : Parce que les gardes d'Arnaud ont fouillé cette boulangerie il y a deux jours. Ils cherchaient exactement la même chose."); input()
+print(Fore.RED + "Nathaniel : Et qu'ont-ils trouvé ?"); input()
+print(Fore.MAGENTA + "Ethan : Rien. Les documents sont cachés sous le four."); input()
+print(Fore.WHITE + "Narrateur : Ferdinand s'avance immédiatement."); input()
+print(Fore.YELLOW + "Ferdinand : Enfin, une mission utile."); input()
+print(Fore.BLUE + character.nom + " : Attends."); input()
+print(Fore.YELLOW + "Ferdinand : Quoi ?"); input()
+print(Fore.BLUE + character.nom + " : Tu vas encore tout casser."); input()
+print(Fore.YELLOW + "Ferdinand : Je n'ai rien cassé depuis le marché."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Cela fait presque une journée. Un record personnel."); input()
-print("Ethan : Laissez-moi faire."); input()
-print("Narrateur : Ethan pousse une brique descellée dans le mur. Un compartiment secret s'ouvre. Il en sort une boîte contenant plusieurs parchemins."); input()
-print("Nathaniel : Tu connais donc cet endroit."); input()
-print("Ethan : Mon père travaillait autrefois pour la cour royale. Il m'a appris quelques secrets avant de disparaître."); input()
-print("Narrateur : Le groupe se tait."); input()
-print(character.nom + " : Disparaître comment ?"); input()
-print("Narrateur : Ethan garde le silence quelques secondes."); input()
-print("Ethan : Il s'est opposé à Arnaud. Un matin, il n'est jamais rentré."); input()
+print(Fore.MAGENTA + "Ethan : Laissez-moi faire."); input()
+print(Fore.WHITE + "Narrateur : Ethan pousse une brique descellée dans le mur. Un compartiment secret s'ouvre. Il en sort une boîte contenant plusieurs parchemins."); input()
+print(Fore.RED + "Nathaniel : Tu connais donc cet endroit."); input()
+print(Fore.MAGENTA + "Ethan : Mon père travaillait autrefois pour la cour royale. Il m'a appris quelques secrets avant de disparaître."); input()
+print(Fore.WHITE + "Narrateur : Le groupe se tait."); input()
+print(Fore.BLUE + character.nom + " : Disparaître comment ?"); input()
+print(Fore.WHITE + "Narrateur : Ethan garde le silence quelques secondes."); input()
+print(Fore.MAGENTA + "Ethan : Il s'est opposé à Arnaud. Un matin, il n'est jamais rentré."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je suis désolé."); input()
-print("Ethan : Ne le sois pas. Je ne cherche pas la pitié. Je cherche des réponses."); input()
-print(character.nom + " : Et tu penses les trouver ici ?"); input()
-print("Ethan : Je pense que les réponses sont partout. Il suffit de savoir où regarder."); input()
-print("Narrateur : Il ouvre la boîte."); input()
+print(Fore.MAGENTA + "Ethan : Ne le sois pas. Je ne cherche pas la pitié. Je cherche des réponses."); input()
+print(Fore.BLUE + character.nom + " : Et tu penses les trouver ici ?"); input()
+print(Fore.MAGENTA + "Ethan : Je pense que les réponses sont partout. Il suffit de savoir où regarder."); input()
+print(Fore.WHITE + "Narrateur : Il ouvre la boîte."); input()
 
 #############################################################
 #                                                           #
@@ -1575,29 +1561,29 @@ print("Narrateur : Il ouvre la boîte."); input()
 #                                                           #
 #############################################################
 
-print("Narrateur : Les parchemins portent le sceau de l'ancienne dynastie. Nathaniel les examine avec précaution."); input()
-print("Nathaniel : Ces documents sont authentiques. Ils datent de la dernière année du règne du roi."); input()
-print(character.nom + " : Que disent-ils ?"); input()
-print("Nathaniel : Le roi avait ordonné le transfert du Coeur de Bedrock vers un sanctuaire sous le château. Il craignait qu'un conseiller ne s'en empare."); input()
-print("Ferdinand : Et ce conseiller, c'était Arnaud ?"); input()
-print("Nathaniel : Tout porte à le croire."); input()
+print(Fore.WHITE + "Narrateur : Les parchemins portent le sceau de l'ancienne dynastie. Nathaniel les examine avec précaution."); input()
+print(Fore.RED + "Nathaniel : Ces documents sont authentiques. Ils datent de la dernière année du règne du roi."); input()
+print(Fore.BLUE + character.nom + " : Que disent-ils ?"); input()
+print(Fore.RED + "Nathaniel : Le roi avait ordonné le transfert du Coeur de Bedrock vers un sanctuaire sous le château. Il craignait qu'un conseiller ne s'en empare."); input()
+print(Fore.YELLOW + "Ferdinand : Et ce conseiller, c'était Arnaud ?"); input()
+print(Fore.RED + "Nathaniel : Tout porte à le croire."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Donc notre cher dirigeant a trahi son roi, réécrit l'histoire et veut maintenant récupérer l'objet qu'il avait promis de protéger."); input()
-print(character.nom + " : C'est une manière élégante de résumer la situation."); input()
+print(Fore.BLUE + character.nom + " : C'est une manière élégante de résumer la situation."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Merci. Je travaille sur un morceau intitulé « Les aventures d'un homme qui aurait dû rester conseiller »."); input()
-print("Ethan : Il manque quelque chose."); input()
-print("Narrateur : Ethan se penche sur le parchemin."); input()
-print("Ethan : Le Coeur aurait été caché avec un second objet : le sceau royal."); input()
-print("Nathaniel : Exact. Le sceau permettrait de réveiller l'artefact."); input()
-print(character.nom + " : Donc Arnaud doit retrouver les deux."); input()
-print("Nathaniel : Oui. Sans le sceau, il ne pourrait pas exploiter tout le pouvoir du Coeur."); input()
-print("Ferdinand : Alors nous prenons le sceau avant lui."); input()
-print(character.nom + " : C'est probablement dans les archives de la capitale."); input()
-print("Ethan : C'est ce que je pense."); input()
+print(Fore.MAGENTA + "Ethan : Il manque quelque chose."); input()
+print(Fore.WHITE + "Narrateur : Ethan se penche sur le parchemin."); input()
+print(Fore.MAGENTA + "Ethan : Le Coeur aurait été caché avec un second objet : le sceau royal."); input()
+print(Fore.RED + "Nathaniel : Exact. Le sceau permettrait de réveiller l'artefact."); input()
+print(Fore.BLUE + character.nom + " : Donc Arnaud doit retrouver les deux."); input()
+print(Fore.RED + "Nathaniel : Oui. Sans le sceau, il ne pourrait pas exploiter tout le pouvoir du Coeur."); input()
+print(Fore.YELLOW + "Ferdinand : Alors nous prenons le sceau avant lui."); input()
+print(Fore.BLUE + character.nom + " : C'est probablement dans les archives de la capitale."); input()
+print(Fore.MAGENTA + "Ethan : C'est ce que je pense."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Tu penses beaucoup de choses pour quelqu'un qui vient de nous rencontrer."); input()
-print("Ethan : Et toi, tu poses beaucoup de questions pour quelqu'un qui n'a pas encore compris que les informations sont utiles."); input()
+print(Fore.MAGENTA + "Ethan : Et toi, tu poses beaucoup de questions pour quelqu'un qui n'a pas encore compris que les informations sont utiles."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Très bien. Je l'aime moins."); input()
-print("Narrateur : Ethan sourit."); input()
-print("Ethan : Je vais prendre cela comme un compliment."); input()
+print(Fore.WHITE + "Narrateur : Ethan sourit."); input()
+print(Fore.MAGENTA + "Ethan : Je vais prendre cela comme un compliment."); input()
 
 
 #############################################################
@@ -1607,29 +1593,29 @@ print("Ethan : Je vais prendre cela comme un compliment."); input()
 #                                                           #
 #############################################################
 
-print("Narrateur : Le groupe s'installe autour d'une vieille table. Ethan sort une carte de la capitale."); input()
-print("Ethan : Vous avez deux possibilités pour atteindre les archives. La première est l'entrée principale, gardée jour et nuit. La seconde passe par un réseau de tunnels sous les anciennes rues."); input()
-print(character.nom + " : Et comment connais-tu ces tunnels ?"); input()
-print("Ethan : Mon père me les a montrés quand j'étais enfant. Ils servaient à déplacer les documents royaux sans attirer l'attention."); input()
-print("Nathaniel : Si les gardes découvrent que tu connais ces passages, tu seras recherché."); input()
-print("Ethan : Je le suis déjà."); input()
-print("Ferdinand : Alors autant les utiliser."); input()
-print(character.nom + " : Pourquoi ne pas partir seul ? Si tu connais les passages, tu pourrais entrer, récupérer les documents et disparaître."); input()
-print("Ethan : Parce que les gardes ont renforcé les accès. Et parce que je ne peux pas faire tout cela seul."); input()
-print(character.nom + " : Tu pourrais chercher d'autres personnes."); input()
-print("Ethan : J'en ai rencontré beaucoup. La plupart veulent de l'argent. Certains veulent se venger. D'autres veulent prendre la place d'Arnaud."); input()
-print("Nathaniel : Et toi ?"); input()
-print("Narrateur : Ethan fixe Nathaniel."); input()
-print("Ethan : Je veux que personne ne puisse plus jamais décider de la vie des autres."); input()
-print("Narrateur : La réponse semble satisfaire Nathaniel. Mais Ethan détourne les yeux vers sa lettre."); input()
-print("Ethan : Mon père croyait qu'il suffisait de dire la vérité pour faire changer les choses. Il a découvert que les gens au pouvoir peuvent enterrer la vérité sous des montagnes de mensonges."); input()
-print(character.nom + " : Tu ne veux pas simplement faire tomber Arnaud. Tu veux comprendre ce qui est arrivé à ton père."); input()
-print("Ethan : Les deux."); input()
-print("Narrateur : Un silence s'installe."); input()
+print(Fore.WHITE + "Narrateur : Le groupe s'installe autour d'une vieille table. Ethan sort une carte de la capitale."); input()
+print(Fore.MAGENTA + "Ethan : Vous avez deux possibilités pour atteindre les archives. La première est l'entrée principale, gardée jour et nuit. La seconde passe par un réseau de tunnels sous les anciennes rues."); input()
+print(Fore.BLUE + character.nom + " : Et comment connais-tu ces tunnels ?"); input()
+print(Fore.MAGENTA + "Ethan : Mon père me les a montrés quand j'étais enfant. Ils servaient à déplacer les documents royaux sans attirer l'attention."); input()
+print(Fore.RED + "Nathaniel : Si les gardes découvrent que tu connais ces passages, tu seras recherché."); input()
+print(Fore.MAGENTA + "Ethan : Je le suis déjà."); input()
+print(Fore.YELLOW + "Ferdinand : Alors autant les utiliser."); input()
+print(Fore.BLUE + character.nom + " : Pourquoi ne pas partir seul ? Si tu connais les passages, tu pourrais entrer, récupérer les documents et disparaître."); input()
+print(Fore.MAGENTA + "Ethan : Parce que les gardes ont renforcé les accès. Et parce que je ne peux pas faire tout cela seul."); input()
+print(Fore.BLUE + character.nom + " : Tu pourrais chercher d'autres personnes."); input()
+print(Fore.MAGENTA + "Ethan : J'en ai rencontré beaucoup. La plupart veulent de l'argent. Certains veulent se venger. D'autres veulent prendre la place d'Arnaud."); input()
+print(Fore.RED + "Nathaniel : Et toi ?"); input()
+print(Fore.WHITE + "Narrateur : Ethan fixe Nathaniel."); input()
+print(Fore.MAGENTA + "Ethan : Je veux que personne ne puisse plus jamais décider de la vie des autres."); input()
+print(Fore.WHITE + "Narrateur : La réponse semble satisfaire Nathaniel. Mais Ethan détourne les yeux vers sa lettre."); input()
+print(Fore.MAGENTA + "Ethan : Mon père croyait qu'il suffisait de dire la vérité pour faire changer les choses. Il a découvert que les gens au pouvoir peuvent enterrer la vérité sous des montagnes de mensonges."); input()
+print(Fore.BLUE + character.nom + " : Tu ne veux pas simplement faire tomber Arnaud. Tu veux comprendre ce qui est arrivé à ton père."); input()
+print(Fore.MAGENTA + "Ethan : Les deux."); input()
+print(Fore.WHITE + "Narrateur : Un silence s'installe."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je vais faire une exception et ne pas plaisanter."); input()
-print("Ferdinand : C'est grave, alors."); input()
+print(Fore.YELLOW + "Ferdinand : C'est grave, alors."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Très grave."); input()
- 
+
 #############################################################
 #                                                           #
 #   Act 4 - Scène 5                                         #
@@ -1637,32 +1623,32 @@ print(Fore.LIGHTBLACK_EX + "Andy : Très grave."); input()
 #                                                           #
 #############################################################
 
-print("Narrateur : Ethan pose la carte sur la table."); input()
-print("Ethan : Je peux vous guider dans les tunnels. Je connais les passages, les postes de garde et plusieurs endroits où nous pourrons nous cacher."); input()
-print(character.nom + " : Et pourquoi devrions-nous te faire confiance ?"); input()
-print("Ethan : Vous ne devriez pas. Pas encore."); input()
-print("Narrateur : Cette réponse surprend le groupe."); input()
-print("Ethan : La confiance se mérite. Je vous propose de vous aider, et vous déciderez ensuite si j'ai ma place parmi vous."); input()
+print(Fore.WHITE + "Narrateur : Ethan pose la carte sur la table."); input()
+print(Fore.MAGENTA + "Ethan : Je peux vous guider dans les tunnels. Je connais les passages, les postes de garde et plusieurs endroits où nous pourrons nous cacher."); input()
+print(Fore.BLUE + character.nom + " : Et pourquoi devrions-nous te faire confiance ?"); input()
+print(Fore.MAGENTA + "Ethan : Vous ne devriez pas. Pas encore."); input()
+print(Fore.WHITE + "Narrateur : Cette réponse surprend le groupe."); input()
+print(Fore.MAGENTA + "Ethan : La confiance se mérite. Je vous propose de vous aider, et vous déciderez ensuite si j'ai ma place parmi vous."); input()
 
 choix = int(input("Faire confiance à Ethan ?\n1 = L'accepter immédiatement.\n2 = Lui demander de prouver sa loyauté.\n"))
 
 if choix == 1:
-    print(character.nom + " : D'accord. Tu viens avec nous."); input()
-    print("Ethan : Tu ne le regretteras pas."); input()
-    print(character.nom + " : C'est exactement ce que disent les gens qu'on finit par regretter."); input()
-    print("Ethan : Alors je vais devoir faire mieux que les autres."); input()
-    print("Narrateur : Ethan rejoint officiellement le groupe."); input()
+    print(Fore.BLUE + character.nom + " : D'accord. Tu viens avec nous."); input()
+    print(Fore.MAGENTA + "Ethan : Tu ne le regretteras pas."); input()
+    print(Fore.BLUE + character.nom + " : C'est exactement ce que disent les gens qu'on finit par regretter."); input()
+    print(Fore.MAGENTA + "Ethan : Alors je vais devoir faire mieux que les autres."); input()
+    print(Fore.WHITE + "Narrateur : Ethan rejoint officiellement le groupe."); input()
 
 elif choix == 2:
-    print(character.nom + " : Nous ne faisons pas confiance à quelqu'un simplement parce qu'il nous raconte une histoire."); input()
-    print("Ethan : C'est raisonnable. Il y a un poste de garde au nord. Je peux vous faire passer sans déclencher l'alarme."); input()
-    print(character.nom + " : Très bien. Montre-nous."); input()
-    print("Narrateur : Ethan conduit le groupe par un passage secondaire. Il désactive un mécanisme ancien et permet au groupe d'éviter les gardes."); input()
-    print("Ferdinand : Je savais que nous aurions dû le recruter dès le début."); input()
-    print(character.nom + " : Tu viens de dire que tu le soupçonnais d'être un espion."); input()
-    print("Ferdinand : Je soupçonne tout le monde. C'est une forme de prudence."); input()
+    print(Fore.BLUE + character.nom + " : Nous ne faisons pas confiance à quelqu'un simplement parce qu'il nous raconte une histoire."); input()
+    print(Fore.MAGENTA + "Ethan : C'est raisonnable. Il y a un poste de garde au nord. Je peux vous faire passer sans déclencher l'alarme."); input()
+    print(Fore.BLUE + character.nom + " : Très bien. Montre-nous."); input()
+    print(Fore.WHITE + "Narrateur : Ethan conduit le groupe par un passage secondaire. Il désactive un mécanisme ancien et permet au groupe d'éviter les gardes."); input()
+    print(Fore.YELLOW + "Ferdinand : Je savais que nous aurions dû le recruter dès le début."); input()
+    print(Fore.BLUE + character.nom + " : Tu viens de dire que tu le soupçonnais d'être un espion."); input()
+    print(Fore.YELLOW + "Ferdinand : Je soupçonne tout le monde. C'est une forme de prudence."); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Non, c'est une forme de paranoïa avec des muscles."); input()
-    print("Narrateur : Ethan rejoint le groupe après avoir prouvé son utilité."); input()
+    print(Fore.WHITE + "Narrateur : Ethan rejoint le groupe après avoir prouvé son utilité."); input()
 
 #############################################################
 #                                                           #
@@ -1671,24 +1657,24 @@ elif choix == 2:
 #                                                           #
 #############################################################
 
-print("Narrateur : Avant de quitter la boulangerie, Nathaniel examine un dernier document."); input()
-print("Nathaniel : Il y a un passage que je ne comprends pas."); input()
-print(character.nom + " : Qu'est-ce qu'il dit ?"); input()
-print("Nathaniel : « Le Coeur ne choisit pas son maître. Il amplifie ce qui existe déjà en lui. »"); input()
+print(Fore.WHITE + "Narrateur : Avant de quitter la boulangerie, Nathaniel examine un dernier document."); input()
+print(Fore.RED + "Nathaniel : Il y a un passage que je ne comprends pas."); input()
+print(Fore.BLUE + character.nom + " : Qu'est-ce qu'il dit ?"); input()
+print(Fore.RED + "Nathaniel : « Le Coeur ne choisit pas son maître. Il amplifie ce qui existe déjà en lui. »"); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Nous avons déjà parlé de ça."); input()
-print("Nathaniel : Oui. Mais cette phrase est suivie d'une mise en garde : « Celui qui cherche à soumettre les autres sera lui-même soumis à son désir de domination. »"); input()
-print("Ferdinand : Donc le Coeur peut rendre quelqu'un fou ?"); input()
-print("Nathaniel : Pas exactement. Il peut rendre son ambition si puissante qu'il ne voit plus rien d'autre."); input()
-print(character.nom + " : Arnaud pourrait finir par perdre le contrôle."); input()
-print("Nathaniel : Ou il pourrait croire qu'il n'a jamais été aussi raisonnable."); input()
-print("Narrateur : Ethan regarde discrètement un fragment noir tombé de la boîte. Il le ramasse et le glisse dans sa poche."); input()
+print(Fore.RED + "Nathaniel : Oui. Mais cette phrase est suivie d'une mise en garde : « Celui qui cherche à soumettre les autres sera lui-même soumis à son désir de domination. »"); input()
+print(Fore.YELLOW + "Ferdinand : Donc le Coeur peut rendre quelqu'un fou ?"); input()
+print(Fore.RED + "Nathaniel : Pas exactement. Il peut rendre son ambition si puissante qu'il ne voit plus rien d'autre."); input()
+print(Fore.BLUE + character.nom + " : Arnaud pourrait finir par perdre le contrôle."); input()
+print(Fore.RED + "Nathaniel : Ou il pourrait croire qu'il n'a jamais été aussi raisonnable."); input()
+print(Fore.WHITE + "Narrateur : Ethan regarde discrètement un fragment noir tombé de la boîte. Il le ramasse et le glisse dans sa poche."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Bon. Nous avons un tyran, un artefact dangereux et une bibliothèque pleine de gardes."); input()
-print("Ferdinand : Et nous sommes cinq."); input()
+print(Fore.YELLOW + "Ferdinand : Et nous sommes cinq."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Tu as compté les ennemis ?"); input()
-print("Ferdinand : Non."); input()
+print(Fore.YELLOW + "Ferdinand : Non."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Évidemment."); input()
-print("Narrateur : Le groupe quitte la boulangerie. Ethan reste quelques secondes en arrière, la main dans sa poche."); input()
-print("Ethan, à voix basse : À bientôt papa..."); input()
+print(Fore.WHITE + "Narrateur : Le groupe quitte la boulangerie. Ethan reste quelques secondes en arrière, la main dans sa poche."); input()
+print(Fore.MAGENTA + "Ethan, à voix basse : À bientôt papa..."); input()
 
 farm=2
 while farm!=1:
@@ -1709,21 +1695,21 @@ while farm!=1:
 #                                                           #
 #############################################################
 
-print("Narrateur : Lieu : La bibliothèque interdite, au coeur de la capitale."); input()
-print("Narrateur : La nuit est tombée. Le groupe observe la bibliothèque depuis una ruelle. Le bâtiment est immense, entouré de murs et de gardes."); input()
+print(Fore.WHITE + "Narrateur : Lieu : La bibliothèque interdite, au coeur de la capitale."); input()
+print(Fore.WHITE + "Narrateur : La nuit est tombée. Le groupe observe la bibliothèque depuis una ruelle. Le bâtiment est immense, entouré de murs et de gardes."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : J'ai une question."); input()
-print(character.nom + " : Laquelle ?"); input()
+print(Fore.BLUE + character.nom + " : Laquelle ?"); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Pourquoi toutes les choses importantes sont-elles enfermées dans des endroits où l'on risque de mourir ?"); input()
-print("Ferdinand : Pour que les gens comme toi ne les touchent pas."); input()
+print(Fore.YELLOW + "Ferdinand : Pour que les gens comme toi ne les touchent pas."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je suis profondément blessé."); input()
-print("Nathaniel : La bibliothèque contient les dernières archives de l'ancienne dynastie. Si nous trouvons le sceau royal, nous pourrons peut-être atteindre le sanctuaire avant Arnaud."); input()
-print(character.nom + " : Tu es certain que le sceau est là ?"); input()
-print("Nathaniel : Les documents indiquent qu'il a été transféré à la capitale. Mais nous ignorons s'il s'y trouve encore."); input()
-print("Ferdinand : Donc nous allons peut-être risquer notre vie pour une boîte vide."); input()
+print(Fore.RED + "Nathaniel : La bibliothèque contient les dernières archives de l'ancienne dynastie. Si nous trouvons le sceau royal, nous pourrons peut-être atteindre le sanctuaire avant Arnaud."); input()
+print(Fore.BLUE + character.nom + " : Tu es certain que le sceau est là ?"); input()
+print(Fore.RED + "Nathaniel : Les documents indiquent qu'il a été transféré à la capitale. Mais nous ignorons s'il s'y trouve encore."); input()
+print(Fore.YELLOW + "Ferdinand : Donc nous allons peut-être risquer notre vie pour une boîte vide."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Enfin, quelqu'un qui comprend la logique de nos aventures."); input()
-print("Ethan : Nous n'avons pas beaucoup de temps. Les gardes déplacent régulièrement les objets sensibles. Si le sceau est encore dans la bibliothèque, il ne le restera pas longtemps."); input()
-print(character.nom + " : Alors nous devons entrer cette nuit."); input()
-print("Nathaniel : Il existe plusieurs moyens."); input()
+print(Fore.MAGENTA + "Ethan : Nous n'avons pas beaucoup de temps. Les gardes déplacent régulièrement les objets sensibles. Si le sceau est encore dans la bibliothèque, il ne le restera pas longtemps."); input()
+print(Fore.BLUE + character.nom + " : Alors nous devons entrer cette nuit."); input()
+print(Fore.RED + "Nathaniel : Il existe plusieurs moyens."); input()
 
 #############################################################
 #                                                           #
@@ -1735,38 +1721,38 @@ print("Nathaniel : Il existe plusieurs moyens."); input()
 choix=int(input("Comment allez vous pénétrer dans la bibliothèque ?\n1 = Passer par l'entrée principale.\n2 = Utiliser les tunnels.\n"))
 
 if choix == 1:
-    print(character.nom + " : Nous allons entrer par devant."); input()
+    print(Fore.BLUE + character.nom + " : Nous allons entrer par devant."); input()
     print(Fore.LIGHTBLACK_EX + "Andy : J'apprécie ton optimisme. Il est totalement déraisonnable, mais je l'apprécie."); input()
-    print("Narrateur : Le groupe s'approche des gardes."); input()
-    print("Garde : Motif de votre visite ?"); input()
-    print(character.nom + " : Nous sommes des archivistes."); input()
-    print("Garde : Vos autorisations ?"); input()
-    print("Narrateur : Silence."); input()
+    print(Fore.WHITE + "Narrateur : Le groupe s'approche des gardes."); input()
+    print(Fore.CYAN + "Garde : Motif de votre visite ?"); input()
+    print(Fore.BLUE + character.nom + " : Nous sommes des archivistes."); input()
+    print(Fore.CYAN + "Garde : Vos autorisations ?"); input()
+    print(Fore.WHITE + "Narrateur : Silence."); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Elles sont… archivées."); input()
-    print("Garde : Vos noms ?"); input()
+    print(Fore.CYAN + "Garde : Vos noms ?"); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Les mêmes que sur nos autorisations."); input()
-    print("Garde : Montrez-les."); input()
+    print(Fore.CYAN + "Garde : Montrez-les."); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Elles sont très bien conservées."); input()
-    print(character.nom + " : Andy."); input()
+    print(Fore.BLUE + character.nom + " : Andy."); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Je panique avec élégance."); input()
-    print("Narrateur : Les gardes comprennent la supercherie et attaquent."); input()
+    print(Fore.WHITE + "Narrateur : Les gardes comprennent la supercherie et attaquent."); input()
     List_player=[character,Andy,Nath,Ethan] ; diff=12
     fight()
 
 elif choix == 2:
-    print(character.nom + " : Ethan, montre-nous le passage."); input()
-    print("Ethan : Suivez-moi. Et essayez de ne pas toucher aux murs."); input()
-    print("Ferdinand : Pourquoi ?"); input()
-    print("Ethan : Parce que certains mécanismes sont encore actifs."); input()
-    print("Ferdinand : Je ne touche jamais aux murs."); input()
-    print("Narrateur : Il pose immédiatement la main sur le mur."); input()
-    print(character.nom + " : Ferdinand !"); input()
-    print("Ferdinand : Je vérifiais s'il disait vrai."); input()
-    print("Narrateur : Un mécanisme claque. Une grille tombe derrière le groupe."); input()
-    print("Ethan : C'était un avertissement."); input()
-    print("Ferdinand : Il était très convaincant."); input()
-    print("Narrateur : Le groupe progresse dans les tunnels, évite plusieurs pièges et atteint une porte de service."); input()
-    print("Narrateur : Résultat : le groupe entre discrètement et économise des ressources, mais doit traverser un passage piégé."); input()
+    print(Fore.BLUE + character.nom + " : Ethan, montre-nous le passage."); input()
+    print(Fore.MAGENTA + "Ethan : Suivez-moi. Et essayez de ne pas toucher aux murs."); input()
+    print(Fore.YELLOW + "Ferdinand : Pourquoi ?"); input()
+    print(Fore.MAGENTA + "Ethan : Parce que certains mécanismes sont encore actifs."); input()
+    print(Fore.YELLOW + "Ferdinand : Je ne touche jamais aux murs."); input()
+    print(Fore.WHITE + "Narrateur : Il pose immédiatement la main sur le mur."); input()
+    print(Fore.BLUE + character.nom + " : Ferdinand !"); input()
+    print(Fore.YELLOW + "Ferdinand : Je vérifiais s'il disait vrai."); input()
+    print(Fore.WHITE + "Narrateur : Un mécanisme claque. Une grille tombe derrière le groupe."); input()
+    print(Fore.MAGENTA + "Ethan : C'était un avertissement."); input()
+    print(Fore.YELLOW + "Ferdinand : Il était très convaincant."); input()
+    print(Fore.WHITE + "Narrateur : Le groupe progresse dans les tunnels, évite plusieurs pièges et atteint une porte de service."); input()
+    print(Fore.WHITE + "Narrateur : Résultat : le groupe entre discrètement et économise des ressources, mais doit traverser un passage piégé."); input()
 
 
 #############################################################
@@ -1776,31 +1762,31 @@ elif choix == 2:
 #                                                           #
 #############################################################
 
-print("Narrateur : Le groupe pénètre dans la bibliothèque. Des rayonnages gigantesques s'élèvent jusqu'au plafond. Une odeur de poussière et de vieux papier flotte dans l'air.")
-print("Nathaniel : Nous devons trouver le registre de la dernière année du règne royal.")
-print("Ferdinand : Il ressemble à quoi ?")
-print("Nathaniel : Un livre.")
-print("Ferdinand : Très utile.")
+print(Fore.WHITE + "Narrateur : Le groupe pénètre dans la bibliothèque. Des rayonnages gigantesques s'élèvent jusqu'au plafond. Une odeur de poussière et de vieux papier flotte dans l'air.")
+print(Fore.RED + "Nathaniel : Nous devons trouver le registre de la dernière année du règne royal.")
+print(Fore.YELLOW + "Ferdinand : Il ressemble à quoi ?")
+print(Fore.RED + "Nathaniel : Un livre.")
+print(Fore.YELLOW + "Ferdinand : Très utile.")
 print(Fore.LIGHTBLACK_EX + "Andy : Il faut reconnaître que les bibliothèques sont conçues avec un manque d'imagination flagrant. Des livres partout, et pas une seule pancarte indiquant où se trouve le livre que tu cherches.")
-print(character.nom + " : C'est une bibliothèque, pas une auberge.")
+print(Fore.BLUE + character.nom + " : C'est une bibliothèque, pas une auberge.")
 print(Fore.LIGHTBLACK_EX + "Andy : Justement. Une auberge possède au moins un tavernier qui peut te dire où se trouve la bière.")
-print("Narrateur : Nathaniel se dirige vers une section interdite. Il examine plusieurs registres avant d'en retirer un volume épais.")
-print("Nathaniel : Je l'ai trouvé.")
-print(character.nom + " : Qu'est-ce qu'il dit ?")
-print("Narrateur : Nathaniel tourne les pages avec précaution.")
-print("Nathaniel : Les registres officiels affirment que le roi a trahi son peuple et provoqué la guerre civile. Mais les dates ont été falsifiées. Certaines signatures ont été copiées.")
-print("Ethan : Continue.")
-print("Nathaniel : Voici un document qui mentionne le conseiller Arnaud. Il avait accès aux archives, aux armureries et aux ordres militaires.")
-print(character.nom + " : Il avait donc les moyens d'organiser la révolte.")
-print("Nathaniel : Oui. Et regarde cette note. Le roi avait demandé le transfert du Coeur d'Bedrock vers le sanctuaire sous le château. Il craignait qu'un conseiller ne s'en empare.")
-print("Ferdinand : Arnaud.")
-print("Nathaniel : Tout porte à le croire.")
+print(Fore.WHITE + "Narrateur : Nathaniel se dirige vers une section interdite. Il examine plusieurs registres avant d'en retirer un volume épais.")
+print(Fore.RED + "Nathaniel : Je l'ai trouvé.")
+print(Fore.BLUE + character.nom + " : Qu'est-ce qu'il dit ?")
+print(Fore.WHITE + "Narrateur : Nathaniel tourne les pages avec précaution.")
+print(Fore.RED + "Nathaniel : Les registres officiels affirment que le roi a trahi son peuple et provoqué la guerre civile. Mais les dates ont été falsifiées. Certaines signatures ont été copiées.")
+print(Fore.MAGENTA + "Ethan : Continue.")
+print(Fore.RED + "Nathaniel : Voici un document qui mentionne le conseiller Arnaud. Il avait accès aux archives, aux armureries et aux ordres militaires.")
+print(Fore.BLUE + character.nom + " : Il avait donc les moyens d'organiser la révolte.")
+print(Fore.RED + "Nathaniel : Oui. Et regarde cette note. Le roi avait demandé le transfert du Coeur de Bedrock vers le sanctuaire sous le château. Il craignait qu'un conseiller ne s'en empare.")
+print(Fore.YELLOW + "Ferdinand : Arnaud.")
+print(Fore.RED + "Nathaniel : Tout porte à le croire.")
 print(Fore.LIGHTBLACK_EX + "Andy : Résumons. Un conseiller est chargé de protéger son roi, trahit la famille royale, prend le pouvoir et réécrit les livres d'histoire. Puis il part à la recherche de l'artefact qu'il était censé protéger.")
-print(character.nom + " : C'est bien ça.")
+print(Fore.BLUE + character.nom + " : C'est bien ça.")
 print(Fore.LIGHTBLACK_EX + "Andy : Je crois que j'ai trouvé le sujet de mon prochain album.")
-print("Nathaniel : Tu pourrais peut-être attendre la fin de notre aventure.")
+print(Fore.RED + "Nathaniel : Tu pourrais peut-être attendre la fin de notre aventure.")
 print(Fore.LIGHTBLACK_EX + "Andy : Et perdre l'occasion d'écrire un album intitulé Le Conseiller qui avait besoin de vacances ?")
-print("Ferdinand : Je l'achèterais.")
+print(Fore.YELLOW + "Ferdinand : Je l'achèterais.")
 print(Fore.LIGHTBLACK_EX + "Andy : Enfin un homme de culture.")
 
 #############################################################
@@ -1810,28 +1796,29 @@ print(Fore.LIGHTBLACK_EX + "Andy : Enfin un homme de culture.")
 #                                                           #
 #############################################################
 
-print("Narrateur : Nathaniel trouve un second document, plus ancien que les autres.")
-print("Nathaniel : Le Coeur d'Bedrock ne pouvait pas être activé seul. Il fallait le sceau royal.")
-print(character.nom + " : Et où est-il ?")
-print("Nathaniel : Le document indique qu'il a été conservé dans cette bibliothèque pendant plusieurs années.")
-print("Ethan : Ce qui signifie qu'Arnaud l'a probablement récupéré.")
-print(character.nom + " : Tu sembles très sûr de toi.")
-print("Ethan : J'ai vu ses hommes transporter un objet portant le sceau royal il y a plusieurs jours.")
-print("Nathaniel : Pourquoi ne nous l'as-tu pas dit plus tôt ?")
-print("Ethan : Parce que je voulais être certain.")
+print(Fore.WHITE + "Narrateur : Nathaniel trouve un second document, plus ancien que les autres.")
+print(Fore.RED + "Nathaniel : Le Coeur de Bedrock ne pouvait pas être activé seul. Il fallait le sceau royal.")
+print(Fore.BLUE + character.nom + " : Et où est-il ?")
+print(Fore.RED + "Nathaniel : Le document indique qu'il a été conservé dans cette bibliothèque pendant plusieurs années.")
+print(Fore.MAGENTA + "Ethan : Ce qui signifie qu'Arnaud l'a probablement récupéré.")
+print(Fore.BLUE + character.nom + " : Tu sembles très sûr de toi.")
+print(Fore.MAGENTA + "Ethan : J'ai vu ses hommes transporter un objet portant le sceau royal il y a plusieurs jours.")
+print(Fore.RED + "Nathaniel : Pourquoi ne nous l'as-tu pas dit plus tôt ?")
+print(Fore.MAGENTA + "Ethan : Parce que je voulais être certain.")
 print(Fore.LIGHTBLACK_EX + "Andy : Et maintenant, tu es certain ?")
-print("Ethan : Oui.")
+print(Fore.MAGENTA + "Ethan : Oui.")
 print(Fore.LIGHTBLACK_EX + "Andy : Je pose la question parce que je préfère découvrir les mauvaises nouvelles avant qu'elles nous tombent dessus.")
-print("Ferdinand : Moi, je préfère les découvrir quand je peux frapper quelqu'un.")
-print("Nathaniel : Le sceau permettrait à Arnaud de réveiller le Coeur. S'il l'a déjà, nous devons agir rapidement.")
-print(character.nom + " : Alors nous allons au château.")
-print("Nathaniel : Ce ne sera pas simple. Le château est entouré de soldats et le sanctuaire se trouve sous la salle du trône.")
-print("Ethan : Je connais un passage qui mène aux quartiers intérieurs.")
-print(character.nom + " : Tu connais toujours un passage secret.")
-print("Ethan : C'est un talent utile.")
+print(Fore.YELLOW + "Ferdinand : Moi, je préfère les découvrir quand je peux frapper quelqu'un.")
+print(Fore.RED + "Nathaniel : Le sceau permettrait à Arnaud de réveiller le Coeur. S'il l'a déjà, nous devons agir rapidement.")
+print(Fore.BLUE + character.nom + " : Alors nous allons au château.")
+print(Fore.RED + "Nathaniel : Ce ne sera pas simple. Le château est entouré de soldats et le sanctuaire se trouve sous la salle du trône.")
+print(Fore.MAGENTA + "Ethan : Je connais un passage qui mène aux quartiers intérieurs.")
+print(Fore.BLUE + character.nom + " : Tu connais toujours un passage secret.")
+print(Fore.MAGENTA + "Ethan : C'est un talent utile.")
 print(Fore.LIGHTBLACK_EX + "Andy : Moi, je connais une chanson qui peut faire pleurer un homme adulte.")
-print(character.nom + " : Ce n'est pas vraiment comparable.")
+print(Fore.BLUE + character.nom + " : Ce n'est pas vraiment comparable.")
 print(Fore.LIGHTBLACK_EX + "Andy : Tu n'as jamais entendu le deuxième couplet.")
+
 #############################################################
 #                                                           #
 #   Act 5 - Scène 5                                         #
@@ -1839,46 +1826,46 @@ print(Fore.LIGHTBLACK_EX + "Andy : Tu n'as jamais entendu le deuxième couplet."
 #                                                           #
 #############################################################
 
-print("Narrateur : Un bruit de pas résonne dans le couloir.")
-print("Garde, *au loin* : Ils sont dans la bibliothèque ! Fouillez toutes les salles !")
-print(character.nom + " : On doit partir !")
-print("Ferdinand : Enfin !")
-print("Nathaniel : Prenez les documents importants. Nous ne pouvons pas les laisser derrière nous.")
-print("Narrateur : Le groupe se dirige vers une porte secondaire. Ethan la maintient ouverte pendant que les autres passent.")
+print(Fore.WHITE + "Narrateur : Un bruit de pas résonne dans le couloir.")
+print(Fore.CYAN + "Garde, *au loin* : Ils sont dans la bibliothèque ! Fouillez toutes les salles !")
+print(Fore.BLUE + character.nom + " : On doit partir !")
+print(Fore.YELLOW + "Ferdinand : Enfin !")
+print(Fore.RED + "Nathaniel : Prenez les documents importants. Nous ne pouvons pas les laisser derrière nous.")
+print(Fore.WHITE + "Narrateur : Le groupe se dirige vers une porte secondaire. Ethan la maintient ouverte pendant que les autres passent.")
 print(Fore.LIGHTBLACK_EX + "Andy : Je voudrais signaler que je déteste les bibliothèques.")
-print("Nathaniel : Tu disais pourtant aimer les livres.")
+print(Fore.RED + "Nathaniel : Tu disais pourtant aimer les livres.")
 print(Fore.LIGHTBLACK_EX + "Andy : J'aime les livres qui ne sont pas protégés par des hommes armés.")
-print("Narrateur : Ils traversent une petite salle de lecture et barricadent la porte.")
+print(Fore.WHITE + "Narrateur : Ils traversent une petite salle de lecture et barricadent la porte.")
 
 choix=int(input("Que faire des documents ?\n1 = Les emporter tous.\n2 = Ne prendre que le plan du sanctuaire.\n3 = Détruire les documents compromettants\n"))
 
 if choix == 1:
-    print(character.nom + " : Nous ne laissons aucune preuve derrière nous.")
-    print("Nathaniel : Très bien. Mais cela nous ralentira.")
-    print("Narrateur : Le groupe conserve toutes les archives. Plus tard, elles permettront de découvrir une entrée secrète du château et d'obtenir davantage d'informations sur Arnaud.")
+    print(Fore.BLUE + character.nom + " : Nous ne laissons aucune preuve derrière nous.")
+    print(Fore.RED + "Nathaniel : Très bien. Mais cela nous ralentira.")
+    print(Fore.WHITE + "Narrateur : Le groupe conserve toutes les archives. Plus tard, elles permettront de découvrir une entrée secrète du château et d'obtenir davantage d'informations sur Arnaud.")
 
 elif choix == 2:
-    print(character.nom + " : Nous n'avons pas le temps. Prenons le plan.")
-    print("Nathaniel : C'est risqué, mais efficace.")
-    print("Narrateur : Le groupe s'enfuit rapidement. Il aura moins d'informations pour le dernier acte.")
+    print(Fore.BLUE + character.nom + " : Nous n'avons pas le temps. Prenons le plan.")
+    print(Fore.RED + "Nathaniel : C'est risqué, mais efficace.")
+    print(Fore.WHITE + "Narrateur : Le groupe s'enfuit rapidement.")
 
 elif choix == 3:
-    print(character.nom + " : Si Arnaud les récupère, il pourra effacer toutes les traces.")
-    print("Nathaniel : Nous devons préserver la vérité, pas la faire disparaître à notre tour.")
-    print(character.nom + " : Et si ces documents permettent à Arnaud de nous retrouver ?")
-    print("Nathaniel : Alors nous trouverons un moyen de les protéger.")
+    print(Fore.BLUE + character.nom + " : Si Arnaud les récupère, il pourra effacer toutes les traces.")
+    print(Fore.RED + "Nathaniel : Nous devons préserver la vérité, pas la faire disparaître à notre tour.")
+    print(Fore.BLUE + character.nom + " : Et si ces documents permettent à Arnaud de nous retrouver ?")
+    print(Fore.RED + "Nathaniel : Alors nous trouverons un moyen de les protéger.")
 
 if choix==1 or choix==3:
     req_EvilEnding=int(input("Souhaitez vous revenir sur votre décision ?\n1 = OUI\n2 = NON"))
     if choix==1:
-        print(character.nom + " : Vous êtes vraiment sûr qu'on ne devrait pas les détruire ? Elles pourraient vraiment nous attirer des problèmes")
-        print("Nathaniel : Oui, il faut impérativement que la vérité ne soit surtout pas détruite.")
-        print("Andy : fait comment bon te semble. Honnêtement tu peux en faire ce que tu veux ça ne changera pas ma musique.")
-        print("Ferdinand : Ça pourrait faire du bon combustible pour la cheminer de l'auberge.")
-        print("Ethan : Moi je suis pour nous en débarrassez.")
-        print("Narrateur : " + character.nom + " n'a donc pas écoutez Nathaniel et à donc détruit les documents")
+        print(Fore.BLUE + character.nom + " : Vous êtes vraiment sûr qu'on ne devrait pas les détruire ? Elles pourraient vraiment nous attirer des problèmes")
+        print(Fore.RED + "Nathaniel : Oui, il faut impérativement que la vérité ne soit surtout pas détruite.")
+        print(Fore.LIGHTBLACK_EX + "Andy : fait comment bon te semble. Honnêtement tu peux en faire ce que tu veux ça ne changera pas ma musique.")
+        print(Fore.YELLOW + "Ferdinand : Ça pourrait faire du bon combustible pour la cheminer de l'auberge.")
+        print(Fore.MAGENTA + "Ethan : Moi je suis pour nous en débarrassez.")
+        print(Fore.WHITE + "Narrateur : " + character.nom + " n'a donc pas écoutez Nathaniel et à donc détruit les documents")
     if choix==2:
-        print("Narrateur : " + character.nom + " décide de ne pas s'en débarraser et les donnes à Nathaniel.")
+        print(Fore.WHITE + "Narrateur : " + character.nom + " décide de ne pas s'en débarraser et les donnes à Nathaniel.")
 
 
 #############################################################
@@ -1888,38 +1875,38 @@ if choix==1 or choix==3:
 #                                                           #
 #############################################################
 
-print("Narrateur : Le groupe finit par sortir de la bibliothèque et rejoint une ruelle silencieuse. Ils se cachent dans un entrepôt abandonné.")
-print("Ferdinand : Je déteste me cacher.")
+print(Fore.WHITE + "Narrateur : Le groupe finit par sortir de la bibliothèque et rejoint une ruelle silencieuse. Ils se cachent dans un entrepôt abandonné.")
+print(Fore.YELLOW + "Ferdinand : Je déteste me cacher.")
 print(Fore.LIGHTBLACK_EX + "Andy : Tu préfères te faire arrêter ?")
-print("Ferdinand : Non.")
+print(Fore.YELLOW + "Ferdinand : Non.")
 print(Fore.LIGHTBLACK_EX + "Andy : Voilà. Tu progresses.")
-print("Ferdinand : Tu sais, pour quelqu'un qui parle autant, tu es parfois très agaçant.")
+print(Fore.YELLOW + "Ferdinand : Tu sais, pour quelqu'un qui parle autant, tu es parfois très agaçant.")
 print(Fore.LIGHTBLACK_EX + "Andy : C'est mon charme.")
-print(character.nom + " : C'est surtout ton volume sonore.")
-print("Narrateur : Nathaniel étale les documents sur une caisse.")
-print("Nathaniel : Nous savons maintenant où se trouve le sanctuaire. Sous le château d'Arnaud.")
-print(character.nom + " : Et le Coeur est probablement là-bas.")
-print("Nathaniel : Oui. Mais il nous manque une information essentielle : comment neutraliser l'artefact.")
-print("Ethan : Nous n'avons pas besoin de le neutraliser. Nous devons empêcher Arnaud de l'utiliser.")
-print("Nathaniel : Et si nous échouons ?")
-print("Ethan : Alors nous le détruirons.")
-print("Nathaniel : Tu sais ce que cela pourrait provoquer ?")
-print("Ethan : Mieux vaut détruire un pouvoir dangereux que de le laisser entre les mains d'un tyran.")
-print("Narrateur : Ethan parle avec une intensité inhabituelle. " + character.nom + " le remarque.")
-print(character.nom + " : Tu as vraiment envie qu'Arnaud tombe.")
-print("Ethan : Tu n'as aucune idée de ce qu'il m'a pris.")
-print(character.nom + " : Alors aide-nous à l'arrêter.")
-print("Ethan : C'est précisément ce que je compte faire.")
-print("Narrateur : Un silence s'installe. Nathaniel rassemble les documents.")
-print("Nathaniel : Nous devons nous préparer. Demain, nous entrerons dans le château.")
+print(Fore.BLUE + character.nom + " : C'est surtout ton volume sonore.")
+print(Fore.WHITE + "Narrateur : Nathaniel étale les documents sur une caisse.")
+print(Fore.RED + "Nathaniel : Nous savons maintenant où se trouve le sanctuaire. Sous le château d'Arnaud.")
+print(Fore.BLUE + character.nom + " : Et le Coeur est probablement là-bas.")
+print(Fore.RED + "Nathaniel : Oui. Mais il nous manque une information essentielle : comment neutraliser l'artefact.")
+print(Fore.MAGENTA + "Ethan : Nous n'avons pas besoin de le neutraliser. Nous devons empêcher Arnaud de l'utiliser.")
+print(Fore.RED + "Nathaniel : Et si nous échouons ?")
+print(Fore.MAGENTA + "Ethan : Alors nous le détruirons.")
+print(Fore.RED + "Nathaniel : Tu sais ce que cela pourrait provoquer ?")
+print(Fore.MAGENTA + "Ethan : Mieux vaut détruire un pouvoir dangereux que de le laisser entre les mains d'un tyran.")
+print(Fore.WHITE + "Narrateur : Ethan parle avec une intensité inhabituelle. " + character.nom + " le remarque.")
+print(Fore.BLUE + character.nom + " : Tu as vraiment envie qu'Arnaud tombe.")
+print(Fore.MAGENTA + "Ethan : Tu n'as aucune idée de ce qu'il m'a pris.")
+print(Fore.BLUE + character.nom + " : Alors aide-nous à l'arrêter.")
+print(Fore.MAGENTA + "Ethan : C'est précisément ce que je compte faire.")
+print(Fore.WHITE + "Narrateur : Un silence s'installe. Nathaniel rassemble les documents.")
+print(Fore.RED + "Nathaniel : Nous devons nous préparer. Demain, nous entrerons dans le château.")
 print(Fore.LIGHTBLACK_EX + "Andy : Très bien. Je propose que nous dormions, que nous mangions et que nous évitions de parler de notre mort imminente.")
-print("Ferdinand : Je peux monter la garde.")
-print(character.nom + " : Tu devrais dormir aussi.")
-print("Ferdinand : Je ne suis pas fatigué.")
-print("Narrateur : Il bâille.")
+print(Fore.YELLOW + "Ferdinand : Je peux monter la garde.")
+print(Fore.BLUE + character.nom + " : Tu devrais dormir aussi.")
+print(Fore.YELLOW + "Ferdinand : Je ne suis pas fatigué.")
+print(Fore.WHITE + "Narrateur : Il bâille.")
 print(Fore.LIGHTBLACK_EX + "Andy : Impressionnant. Même ton corps ne croit pas à tes mensonges.")
-print("Narrateur : Le groupe se prépare pour la dernière étape de son voyage. Dans un coin sombre, Ethan sort discrètement le fragment noir qu'il avait récupéré dans la boulangerie.")
-print("Ethan, *à voix basse* : Encore un peu de patience.")
+print(Fore.WHITE + "Narrateur : Le groupe se prépare pour la dernière étape de son voyage. Dans un coin sombre, Ethan sort discrètement le fragment noir qu'il avait récupéré dans la boulangerie.")
+print(Fore.MAGENTA + "Ethan, *à voix basse* : Encore un peu de patience.")
 
 farm=2
 while farm!=1:
@@ -1940,29 +1927,29 @@ while farm!=1:
 #                                                           #
 #############################################################
 
-print("Narrateur : Lieu : Le château de Monsieur Arnaud.")
-print("Narrateur : Le ciel est sombre. Le groupe arrive devant les portes du château. Des gardes patrouillent sur les remparts. Une cloche annonce le changement de garde.")
-print(character.nom + " : C'est ici que tout se termine.")
+print(Fore.WHITE + "Narrateur : Lieu : Le château de Monsieur Arnaud.")
+print(Fore.WHITE + "Narrateur : Le ciel est sombre. Le groupe arrive devant les portes du château. Des gardes patrouillent sur les remparts. Une cloche annonce le changement de garde.")
+print(Fore.BLUE + character.nom + " : C'est ici que tout se termine.")
 print(Fore.LIGHTBLACK_EX + "Andy : Je préférerais que tout se termine dans une auberge, avec un repas chaud et un public qui m'applaudit.")
-print("Ferdinand : Après avoir battu Arnaud, tu pourras chanter autant que tu veux.")
+print(Fore.YELLOW + "Ferdinand : Après avoir battu Arnaud, tu pourras chanter autant que tu veux.")
 print(Fore.LIGHTBLACK_EX + "Andy : Je vais prendre ça pour une promesse.")
-print("Nathaniel : Restons concentrés. Le sanctuaire se trouve sous la salle du trône. Si nous atteignons le Coeur avant Arnaud, nous pourrons peut-être empêcher son activation.")
-print(character.nom + " : Et si nous arrivons trop tard ?")
-print("Nathaniel : Alors nous devrons l'affronter avec le pouvoir du Coeur à sa disposition.")
-print("Ferdinand : J'aime mieux le premier plan.")
+print(Fore.RED + "Nathaniel : Restons concentrés. Le sanctuaire se trouve sous la salle du trône. Si nous atteignons le Coeur avant Arnaud, nous pourrons peut-être empêcher son activation.")
+print(Fore.BLUE + character.nom + " : Et si nous arrivons trop tard ?")
+print(Fore.RED + "Nathaniel : Alors nous devrons l'affronter avec le pouvoir du Coeur à sa disposition.")
+print(Fore.YELLOW + "Ferdinand : J'aime mieux le premier plan.")
 print(Fore.LIGHTBLACK_EX + "Andy : Pour une fois, nous sommes tous d'accord.")
-print("Narrateur : Ethan observe les remparts.")
-print("Ethan : Je connais un passage qui mène aux quartiers intérieurs. Il passe derrière l'ancienne salle des archives.")
-print(character.nom + " : Comment peux-tu connaître autant de passages dans ce château ?")
-print("Ethan : Mon père travaillait pour la cour royale. Il m'a appris à reconnaître les endroits où les puissants cachent leurs secrets.")
-print("Nathaniel : Nous devons rester prudents. Les gardes peuvent avoir modifié les accès.")
-print("Ethan : Faites-moi confiance.")
-print("Narrateur : Un court silence.")
+print(Fore.WHITE + "Narrateur : Ethan observe les remparts.")
+print(Fore.MAGENTA + "Ethan : Je connais un passage qui mène aux quartiers intérieurs. Il passe derrière l'ancienne salle des archives.")
+print(Fore.BLUE + character.nom + " : Comment peux-tu connaître autant de passages dans ce château ?")
+print(Fore.MAGENTA + "Ethan : Mon père travaillait pour la cour royale. Il m'a appris à reconnaître les endroits où les puissants cachent leurs secrets.")
+print(Fore.RED + "Nathaniel : Nous devons rester prudents. Les gardes peuvent avoir modifié les accès.")
+print(Fore.MAGENTA + "Ethan : Faites-moi confiance.")
+print(Fore.WHITE + "Narrateur : Un court silence.")
 print(Fore.LIGHTBLACK_EX + "Andy : C'est exactement la phrase que je voulais entendre juste avant d'entrer dans un château rempli de gardes.")
-print(character.nom + " : Tu as une meilleure idée ?")
+print(Fore.BLUE + character.nom + " : Tu as une meilleure idée ?")
 print(Fore.LIGHTBLACK_EX + "Andy : Oui. Une porte ouverte, aucun garde et un buffet.")
-print("Ferdinand : On peut garder le buffet pour après.")
-print("Narrateur : Le groupe emprunte un passage étroit derrière une vieille tour.")
+print(Fore.YELLOW + "Ferdinand : On peut garder le buffet pour après.")
+print(Fore.WHITE + "Narrateur : Le groupe emprunte un passage étroit derrière une vieille tour.")
 
 #############################################################
 #                                                           #
@@ -1971,26 +1958,26 @@ print("Narrateur : Le groupe emprunte un passage étroit derrière une vieille t
 #                                                           #
 #############################################################
 
-print("Narrateur : Le groupe traverse un couloir couvert de portraits. Plusieurs tableaux ont été lacérés, et certains visages ont été complètement effacés.")
-print("Nathaniel : Regardez ces tableaux. Ils représentent les derniers membres de l'ancienne dynastie.")
-print(character.nom + " : Pourquoi leurs visages ont-ils été détruits ?")
-print("Nathaniel : Pour effacer leur mémoire. Arnaud ne veut pas que les habitants puissent comparer son règne à celui des anciens souverains.")
-print("Ferdinand : Il a peur d'un tableau ?")
-print("Nathaniel : Il a peur de ce que le tableau représente.")
+print(Fore.WHITE + "Narrateur : Le groupe traverse un couloir couvert de portraits. Plusieurs tableaux ont été lacérés, et certains visages ont été complètement effacés.")
+print(Fore.RED + "Nathaniel : Regardez ces tableaux. Ils représentent les derniers membres de l'ancienne dynastie.")
+print(Fore.BLUE + character.nom + " : Pourquoi leurs visages ont-ils été détruits ?")
+print(Fore.RED + "Nathaniel : Pour effacer leur mémoire. Arnaud ne veut pas que les habitants puissent comparer son règne à celui des anciens souverains.")
+print(Fore.YELLOW + "Ferdinand : Il a peur d'un tableau ?")
+print(Fore.RED + "Nathaniel : Il a peur de ce que le tableau représente.")
 print(Fore.LIGHTBLACK_EX + "Andy : C'est une différence importante. Moi, j'ai surtout peur des tableaux qui me représentent. Les peintres ont parfois une vision très personnelle de la réalité.")
-print("Narrateur : " + character.nom + " s'arrête devant un portrait dont le visage est encore visible. Un roi tient un sceau gravé du symbole royal.")
-print(character.nom + " : C'est le sceau.")
-print("Nathaniel : Oui. Le même symbole apparaît sur les documents de la boulangerie.")
-print("Ethan : Nous sommes proches du sanctuaire.")
-print("Narrateur : Ethan semble tendu. Il regarde alternativement le couloir et le sol.")
-print(character.nom + " : Tout va bien ?")
-print("Ethan : Oui.")
-print(character.nom + " : Tu es sûr ?")
-print("Ethan : Je suis simplement impatient d'en finir.")
+print(Fore.WHITE + "Narrateur : " + character.nom + " s'arrête devant un portrait dont le visage est encore visible. Un roi tient un sceau gravé du symbole royal.")
+print(Fore.BLUE + character.nom + " : C'est le sceau.")
+print(Fore.RED + "Nathaniel : Oui. Le même symbole apparaît sur les documents de la boulangerie.")
+print(Fore.MAGENTA + "Ethan : Nous sommes proches du sanctuaire.")
+print(Fore.WHITE + "Narrateur : Ethan semble tendu. Il regarde alternativement le couloir et le sol.")
+print(Fore.BLUE + character.nom + " : Tout va bien ?")
+print(Fore.MAGENTA + "Ethan : Oui.")
+print(Fore.BLUE + character.nom + " : Tu es sûr ?")
+print(Fore.MAGENTA + "Ethan : Je suis simplement impatient d'en finir.")
 print(Fore.LIGHTBLACK_EX + "Andy : C'est drôle. Moi, quand je suis impatient, je parle encore plus. Et je parle déjà beaucoup.")
-print("Ethan : Tu devrais écrire une chanson sur le silence.")
+print(Fore.MAGENTA + "Ethan : Tu devrais écrire une chanson sur le silence.")
 print(Fore.LIGHTBLACK_EX + "Andy : J'y ai pensé. Mais j'ai peur que le public ne m'entende pas.")
-print("Narrateur : Le groupe continue d'avancer.")
+print(Fore.WHITE + "Narrateur : Le groupe continue d'avancer.")
 
 
 #############################################################
@@ -2000,52 +1987,52 @@ print("Narrateur : Le groupe continue d'avancer.")
 #                                                           #
 #############################################################
 
-print("Narrateur : Ethan s'arrête devant une porte massive.")
-print("Ethan : Nous y sommes.")
-print("Ferdinand : Alors ouvrons.")
-print("Ethan : Attendez. Il y a quelque chose que je dois vous dire.")
-print("Narrateur : Le groupe se retourne vers lui.")
-print(character.nom + " : Quoi ?")
-print("Narrateur : Ethan baisse la tête. Lorsqu'il relève les yeux, son expression a changé.")
-print("Ethan : Je vous ai menti depuis le début.")
+print(Fore.WHITE + "Narrateur : Ethan s'arrête devant une porte massive.")
+print(Fore.MAGENTA + "Ethan : Nous y sommes.")
+print(Fore.YELLOW + "Ferdinand : Alors ouvrons.")
+print(Fore.MAGENTA + "Ethan : Attendez. Il y a quelque chose que je dois vous dire.")
+print(Fore.WHITE + "Narrateur : Le groupe se retourne vers lui.")
+print(Fore.BLUE + character.nom + " : Quoi ?")
+print(Fore.WHITE + "Narrateur : Ethan baisse la tête. Lorsqu'il relève les yeux, son expression a changé.")
+print(Fore.MAGENTA + "Ethan : Je vous ai menti depuis le début.")
 print(Fore.LIGHTBLACK_EX + "Andy : … Je savais que tu étais mystérieux, mais je pensais que c'était juste une mauvaise habitude.")
-print("Nathaniel : Ethan. Que signifie tout cela ?")
-print("Ethan : Je n'ai jamais voulu simplement faire tomber Arnaud. Je voulais prendre sa place.")
-print("Narrateur : Le silence devient pesant.")
-print(character.nom + " : Tu es sérieux ?")
-print("Ethan : Toute ma vie, j'ai vu les puissants décider du sort des autres. Mon père a été détruit parce qu'il s'est opposé à Arnaud. J'ai passé des années à chercher un moyen de ne plus jamais être impuissant.")
-print("Nathaniel : Tu veux utiliser le Coeur Bedrock.")
-print("Ethan : Exactement.")
-print(character.nom + " : Tu sais ce que cet artefact peut faire !")
-print("Ethan : Je sais qu'il peut me donner le pouvoir de changer le royaume.")
-print("Nathaniel : Il ne changera pas le royaume. Il te changera, toi.")
-print("Ethan : Peut-être. Mais je préfère risquer de devenir un monstre plutôt que de rester un homme que personne ne peut entendre.")
-print(character.nom + " : Nous t'avons fait confiance.")
-print("Ethan : Et vous m'avez été utiles. Vous avez trouvé les archives, révélé le sanctuaire et éliminé plusieurs obstacles. Sans vous, je n'aurais jamais pu arriver jusqu'ici.")
+print(Fore.RED + "Nathaniel : Ethan. Que signifie tout cela ?")
+print(Fore.MAGENTA + "Ethan : Je n'ai jamais voulu simplement faire tomber Arnaud. Je voulais prendre sa place.")
+print(Fore.WHITE + "Narrateur : Le silence devient pesant.")
+print(Fore.BLUE + character.nom + " : Tu es sérieux ?")
+print(Fore.MAGENTA + "Ethan : Toute ma vie, j'ai vu les puissants décider du sort des autres. Mon père a été détruit parce qu'il s'est opposé à Arnaud. J'ai passé des années à chercher un moyen de ne plus jamais être impuissant.")
+print(Fore.RED + "Nathaniel : Tu veux utiliser le Coeur Bedrock.")
+print(Fore.MAGENTA + "Ethan : Exactement.")
+print(Fore.BLUE + character.nom + " : Tu sais ce que cet artefact peut faire !")
+print(Fore.MAGENTA + "Ethan : Je sais qu'il peut me donner le pouvoir de changer le royaume.")
+print(Fore.RED + "Nathaniel : Il ne changera pas le royaume. Il te changera, toi.")
+print(Fore.MAGENTA + "Ethan : Peut-être. Mais je préfère risquer de devenir un monstre plutôt que de rester un homme que personne ne peut entendre.")
+print(Fore.BLUE + character.nom + " : Nous t'avons fait confiance.")
+print(Fore.MAGENTA + "Ethan : Et vous m'avez été utiles. Vous avez trouvé les archives, révélé le sanctuaire et éliminé plusieurs obstacles. Sans vous, je n'aurais jamais pu arriver jusqu'ici.")
 print(Fore.LIGHTBLACK_EX + "Andy : Tu nous as utilisés.")
-print("Ethan : Oui.")
-print("Ferdinand : Je vais lui faire ravaler ses paroles.")
-print("Nathaniel : Ferdinand, attends.")
-print("Ferdinand : Quoi ? Tu veux lui offrir un livre ?")
-print("Nathaniel : Je veux comprendre jusqu'où il est allé.")
-print("Narrateur : Ethan sort le fragment noir de sa poche.")
-print("Ethan : Ce fragment provient du Coeur. Il m'a permis de sentir sa présence et de suivre les indices qui menaient jusqu'ici.")
-print(character.nom + " : Tu l'avais depuis la boulangerie ?")
-print("Ethan : Oui.")
-print(character.nom + " : Et tu nous as laissé chercher l'artefact en sachant que tu voulais le prendre pour toi ?")
-print("Ethan : Je savais que vous pouviez trouver les documents. Je savais que Nathaniel comprendrait les archives. Et je savais que vous finirez par atteindre le château.")
+print(Fore.MAGENTA + "Ethan : Oui.")
+print(Fore.YELLOW + "Ferdinand : Je vais lui faire ravaler ses paroles.")
+print(Fore.RED + "Nathaniel : Ferdinand, attends.")
+print(Fore.YELLOW + "Ferdinand : Quoi ? Tu veux lui offrir un livre ?")
+print(Fore.RED + "Nathaniel : Je veux comprendre jusqu'où il est allé.")
+print(Fore.WHITE + "Narrateur : Ethan sort le fragment noir de sa poche.")
+print(Fore.MAGENTA + "Ethan : Ce fragment provient du Coeur. Il m'a permis de sentir sa présence et de suivre les indices qui menaient jusqu'ici.")
+print(Fore.BLUE + character.nom + " : Tu l'avais depuis la boulangerie ?")
+print(Fore.MAGENTA + "Ethan : Oui.")
+print(Fore.BLUE + character.nom + " : Et tu nous as laissé chercher l'artefact en sachant que tu voulais le prendre pour toi ?")
+print(Fore.MAGENTA + "Ethan : Je savais que vous pouviez trouver les documents. Je savais que Nathaniel comprendrait les archives. Et je savais que vous finirez par atteindre le château.")
 print(Fore.LIGHTBLACK_EX + "Andy : Tu as donc planifié tout ça.")
-print("Ethan : Chaque étape.")
+print(Fore.MAGENTA + "Ethan : Chaque étape.")
 print(Fore.LIGHTBLACK_EX + "Andy : Je déteste reconnaître le talent chez mes ennemis.")
-print("Ethan : Je vous ai donné une chance de vous retirer.")
-print(character.nom + " : Tu ne nous as jamais dit la vérité !")
-print("Ethan : Parce que vous m'auriez arrêté.")
-print("Nathaniel : Bien sûr que nous t'aurions arrêté.")
-print("Ethan : Voilà pourquoi je ne vous ai rien dit.")
-print("Narrateur : Ethan frappe le sol avec le fragment noir. Un mécanisme s'active. Des grilles tombent et séparent le groupe.")
-print(character.nom + " : ETHAN !")
-print("Ethan : Je suis désolé, " + character.nom + ". Mais je ne peux pas laisser quelqu'un d'autre décider de mon avenir.")
-print("Narrateur : Une porte s'ouvre derrière lui. Il disparaît dans le sanctuaire.")
+print(Fore.MAGENTA + "Ethan : Je vous ai donné une chance de vous retirer.")
+print(Fore.BLUE + character.nom + " : Tu ne nous as jamais dit la vérité !")
+print(Fore.MAGENTA + "Ethan : Parce que vous m'auriez arrêté.")
+print(Fore.RED + "Nathaniel : Bien sûr que nous t'aurions arrêté.")
+print(Fore.MAGENTA + "Ethan : Voilà pourquoi je ne vous ai rien dit.")
+print(Fore.WHITE + "Narrateur : Ethan frappe le sol avec le fragment noir. Un mécanisme s'active. Des grilles tombent et séparent le groupe.")
+print(Fore.BLUE + character.nom + " : ETHAN !")
+print(Fore.MAGENTA + "Ethan : Je suis désolé, " + character.nom + ". Mais je ne peux pas laisser quelqu'un d'autre décider de mon avenir.")
+print(Fore.WHITE + "Narrateur : Une porte s'ouvre derrière lui. Il disparaît dans le sanctuaire.")
 
 #############################################################
 #                                                           #
@@ -2054,49 +2041,48 @@ print("Narrateur : Une porte s'ouvre derrière lui. Il disparaît dans le sanctu
 #                                                           #
 #############################################################
 
-print("Narrateur : Le groupe se retrouve enfermé dans le couloir. Ferdinand frappe la grille de ses deux mains.")
-print("Ferdinand : Je vais ouvrir cette porte.")
-print("Nathaniel : Attends. Il doit y avoir un mécanisme.")
-print("Ferdinand : Je suis le mécanisme.")
-print("Narrateur : Il frappe la grille. Elle tremble, mais ne s'ouvre pas.")
+print(Fore.WHITE + "Narrateur : Le groupe se retrouve enfermé dans le couloir. Ferdinand frappe la grille de ses deux mains.")
+print(Fore.YELLOW + "Ferdinand : Je vais ouvrir cette porte.")
+print(Fore.RED + "Nathaniel : Attends. Il doit y avoir un mécanisme.")
+print(Fore.YELLOW + "Ferdinand : Je suis le mécanisme.")
+print(Fore.WHITE + "Narrateur : Il frappe la grille. Elle tremble, mais ne s'ouvre pas.")
 print(Fore.LIGHTBLACK_EX + "Andy : Impressionnant. La grille est toujours là, mais elle a probablement peur.")
-print(character.nom + " : Arrêtez tous les deux !")
-print("Narrateur : Le " + character.nom + " observe le mécanisme et cherche une commande. Nathaniel l'aide à comprendre les symboles gravés sur le mur. Après quelques instants, la grille se soulève.")
-print("Ferdinand : Tu vois ? J'avais presque réussi.")
-print(character.nom + " : Tu étais en train de te faire mal aux mains.")
-print("Ferdinand : C'était une stratégie.")
+print(Fore.BLUE + character.nom + " : Arrêtez tous les deux !")
+print(Fore.WHITE + "Narrateur : Le " + character.nom + " observe le mécanisme et cherche une commande. Nathaniel l'aide à comprendre les symboles gravés sur le mur. Après quelques instants, la grille se soulève.")
+print(Fore.YELLOW + "Ferdinand : Tu vois ? J'avais presque réussi.")
+print(Fore.BLUE + character.nom + " : Tu étais en train de te faire mal aux mains.")
+print(Fore.YELLOW + "Ferdinand : C'était une stratégie.")
 print(Fore.LIGHTBLACK_EX + "Andy : La stratégie du poing douloureux.")
-print("Narrateur : Le groupe rejoint un escalier qui descend vers le sanctuaire.") 
+print(Fore.WHITE + "Narrateur : Le groupe rejoint un escalier qui descend vers le sanctuaire.") 
 
-choix=int(input("Comment réagit le character.nom à la trahison ?\n1 = ")) 
+choix=int(input("Comment réagit le character.nom à la trahison ?\n1 = « Je te ferai payer ce que tu as fait. »\n2 = « Il est encore temps de renoncer. »\n3 = « Tu n'as jamais été notre ami. »\n")) 
 
 if choix == 1:
-    print(character.nom + " : Tu as trahi des gens qui te faisaient confiance. Je ne te laisserai pas utiliser cet artefact.")
+    print(Fore.BLUE + character.nom + " : Tu as trahi des gens qui te faisaient confiance. Je ne te laisserai pas utiliser cet artefact.")
     print(Fore.LIGHTBLACK_EX + "Andy : Je suis avec toi. Et je tiens à préciser que je n'ai jamais aimé ses chaussures.")
-    print(character.nom + " : Ses chaussures ?")
+    print(Fore.BLUE + character.nom + " : Ses chaussures ?")
     print(Fore.LIGHTBLACK_EX + "Andy : Je cherche encore une raison logique de lui en vouloir.")
-    print("Ferdinand : Moi, j'en ai une. Il nous a trahis.")
-    print("Nathaniel : Alors nous devons l'arrêter avant qu'il ne soit trop tard.")
-    print("Narrateur : Le groupe poursuit Ethan, déterminé à le vaincre.")
+    print(Fore.YELLOW + "Ferdinand : Moi, j'en ai une. Il nous a trahis.")
+    print(Fore.RED + "Nathaniel : Alors nous devons l'arrêter avant qu'il ne soit trop tard.")
+    print(Fore.WHITE + "Narrateur : Le groupe poursuit Ethan, déterminé à le vaincre.")
 
 elif choix == 2:
-    print(character.nom + " : Ethan, tu peux encore faire marche arrière. Ne deviens pas ce que tu détestes.")
-    print("Ethan, au loin : Tu ne comprends pas. Je ne veux plus revenir en arrière.")
-    print(character.nom + " : Je sais que tu as souffert. Mais ce que tu as vécu ne te donne pas le droit de décider de la vie de tous les autres.")
-    print("Narrateur : Un silence suit.")
-    print("Ethan : Tu parles comme mon père.")
-    print("Narrateur : Ethan disparaît dans le sanctuaire. Nathaniel remarque qu'il a hésité.")
-    print("Nathaniel : Il n'est peut-être pas entièrement perdu.")
-
-# Le joueur débloque une possibilité supplémentaire de le convaincre pendant le combat final.
+    print(Fore.BLUE + character.nom + " : Ethan, tu peux encore faire marche arrière. Ne deviens pas ce que tu détestes.")
+    print(Fore.MAGENTA + "Ethan, au loin : Tu ne comprends pas. Je ne veux plus revenir en arrière.")
+    print(Fore.BLUE + character.nom + " : Je sais que tu as souffert. Mais ce que tu as vécu ne te donne pas le droit de décider de la vie de tous les autres.")
+    print(Fore.WHITE + "Narrateur : Un silence suit.")
+    print(Fore.MAGENTA + "Ethan : Tu parles comme mon père.")
+    print(Fore.WHITE + "Narrateur : Ethan disparaît dans le sanctuaire. Nathaniel remarque qu'il a hésité.")
+    print(Fore.RED + "Nathaniel : Il n'est peut-être pas entièrement perdu.")
+    Req_TrueEnding=1
 
 elif choix == 3:
-    print(character.nom + " : Tout ce que tu nous as raconté n'était qu'un mensonge.")
-    print("Ethan : Certaines choses étaient vraies. C'est ce qui rend les mensonges efficaces.")
+    print(Fore.BLUE + character.nom + " : Tout ce que tu nous as raconté n'était qu'un mensonge.")
+    print(Fore.MAGENTA + "Ethan : Certaines choses étaient vraies. C'est ce qui rend les mensonges efficaces.")
     print(Fore.LIGHTBLACK_EX + "Andy : Je vais devoir reconnaître que cette phrase est très bonne. Et ça m'énerve.")
-    print("Ferdinand : Moi, je n'ai pas besoin d'une bonne phrase pour le frapper.")
-    print("Nathaniel : Nous devons rester concentrés. La colère ne nous aidera pas à gagner.")
-    print("Narrateur : Le groupe poursuit Ethan, mais la confiance entre les personnages est profondément ébranlée.")
+    print(Fore.YELLOW + "Ferdinand : Moi, je n'ai pas besoin d'une bonne phrase pour le frapper.")
+    print(Fore.RED + "Nathaniel : Nous devons rester concentrés. La colère ne nous aidera pas à gagner.")
+    print(Fore.WHITE + "Narrateur : Le groupe poursuit Ethan, mais la confiance entre les personnages est profondément ébranlée.")
 
 #############################################################
 #                                                           #
@@ -2105,29 +2091,29 @@ elif choix == 3:
 #                                                           #
 #############################################################
 
-print("Narrateur : Le groupe arrive devant une immense salle. Des bannières noires pendent au plafond. Au fond, Monsieur Arnaud se tient devant les portes du sanctuaire.")
-print("Monsieur Arnaud : Vous voilà enfin.")
-print(character.nom + " : C'est terminé, Arnaud.")
-print("Monsieur Arnaud : Terminé ? Vous avez traversé mon royaume, détruit mes postes de garde et pillé mes archives. Et vous pensez pouvoir m'arrêter avec quelques discours ?")
-print("Fore.LIGHTBLACK_EX + Andy : Je peux aussi faire des chansons. Elles sont particulièrement désagréables.")
-print("Monsieur Arnaud : Le musicien. Toujours aussi bruyant.")
+print(Fore.WHITE + "Narrateur : Le groupe arrive devant une immense salle. Des bannières noires pendent au plafond. Au fond, Monsieur Arnaud se tient devant les portes du sanctuaire.")
+print(Fore.GREEN + "Monsieur Arnaud : Vous voilà enfin.")
+print(Fore.BLUE + character.nom + " : C'est terminé, Arnaud.")
+print(Fore.GREEN + "Monsieur Arnaud : Terminé ? Vous avez traversé mon royaume, détruit mes postes de garde et pillé mes archives. Et vous pensez pouvoir m'arrêter avec quelques discours ?")
+print(Fore.LIGHTBLACK_EX + "Andy : Je peux aussi faire des chansons. Elles sont particulièrement désagréables.")
+print(Fore.GREEN + "Monsieur Arnaud : Le musicien. Toujours aussi bruyant.")
 print(Fore.LIGHTBLACK_EX + "Andy : Et vous, toujours aussi laid dans vos choix politiques.")
-print("Ferdinand : Andy, concentre-toi !")
+print(Fore.YELLOW + "Ferdinand : Andy, concentre-toi !")
 print(Fore.LIGHTBLACK_EX + "Andy : Je me concentre. Je peux être sarcastique et attentif en même temps.")
-print("Monsieur Arnaud : Vous ne comprenez rien. Les gens sont faibles. Ils se battent, se trahissent et détruisent tout ce qu'ils touchent. J'ai apporté l'ordre à ce royaume.")
-print("Nathaniel : Vous avez apporté la peur.")
-print("Monsieur Arnaud : La peur est le prix de la paix.")
-print(character.nom + " : Non. La paix n'a aucune valeur si personne n'est libre.")
-print("Narrateur : Arnaud descend lentement les marches du trône.")
-print("Monsieur Arnaud : La liberté est un mot que les gens utilisent quand ils ne veulent pas assumer les conséquences de leurs décisions. Regardez votre groupe. Un musicien qui provoque les autorités, un combattant qui casse tout ce qu'il touche, un prêtre qui préfère les livres aux réalités et un voyageur qui se prend pour un héros.")
-print("Ferdinand : Je ne casse pas tout ce que je touche.")
+print(Fore.GREEN + "Monsieur Arnaud : Vous ne comprenez rien. Les gens sont faibles. Ils se battent, se trahissent et détruisent tout ce qu'ils touchent. J'ai apporté l'ordre à ce royaume.")
+print(Fore.RED + "Nathaniel : Vous avez apporté la peur.")
+print(Fore.GREEN + "Monsieur Arnaud : La peur est le prix de la paix.")
+print(Fore.BLUE + character.nom + " : Non. La paix n'a aucune valeur si personne n'est libre.")
+print(Fore.WHITE + "Narrateur : Arnaud descend lentement les marches du trône.")
+print(Fore.GREEN + "Monsieur Arnaud : La liberté est un mot que les gens utilisent quand ils ne veulent pas assumer les conséquences de leurs décisions. Regardez votre groupe. Un musicien qui provoque les autorités, un combattant qui casse tout ce qu'il touche, un prêtre qui préfère les livres aux réalités et un voyageur qui se prend pour un héros.")
+print(Fore.YELLOW + "Ferdinand : Je ne casse pas tout ce que je touche.")
 print(Fore.LIGHTBLACK_EX + "Andy : Tu as cassé une épée, trois paniers et une grille depuis que je te connais.")
-print("Ferdinand : La grille était solide.")
-print("Monsieur Arnaud : Vous voyez ? Ils ne savent même pas s'entendre entre eux. Et vous prétendez être capables de gouverner un royaume ?")
-print(character.nom + " : Nous ne voulons pas gouverner le royaume.")
-print("Nathaniel : Nous voulons qu'il puisse choisir son avenir.")
-print("Monsieur Arnaud : Alors vous êtes plus naïfs que je ne le pensais.")
-print("Narrateur : Arnaud ouvre les portes du sanctuaire. Une lueur noire se répand dans la salle.")
+print(Fore.YELLOW + "Ferdinand : La grille était solide.")
+print(Fore.GREEN + "Monsieur Arnaud : Vous voyez ? Ils ne savent même pas s'entendre entre eux. Et vous prétendez être capables de gouverner un royaume ?")
+print(Fore.BLUE + character.nom + " : Nous ne voulons pas gouverner le royaume.")
+print(Fore.RED + "Nathaniel : Nous voulons qu'il puisse choisir son avenir.")
+print(Fore.GREEN + "Monsieur Arnaud : Alors vous êtes plus naïfs que je ne le pensais.")
+print(Fore.WHITE + "Narrateur : Arnaud ouvre les portes du sanctuaire. Une lueur noire se répand dans la salle.")
 
 #############################################################
 #                                                           #
@@ -2136,34 +2122,34 @@ print("Narrateur : Arnaud ouvre les portes du sanctuaire. Une lueur noire se ré
 #                                                           #
 #############################################################
 
-print("Narrateur : Au centre de la salle souterraine, le Coeur d'Bedrock flotte au-dessus d'un socle. Le sceau royal repose devant lui. Ethan se tient à ses côtés.")
-print("Ethan : Nous y sommes.")
-print("Monsieur Arnaud : Tu as accompli ta tâche, Ethan. Maintenant, écarte-toi.")
-print("Ethan : Non.")
-print("Narrateur : Arnaud se tourne lentement vers lui.")
-print("Monsieur Arnaud : Pardon ?")
-print("Ethan : Vous avez utilisé mon père, détruit sa réputation et m'avez laissé grandir dans un monde où votre parole valait plus que la vérité. Je ne vous servirai pas.")
-print("Monsieur Arnaud : Tu crois pouvoir me remplacer ?")
-print("Ethan : Je sais que je le peux.")
-print("Monsieur Arnaud : Tu es un enfant qui joue avec des forces qu'il ne comprend pas.")
-print("Ethan : Et vous êtes un vieil homme qui croit encore que tout lui appartient.")
-print("Narrateur : Ethan s'empare du Coeur d'Bedrock.")
-print("Nathaniel : Ethan, lâche cet artefact !")
-print("Ethan : Il est trop tard.")
-print("Narrateur : Une lueur noire traverse la salle. Les pierres vibrent et les flammes vacillent.")
-print("Monsieur Arnaud : Idiot ! Tu ne sais pas ce que tu réveilles !")
-print("Ethan : Je sais exactement ce que je fais.")
-print(character.nom + " : Tu ne sais même pas si tu pourras contrôler ce pouvoir !")
-print("Ethan : Je n'ai pas besoin de le contrôler parfaitement. J'ai seulement besoin qu'il soit de mon côté.")
-print("Nathaniel : Le Coeur n'est jamais du côté de personne. Il amplifie les désirs de son porteur jusqu'à ce qu'ils deviennent impossibles à ignorer.")
-print("Ethan : Alors il amplifiera mon désir de justice.")
-print(character.nom + " : Ce n'est pas de la justice que tu cherches. Tu veux être certain que personne ne puisse jamais te faire de mal.")
-print("Narrateur : Ethan serre le Coeur contre lui.")
-print("Ethan : Tu ne sais rien de ce que j'ai vécu.")
-print(character.nom + " : Peut-être. Mais je sais ce que tu es en train de faire.")
-print("Narrateur : Arnaud saisit son arme.")
-print("Monsieur Arnaud : Si je ne peux pas régner sur ce royaume, personne ne le fera !")
-print(character.nom + " : Alors nous allons vous arrêter tous les deux.")
+print(Fore.WHITE + "Narrateur : Au centre de la salle souterraine, le Coeur de Bedrock flotte au-dessus d'un socle. Le sceau royal repose devant lui. Ethan se tient à ses côtés.")
+print(Fore.MAGENTA + "Ethan : Nous y sommes.")
+print(Fore.GREEN + "Monsieur Arnaud : Tu as accompli ta tâche, Ethan. Maintenant, écarte-toi.")
+print(Fore.MAGENTA + "Ethan : Non.")
+print(Fore.WHITE + "Narrateur : Arnaud se tourne lentement vers lui.")
+print(Fore.GREEN + "Monsieur Arnaud : Pardon ?")
+print(Fore.MAGENTA + "Ethan : Vous avez utilisé mon père, détruit sa réputation et m'avez laissé grandir dans un monde où votre parole valait plus que la vérité. Je ne vous servirai pas.")
+print(Fore.GREEN + "Monsieur Arnaud : Tu crois pouvoir me remplacer ?")
+print(Fore.MAGENTA + "Ethan : Je sais que je le peux.")
+print(Fore.GREEN + "Monsieur Arnaud : Tu es un enfant qui joue avec des forces qu'il ne comprend pas.")
+print(Fore.MAGENTA + "Ethan : Et vous êtes un vieil homme qui croit encore que tout lui appartient.")
+print(Fore.WHITE + "Narrateur : Ethan s'empare du Coeur de Bedrock.")
+print(Fore.RED + "Nathaniel : Ethan, lâche cet artefact !")
+print(Fore.MAGENTA + "Ethan : Il est trop tard.")
+print(Fore.WHITE + "Narrateur : Une lueur noire traverse la salle. Les pierres vibrent et les flammes vacillent.")
+print(Fore.GREEN + "Monsieur Arnaud : Idiot ! Tu ne sais pas ce que tu réveilles !")
+print(Fore.MAGENTA + "Ethan : Je sais exactement ce que je fais.")
+print(Fore.BLUE + character.nom + " : Tu ne sais même pas si tu pourras contrôler ce pouvoir !")
+print(Fore.MAGENTA + "Ethan : Je n'ai pas besoin de le contrôler parfaitement. J'ai seulement besoin qu'il soit de mon côté.")
+print(Fore.RED + "Nathaniel : Le Coeur n'est jamais du côté de personne. Il amplifie les désirs de son porteur jusqu'à ce qu'ils deviennent impossibles à ignorer.")
+print(Fore.MAGENTA + "Ethan : Alors il amplifiera mon désir de justice.")
+print(Fore.BLUE + character.nom + " : Ce n'est pas de la justice que tu cherches. Tu veux être certain que personne ne puisse jamais te faire de mal.")
+print(Fore.WHITE + "Narrateur : Ethan serre le Coeur contre lui.")
+print(Fore.MAGENTA + "Ethan : Tu ne sais rien de ce que j'ai vécu.")
+print(Fore.BLUE + character.nom + " : Peut-être. Mais je sais ce que tu es en train de faire.")
+print(Fore.WHITE + "Narrateur : Arnaud saisit son arme.")
+print(Fore.GREEN + "Monsieur Arnaud : Si je ne peux pas régner sur ce royaume, personne ne le fera !")
+print(Fore.BLUE + character.nom + " : Alors nous allons vous arrêter tous les deux.")
 
 
 #############################################################
@@ -2173,23 +2159,23 @@ print(character.nom + " : Alors nous allons vous arrêter tous les deux.")
 #                                                           #
 #############################################################
 
-print("Narrateur : Arnaud attaque le premier. Il utilise des techniques précises")
-print("Monsieur Arnaud : Vous avez confondu mon calme avec de la faiblesse !")
-print("Ferdinand : Et vous avez confondu votre couronne avec un cerveau !")
+print(Fore.WHITE + "Narrateur : Arnaud attaque le premier. Il utilise des techniques précises")
+print(Fore.GREEN + "Monsieur Arnaud : Vous avez confondu mon calme avec de la faiblesse !")
+print(Fore.YELLOW + "Ferdinand : Et vous avez confondu votre couronne avec un cerveau !")
 print(Fore.LIGHTBLACK_EX + "Andy : C'était presque une bonne phrase, Ferdinand !")
-print("Ferdinand : Je peux la refaire !")
-print(character.nom + " : Pas maintenant !")
-print("Narrateur : Le combat commence.")
+print(Fore.YELLOW + "Ferdinand : Je peux la refaire !")
+print(Fore.BLUE + character.nom + " : Pas maintenant !")
+print(Fore.WHITE + "Narrateur : Le combat commence.")
 
 List_player=[character,Andy,Nath]; stade_equipe=1
 boss_fight(IsArnaudDead=0)
 
 
-print("Narrateur : Après un long combat, Arnaud finit par tomber à genoux. Son arme glisse sur le sol.")
-print("Monsieur Arnaud : Impossible… Vous n'êtes que des voyageurs.")
-print(character.nom + " : Et vous n'êtes qu'un homme.")
-print("Monsieur Arnaud : Ethan ! Fais ce que tu as à faire !")
-print("Ethan : Avec plaisir.")
+print(Fore.WHITE + "Narrateur : Après un long combat, Arnaud finit par tomber à genoux. Son arme glisse sur le sol.")
+print(Fore.GREEN + "Monsieur Arnaud : Impossible… Vous n'êtes que des voyageurs.")
+print(Fore.BLUE + character.nom + " : Et vous n'êtes qu'un homme.")
+print(Fore.GREEN + "Monsieur Arnaud : Ethan ! Fais ce que tu as à faire !")
+print(Fore.MAGENTA + "Ethan : Avec plaisir.")
 
 #############################################################
 #                                                           #
@@ -2200,131 +2186,143 @@ print("Ethan : Avec plaisir.")
 
 # deuxieme combat / contre éthan 
 
-print("Narrateur : Ethan s'avance. Ses attaques deviennent plus rapides et plus puissantes.")
-print("Ethan : Je vous avais dit de ne pas me suivre.")
-print(character.nom + " : Nous ne t'abandonnerons pas au pouvoir de cet artefact !")
-print("Ethan : Je n'ai pas besoin d'être sauvé !")
-print("Nathaniel : Tu n'as pas besoin de tout contrôler pour avoir de la valeur !")
-print("Ethan : Tais-toi !")
-print("Narrateur : Ethan lance une attaque puissante. Le groupe est repoussé.")
+print(Fore.WHITE + "Narrateur : Ethan s'avance. Ses attaques deviennent plus rapides et plus puissantes.")
+print(Fore.MAGENTA + "Ethan : Je vous avais dit de ne pas me suivre.")
+print(Fore.BLUE + character.nom + " : Nous ne t'abandonnerons pas au pouvoir de cet artefact !")
+print(Fore.MAGENTA + "Ethan : Je n'ai pas besoin d'être sauvé !")
+print(Fore.RED + "Nathaniel : Tu n'as pas besoin de tout contrôler pour avoir de la valeur !")
+print(Fore.MAGENTA + "Ethan : Tais-toi !")
+print(Fore.WHITE + "Narrateur : Ethan lance une attaque puissante. Le groupe est repoussé.")
 print(Fore.LIGHTBLACK_EX + "Andy : Bon. Je retire tout ce que j'ai dit sur les petites aventures tranquilles.")
-print("Ferdinand : On ne peut pas abandonner maintenant !")
-print(character.nom + " : Ensemble !")
-print("Narrateur : Le groupe attaque une nouvelle fois. Ethan vacille. Le Coeur se fissure légèrement.")
-print("Ethan : Non… Pas maintenant !")
-print("Nathaniel : Le Coeur ne peut pas contenir autant de volonté contradictoire. Il faut décider quoi faire !")
-'''
-SCÈNE 9 — LE DERNIER CHOIX 
-
-# GOOD ENDING / SANS  PRÉREQUIS
-CHOIX A — Détruire le Coeur d'Bedrock 
-
-character.nom : Aucun de nous ne devrait posséder ce pouvoir. 
-Nathaniel : Si tu le détruis, le royaume sera libéré de son influence. Mais personne ne sait quelles autres conséquences cela entraînera. 
-Ethan : Non ! C'est la seule chose qui pouvait me donner le pouvoir de changer les choses !
-character.nom : Tu pouvais changer les choses sans contrôler les autres. 
-Ethan : Tu ne comprends pas ! 
-character.nom : Alors explique-moi. Mais pas avec un artefact qui te permet de décider pour tout le monde. 
-Le character.nom s'approche du Coeur. 
-Ethan : Si tu le détruis, tout ce que j'ai fait aura été inutile ! 
-character.nom : Ce n'est pas le pouvoir qui donne un sens à ta vie. 
-Le character.nom frappe le Coeur. L'artefact se brise et sa lumière disparaît. 
-Le silence retombe dans la salle. 
-Ethan : Tout ce que j'ai fait… pour rien… 
-Ethan tombe à genoux. Arnaud, privé de son dernier avantage, est capturé.
-
-FIN POSSIBLE A — LA LIBÉRATION 
-
-Quelques semaines plus tard, les habitants de Monté Cristo se rassemblent sur la place du marché. Les archives prouvent les crimes d'Arnaud. Un conseil provisoire est établi pour reconstruire le royaume. 
-Andy : Je dois reconnaître une chose : nous avons accompli quelque chose d'incroyable. Ferdinand : Et personne n'a même eu besoin de me payer une épée. Andy : Ne gâche pas le moment. 
-Nathaniel : Le royaume devra apprendre à vivre sans tyran. Cela ne sera pas facile, mais c'est un début. 
-character.nom : La liberté ne se donne pas. Elle se protège. 
-Ethan est arrêté et devra répondre de ses actes. Selon les choix du joueur, il peut avoir une chance de reconstruire sa vie ou rester enfermé pour ses crimes. 
-La caméra montre le soleil se lever sur Monté Cristo. 
+print(Fore.YELLOW + "Ferdinand : On ne peut pas abandonner maintenant !")
+print(Fore.BLUE + character.nom + " : Ensemble !")
 
 
-# TRUE ENDING / PRÉREQUIS : 
 
-CHOIX B — Convaincre Ethan de lâcher le Coeur 
 
-character.nom : Ethan, regarde ce que tu es devenu. Tu voulais arrêter un tyran et tu es en train de prendre sa place. 
-Ethan : Je voulais seulement que ma vie ait un sens. 
-character.nom : Elle peut en avoir un sans que tu contrôles tout le monde. 
-Le character.nom tend la main. 
-character.nom : Lâche l'artefact. Nous pouvons encore empêcher qu'il détruise tout. Ethan regarde le Coeur, puis les visages de ses anciens compagnons. Ethan : Et si je ne sais pas comment vivre autrement ? 
-Nathaniel : Alors tu apprendras. Personne ne naît en sachant réparer ses erreurs. 
-Andy : Pour une fois, je suis d'accord avec le prêtre. Et je tiens à préciser que c'est une journée historiquement importante. 
-Ferdinand : Ethan. Tu peux encore choisir. 
-Ethan hésite, puis laisse tomber le Coeur. Nathaniel le recouvre d'un sceau ancien. 
-Ethan : Je ne sais pas si je pourrai réparer ce que j'ai fait. 
-character.nom : Tu devras commencer par en assumer les conséquences. 
+#############################################################
+#                                                           #
+#   Act 6 - Scène 9                                         #
+#   the last choice                                         #
+#                                                           #
+#############################################################
 
-FIN POSSIBLE B — UNE SECONDE CHANCE 
+print("Que ferai vous du coeur de Bedrock ?")
+Print("1 : Détuitre le Coeur de Bedrock.")
+if Req_TrueEnding==1:
+    print("2 : Convaincre Ethan de lâcher le Coeur")
+if req_EvilEnding==1:
+    print("3 : Utiliser le Coeur pour prendre le pouvoir")
 
-Arnaud est arrêté. Ethan est placé sous surveillance et devra répondre de sa trahison. Le Coeur est enfermé dans un lieu protégé par plusieurs gardiens. 
-Le groupe quitte le château ensemble, mais Ethan marche derrière les autres, silencieux. 
-Andy : Alors… quelqu'un connaît une bonne auberge ? 
-Ferdinand : Tant qu'il y a de quoi manger. 
-Nathaniel : Vous ne pensez jamais à autre chose ? 
-character.nom : Pour une fois, laissons le royaume respirer. 
-Le groupe s'éloigne sur la route. Ethan les suit à distance, sans savoir s'il sera un jour de nouveau accepté. 
+ending=int(input(""))
 
-# BAD ENDING / PRÉREQUIS : détruire les documents + ne pas voir éthan comme un ennemi
-CHOIX C — Utiliser le Coeur pour prendre le pouvoir
+########################################
+#                                      #
+#   Good ending                        #
+#                                      #
+########################################
 
-character.nom regarde l'artefact. Il pourrait le détruire, le sceller ou s'en servir pour imposer sa propre vision du royaume. 
-Nathaniel : character.nom, ne fais pas cette erreur. 
-Andy : Nous avons combattu Arnaud pour être libres. Ne deviens pas un autre Arnaud. 
-Ferdinand : Je te fais confiance. Ne me force pas à le regretter. 
-Ethan : Tu comprends enfin. Le pouvoir est la seule chose qui empêche les autres de te piétiner !
-character.nom : Si je peux empêcher les guerres et les injustices, pourquoi ne pas utiliser ce pouvoir ? 
-Nathaniel : Parce que tu ne pourras jamais garantir que tu auras toujours raison. Et parce que personne ne pourra te dire que tu as tort. 
-Le character.nom saisit le Coeur. Une lueur noire se répand dans la salle. 
-Nathaniel : Tu as fait ton choix. 
-Andy recule. Ferdinand baisse les yeux. Nathaniel quitte la salle, incapable d'accepter cette décision. 
-Ethan : Bienvenue dans le monde réel. 
+if ending == 1:
+    print(character.nom + " : Aucun de nous ne devrait posséder ce pouvoir.")
+    print("Nathaniel : Si tu le détruis, le royaume sera libéré de son influence. Mais personne ne sait quelles autres conséquences cela entraînera.")
+    print("Ethan : Non ! C'est la seule chose qui pouvait me donner le pouvoir de changer les choses !")
+    print(character.nom + " : Tu pouvais changer les choses sans contrôler les autres.")
+    print("Ethan : Tu ne comprends pas !")
+    print(character.nom + " : Alors explique-moi. Mais pas avec un artefact qui te permet de décider pour tout le monde.")
+    print("Narrateur : Le " + character.nom + " s'approche du Coeur.")
+    print("Ethan : Si tu le détruis, tout ce que j'ai fait aura été inutile !")
+    print(character.nom + " : Ce n'est pas le pouvoir qui donne un sens à ta vie.")
+    print("Narrateur : Le " + character.nom + " frappe le Coeur. L'artefact se brise et sa lumière disparaît.")
+    print("Narrateur : Le silence retombe dans la salle.")
+    print("Ethan : Tout ce que j'ai fait… pour rien…")
+    print("Narrateur : Ethan tombe à genoux. Arnaud, privé de son dernier avantage, est capturé.")
+    # Espace
+    print("Narrateur : Quelques semaines plus tard, les habitants de Monté Cristo se rassemblent sur la place du marché. Les archives prouvent les crimes d'Arnaud. Un conseil provisoire est établi pour reconstruire le royaume.")
+    print("Andy : Je dois reconnaître une chose : nous avons accompli quelque chose d'incroyable.")
+    print("Ferdinand : Et personne n'a même eu besoin de me payer une épée.")
+    print("Andy : Ne gâche pas le moment.")
+    print("Nathaniel : Le royaume devra apprendre à vivre sans tyran. Cela ne sera pas facile, mais c'est un début.")
+    print(character.nom + " : La liberté ne se donne pas. Elle se protège.")
+    print("Narrateur : Ethan est arrêté et devra répondre de ses actes. Selon les choix du joueur, il peut avoir une chance de reconstruire sa vie ou rester enfermé pour ses crimes.")
+    print("Narrateur : La caméra montre le soleil se lever sur Monté Cristo.")
 
-FIN POSSIBLE C — LE NOUVEAU MAÎTRE 
 
-character.nom prend le contrôle du royaume au nom de la paix grâce aux ancienne archives volées.
-Les conflits diminuent, mais les habitants n'ont plus le droit de s'opposer à ses décisions. 
-Arnaud a disparu, mais son système de domination survit sous un nouveau visage. 
-character.nom est assis sur le trône, le Cœur d'Bedrock dans la main. 
-character.nom : Adieu misérable chaos... 
+elif ending == 2 and Req_TrueEnding == 1:
+    print(character.nom + " : Ethan, regarde ce que tu es devenu. Tu voulais arrêter un tyran et tu es en train de prendre sa place.")
+    print("Ethan : Je voulais seulement que ma vie ait un sens.")
+    print(character.nom + " : Elle peut en avoir un sans que tu contrôles tout le monde.")
+    print("Narrateur : Le " + character.nom + " tend la main.")
+    print(character.nom + " : Lâche l'artefact. Nous pouvons encore empêcher qu'il détruise tout.")
+    print("Narrateur : Ethan regarde le Coeur, puis les visages de ses anciens compagnons.")
+    print("Ethan : Et si je ne sais pas comment vivre autrement ?")
+    print("Nathaniel : Alors tu apprendras. Personne ne naît en sachant réparer ses erreurs.")
+    print("Andy : Pour une fois, je suis d'accord avec le prêtre. Et je tiens à préciser que c'est une journée historiquement importante.")
+    print("Ferdinand : Ethan. Tu peux encore choisir.")
+    print("Narrateur : Ethan hésite, puis laisse tomber le Coeur. Nathaniel le recouvre d'un sceau ancien.")
+    print("Ethan : Je ne sais pas si je pourrai réparer ce que j'ai fait.")
+    print(character.nom + " : Tu devras commencer par en assumer les conséquences.")
+    # Espace
+    print("Narrateur : Arnaud est arrêté. Ethan est placé sous surveillance et devra répondre de sa trahison. Le Coeur est enfermé dans un lieu protégé par plusieurs gardiens.")
+    print("Narrateur : Le groupe quitte le château ensemble, mais Ethan marche derrière les autres, silencieux.")
+    print("Andy : Alors… quelqu'un connaît une bonne auberge ?")
+    print("Ferdinand : Tant qu'il y a de quoi manger.")
+    print("Nathaniel : Vous ne pensez jamais à autre chose ?")
+    print(character.nom + " : Pour une fois, laissons le royaume respirer.")
+    print("Narrateur : Le groupe s'éloigne sur la route. Ethan les suit à distance, sans savoir s'il sera un jour de nouveau accepté.")
 
-# TRUE ENDING +
-ÉPILOGUE SECRET — LA VÉRITÉ SUR ETHAN 
 
-Condition : Collecter les archives royales et choisir plusieurs fois de laisser une chance à Ethan. 
-Après la bataille, Nathaniel retrouve une lettre dans les affaires d'Ethan. Elle a été écrite par son père avant sa disparition.
-Nathaniel : J'ai trouvé quelque chose. 
-character.nom : Qu'est-ce que c'est ? 
-Nathaniel : Une lettre. Elle est adressée à Ethan. 
-Le character.nom prend la lettre et commence à lire. 
-Lettre du père d'Ethan :
-Ethan,
-Si tu lis cette lettre, c'est que je n'ai pas réussi à revenir.
-Ne cherche pas à me venger. Arnaud m'a offert le pouvoir, et j'ai refusé. C'est pour cela qu'il m'a fait disparaître.
-J'ai cru longtemps que la vérité suffirait à sauver le royaume. Je me trompais. La vérité a besoin de personnes prêtes à la défendre, mais elle ne justifie pas tous les moyens.\n
-Le Coeur d'Bedrock ne rend pas les hommes forts. Il donne simplement plus de place à ce qu'ils portent déjà en eux.
-Si tu veux changer le monde, ne deviens pas prisonnier de ta propre colère.
-Je ne te demande pas d'oublier ce qui nous est arrivé. Je te demande de ne pas laisser notre malheur décider de toute ta vie.
-Ton père.
-Narrateur : Le character.nom referme la lettre. 
-character.nom : Il voulait venger son père. Mais il a fini par poursuivre la même chose qu'Arnaud. Nathaniel : La souffrance peut expliquer les choix d'un homme. Elle ne les justifie pas tous.
-Andy : Je crois que c'est la première fois que je n'ai aucune plaisanterie à faire.
-Ferdinand : Alors c'est vraiment grave. 
-Narrateur : Le groupe quitte le château. Les cloches de Monté Cristo sonnent pour la première fois depuis des années. 
-Narrateur : Les habitants sortent de leurs maisons. Certains pleurent, d'autres applaudissent, et beaucoup restent simplement silencieux, comme s'ils n'osaient pas encore croire que la peur avait pris fin.
-character.nom : Nous avons réussi. 
-Nathaniel : Nous avons commencé. Le reste dépendra de ce que les habitants feront de leur liberté. 
-Andy : Et de ce que je ferai de ma carrière musicale. 
-Ferdinand : Tu vas encore donner des concerts ? 
-Andy : Bien sûr. J'ai un album à enregistrer. 
-character.nom : Comment va-t-il s'appeler ? 
-Andy : Cinq idiots et un tyran. 
-Ferdinand : Pourquoi cinq idiots ?
-Andy : Parce que je me compte dedans. Je suis humble. 
-Nathaniel : C'est la chose la moins crédible que tu aies jamais dite. 
-Andy : Merci. Je travaille dur pour rester cohérent. 
-Narrateur : Le groupe s'éloigne sur la route, tandis que le soleil se lève sur Monté Cristo.'''
+elif ending == 3 and req_EvilEnding == 1:
+    print("Narrateur : Le " + character.nom + " regarde l'artefact. Il pourrait le détruire, le sceller ou s'en servir pour imposer sa propre vision du royaume.")
+    print("Nathaniel : " + character.nom + ", ne fais pas cette erreur.")
+    print("Andy : Nous avons combattu Arnaud pour être libres. Ne deviens pas un otro Arnaud.")
+    print("Ferdinand : Je te fais confiance. Ne me force pas à le regretter.")
+    print("Ethan : Tu comprends enfin. Le pouvoir est la seule chose qui empêche les autres de te piétiner !")
+    print(character.nom + " : Si je peux empêcher les guerres et les injustices, pourquoi ne pas utiliser ce pouvoir ?")
+    print("Nathaniel : Parce que tu ne pourras jamais garantir que tu auras toujours raison. Et parce que personne ne pourra te dire que tu as tort.")
+    print("Narrateur : Le " + character.nom + " saisit le Coeur. Une lueur noire se répand dans la salle.")
+    print("Nathaniel : Tu as fait ton choix.")
+    print("Narrateur : Andy recule. Ferdinand baisse les yeux. Nathaniel quitte la salle, incapable d'accepter cette décision.")
+    print("Ethan : Bienvenue dans le monde réel.")
+    # Espace
+    print("Narrateur : Le " + character.nom + " prend le contrôle du royaume au nom de la paix grâce aux ancienne archives volées.")
+    print("Narrateur : Les conflits diminuent, mais les habitants n'ont plus le droit de s'opposer à ses décisions.")
+    print("Narrateur : Arnaud a disparu, mais son système de domination survit sous un nouveau visage.")
+    print("Narrateur : Le " + character.nom + " est assis sur le trône, le Coeur de Bedrock dans la main.")
+    print(character.nom + " : Adieu misérable chaos...")
+
+
+elif ending == 2:
+    print("Narrateur : Condition : Collecter les archives royales et choisir plusieurs fois de laisser une chance à Ethan.")
+    print("Narrateur : Après la bataille, Nathaniel retrouve une lettre dans les affaires d'Ethan. Elle a été écrite par son père avant sa disparition.")
+    print("Nathaniel : J'ai trouvé quelque chose.")
+    print(character.nom + " : Qu'est-ce que c'est ?")
+    print("Nathaniel : Une lettre. Elle est adressée à Ethan.")
+    print("Narrateur : Le " + character.nom + " prend la lettre et commence à lire.")
+    print("Lettre : Ethan,\n " 
+        + "Si tu lis cette lettre, c'est que je n'ai pas réussi à revenir.\n"
+        + "Ne cherche pas à me venger. Arnaud m'a offert le pouvoir, et j'ai refusé. C'est pour cela qu'il m'a fait disparaître.\n"
+        + "J'ai cru longtemps que la vérité suffirait à sauver le royaume. Je me trompais. La vérité a besoin de personnes prêtes à la défendre, mais elle ne justifie pas tous les moyens.\n"
+        + "Le Coeur de Bedrock ne rend pas les hommes forts. Il donne simplement plus de place à ce qu'ils portent déjà en eux.\n"
+        + "Si tu veux changer le monde, ne deviens pas prisonnier de ta propre colère.\n"
+        + "Je ne te demande pas d'oublier ce qui nous est arrivé. Je te demande de ne pas laisser notre malheur décider de toute ta vie.\n"
+        + "Ton père.")
+    print("Narrateur : Le " + character.nom + " referme la lettre.")
+    print(character.nom + " : Il voulait venger son père. Mais il a fini par poursuivre la même chose qu'Arnaud.")
+    print("Nathaniel : La souffrance peut expliquer les choix d'un homme. Elle ne les justifie pas tous.")
+    print("Andy : Je crois que c'est la première fois que je n'ai aucune plaisanterie à faire.")
+    print("Ferdinand : Alors c'est vraiment grave.")
+    print("Narrateur : Le groupe quitte le château. Les cloches de Monté Cristo sonnent pour la première fois depuis des années.")
+    print("Narrateur : Les habitants sortent de leurs maisons. Certains pleurent, d'autres applaudissent, et beaucoup restent simplement silencieux, comme s'ils n'osaient pas encore croire que la peur avait pris fin.")
+    print(character.nom + " : Nous avons réussi.")
+    print("Nathaniel : Nous avons commencé. Le reste dépendra de ce que les habitants feront de leur liberté.")
+    print("Andy : Et de ce que je ferai de ma carrière musicale.")
+    print("Ferdinand : Tu vas encore donner des concerts ?")
+    print("Andy : Bien évidemment.")
+    print(character.nom + " : Comment va-t-il s'appeler ?")
+    print("Andy : Cinq idiots et un tyran.")
+    print("Ferdinand : Pourquoi cinq idiots ?")
+    print("Andy : Parce que je me compte dedans. Je suis humble.")
+    print("Nathaniel : C'est la chose la moins crédible que tu aies jamais dite.")
+    print("Andy : Merci. Je travaille dur pour rester cohérent.")
+    print("Narrateur : Le groupe s'éloigne sur la route, tandis que le soleil se lève sur Monté Cristo.")
+

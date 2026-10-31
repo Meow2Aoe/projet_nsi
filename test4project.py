@@ -15,18 +15,22 @@ class chara:
     '''
     Classe pour la création du personnage contenant (pour l'instant) son nom, sa vie, sa classe, son type de magie, son mana et son multiplicateur de dégat
     '''
-    def __init__(self, nom, classe, vie, magika, mana, degat, arme, dura_arme, lvl, xp, argent):
+    def __init__(self, nom, classe, vie, vie_max, magika, mana, degat, arme, dura_arme, lvl, xp, argent):
         self.nom=nom
         self.classe=classe
-        self.vie=vie
+        self.vie_base=vie
+        self.lvl=lvl
+        self.vie_max=self.get_maxvie()
+        self.vie=self.vie_max
         self.magika=magika
         self.mana=mana
         self.degat=degat
         self.arme=arme
-        self.lvl=lvl
         self.xp=xp
         self.dura=dura_arme
         self.argent=argent
+    def get_maxvie(self):
+        return int(self.vie_base*(1+0.15*(self.lvl-1)))
 
 class mobs:
     def __init__(self, nom, pv, race, magika, mana, degat, argent, xp):
@@ -36,6 +40,7 @@ class mobs:
         self.degat=degat
         self.argent=argent
         self.pv=pv
+        self.pv_max=pv
         self.xp=xp
         self.mana=mana
 
@@ -96,22 +101,22 @@ name=str(input("Entrez le nom du personnage : "))
 laclasse=int(input("Choississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n"))
 typee=int(input("Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divin\n"))
 
-character=chara(name, laclasse, 100, typee, 100, null_sword.degat, null_sword.nom, null_sword.dura, 1, 0, 5000)
+character=chara(name, laclasse, 100, 100, typee, 100, null_sword.degat, null_sword.nom, null_sword.dura, 1, 0, 5000)
 if laclasse==1:         # classe -> mêlée
-    character.vie+=25
+    character.vie_base+=25
     character.mana-=25
     character.arme=starter_sword.nom
     character.degat=starter_sword.degat
     character.dura=starter_sword.dura
     character.degat*=1.3
 if laclasse==2:         # classe -> ranger
-    character.vie-=15
+    character.vie_base-=15
     character.arme=starter_bow.nom
     character.degat=starter_bow.degat
     character.dura=starter_bow.dura
     character.degat*=1.25
 if laclasse==3:         # classe -> mage
-    character.vie-=35
+    character.vie_base-=35
     character.mana+=50
     character.arme=starter_staff.nom
     character.degat=starter_staff.degat
@@ -119,36 +124,37 @@ if laclasse==3:         # classe -> mage
     character.degat*=1.1
 if character.nom.lower()=="Reaper".lower():
     if laclasse==4:         # la classe secrète (reaper)
+        character.vie_base=250
         character.arme=shadow_scythe.nom
         character.degat=shadow_scythe.degat
         character.dura=shadow_scythe.dura
+character.vie_max=character.get_maxvie()
+character.vie=character.vie_max
+
 '''
 Nath=chara("Nathaniel", 3, 80, 4, 150, starter_staff.degat, starter_staff.nom, starter_staff.dura, 1, 0, randint(25,150))
 Andy=chara("Andy", 0, 100, 2, 100, starter_music.degat, starter_music.nom, starter_music.dura, 1, 0, randint(25,150))
 Ferdi=chara("Ferdinand", 1, 150, 3, 75, Ferdi_sword.degat, Ferdi_sword.nom, Ferdi_sword.dura, 1, 0, 0)
 Ethan=chara("Éthan", 0, 120, 1, 80, starter_cook.degat, starter_cook.nom, starter_cook.dura, 1, 0, randint(25,150))
 '''
-Nath=chara("Nathaniel", 3, 80, 4, 150, starter_staff.degat, starter_staff.nom, starter_staff.dura, 1, 0, 5000)
-Andy=chara("Andy", 0, 100, 2, 100, starter_music.degat, starter_music.nom, starter_music.dura, 1, 0, 5000)
-Ferdi=chara("Ferdinand", 1, 150, 3, 75, Ferdi_sword.degat, Ferdi_sword.nom, Ferdi_sword.dura, 1, 0, 5000)
-Ethan=chara("Éthan", 0, 120, 1, 80, starter_cook.degat, starter_cook.nom, starter_cook.dura, 1, 0, 5000)
-
-
-max_vie=character.vie
-List_player=[character, Andy,Nath]
-list_ferdi=[Ferdi]
-
+Nath=chara("Nathaniel", 3, 80, 80, 4, 150, starter_staff.degat, starter_staff.nom, starter_staff.dura, 1, 0, 5000)
+Andy=chara("Andy", 0, 100, 100, 2, 100, starter_music.degat, starter_music.nom, starter_music.dura, 1, 0, 5000)
+Ferdi=chara("Ferdinand", 1, 150, 150, 3, 75, Ferdi_sword.degat, Ferdi_sword.nom, Ferdi_sword.dura, 1, 0, 5000)
+Ethan=chara("Éthan", 0, 120, 120, 1, 80, starter_cook.degat, starter_cook.nom, starter_cook.dura, 1, 0, 5000)
 
 goblin=mobs("Goblin Racketteur", 45, 'goblin',0, 100,1.2,10,5)
 balai=mobs("Balais Possédé", 60, 'objet', 0, 100, 1.5, 17, 7)
 mannequin=mobs("Mannequin de Combat", 90, 'objet', 0, 100, 1.75 , 25, 10)
+diff1=[goblin,balai,mannequin]
 
 Chevalier=mobs("Chevalier de la Craie", 100, 'humain', 0, 150, 1.75, 50, 15)
 mimik=mobs("Mimique Gourmand", 120, 'objet', 0, 150, 1.6, 60, 17)
+diff2=[goblin,balai,mannequin,Chevalier,mimik]
 
 garde=mobs('Garde du Tableau Noir', 200, 'esprit', 0, 200, 2, 100, 20)
 loup=mobs('Loup des Ombres', 150, 'esprit', 0, 200, 2.2, 120, 25)
-cake=mobs('Gâteau Mutant', 250, 'esprit', 0, 200, 1.8, 135, 30)
+cake=mobs('Gâteau Mutant', 250, 'esprit', 0, 20, 1.8, 135, 30)
+diff3=[Chevalier,mimik,garde,loup,cake]
 
 Arnaud=mobs("M. Arnaud", 1500, 'humain', 0, 1000, 1, 50000, 300)
 Ethan_boss=mobs("Éthan", 750, 'humain', 0, 500, 2, Ethan.argent/4, 100*Ethan.lvl)
@@ -206,7 +212,7 @@ def lvlup():
         while i.xp>=100:
             i.degat+=0.2
             i.lvl+=1
-            i.vie*=1.15
+            i.vie=i.get_maxvie()
             i.xp-=100
             print("Félicitation ! " + i.nom + " a augmenté d'un niveau, il est maintenant niveau " + str(i.lvl)+ ".")
 
@@ -316,7 +322,7 @@ def attack_enemi(enemi, List_player):
     for i in List_player:
         if i.vie<=0:
             List_player.remove(i)
-        elif character.vie<=0:
+        elif i.nom==character.nom and i.vie<0:
             gameover()
     perso=choice(List_player)
     perso.vie-=5*enemi.degat
@@ -330,37 +336,12 @@ def rdm_enemi():
     if diff==12:
         enemi=mini_boss1
     if diff==1:
-        enemi1=randint(0,2)
-        if enemi1==0:
-            enemi=goblin
-        elif enemi1==1:
-            enemi=balai
-        elif enemi1==2:
-            enemi=mannequin
+        enemi=choice(diff1)
     if diff==2:
-        enemi1=randint(0,4)
-        if enemi1==0:
-            enemi=goblin
-        elif enemi1==1:
-            enemi=balai
-        elif enemi1==2:
-            enemi=mannequin
-        elif enemi1==3:
-            enemi=Chevalier
-        elif enemi1==4:
-            enemi=mimik
+        enemi=choice(diff2)
     if diff==3:
-        enemi1=randint(0,4)
-        if enemi1==0:
-            enemi=garde
-        elif enemi1==1:
-            enemi=cake
-        elif enemi1==2:
-            enemi=loup
-        elif enemi1==3:
-            enemi=Chevalier
-        elif enemi1==4:
-            enemi=mimik
+        enemi=choice(diff3)
+    enemi.pv=enemi.pv_max
     return enemi
 
 def fight():
@@ -404,7 +385,7 @@ def boss_fight(IsArnaudDead):
                     print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
                 cible,a,objet_vole_ce_tour,temp_objet=attack_arnaud(enemi,List_player,bp)
                 print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
-                if objet_vole_ce_tour!=0:
+                if objet_vole_ce_tour!=0:   # bug car rend juste apres l'attaque + attaque deux fois jpp
                     objetprecedent=objet_vole_ce_tour
                 if objetprecedent!=None:
                     objetprecedent=temp_objet
@@ -419,7 +400,6 @@ def boss_fight(IsArnaudDead):
                     print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
                 cible=attack_ethan(enemi,List_player,bp)
                 print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
-
         if totalpv(List_player)>0:
             for i in List_player:
                 i.xp+=enemi.xp
@@ -432,8 +412,6 @@ def boss_fight(IsArnaudDead):
         print("Vous ne pouvez pas vous battre car vous n'avez pas d'arme.")
         armurerie()
         fight()
-
-
 
 def attack_arnaud(enemi, List_player, bp):
     for i in List_player:
@@ -481,7 +459,6 @@ def attack_arnaud(enemi, List_player, bp):
         elif a==4:
             print("Monsieur Arnaud : Je me rend ! Ne m'attaquez plus !")
     return perso, a, objet_vole_ce_tour, temp_objet
-
 
 def attack_ethan(enemi, List_player):
     if 500<enemi.pv<=750:       # phase 1
@@ -756,9 +733,16 @@ def armurerie():
                     print("Vous n'avez pas assez d'argent pour acheter ceci")
                     shop=0
 
-armurerie()
+while True:
+    List_player=[character] ; stade_equipe=3
+    fight()
+
+'''
 List_player=[character, Andy, Nath] ; stade_equipe=1
 boss_fight(IsArnaudDead=0)
+'''
+
+
 
 '''
 Boss Fight - Arnaud
