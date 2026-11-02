@@ -894,6 +894,7 @@ print(Fore.LIGHTBLACK_EX + "Andy : Je suis musicien. Attirer l'attention, c'est 
 print(Fore.BLUE + character.nom + " : Ton métier va nous faire arrêter. "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Tu vois ? Tu comprends déjà les difficultés de la vie d'artiste." + Fore.WHITE + "\nNarrateur : Les coups deviennent plus violents. "); input()
 print(Fore.CYAN + "Garde : DERNIER AVERTISSEMENT !"); 
+
 choix=int(input(Fore.WHITE + "CHOIX 1 — Que choix ferait vous ?\n1 = Aider Andy à bloquer la porte.\n2 = Se cacher derrière le comptoir.\n3 = Fuir par la porte arrière.\n"))
 
 if choix==1:
@@ -1709,7 +1710,7 @@ print(Fore.YELLOW + "Ferdinand : Donc nous allons peut-être risquer notre vie p
 print(Fore.LIGHTBLACK_EX + "Andy : Enfin, quelqu'un qui comprend la logique de nos aventures."); input()
 print(Fore.MAGENTA + "Ethan : Nous n'avons pas beaucoup de temps. Les gardes déplacent régulièrement les objets sensibles. Si le sceau est encore dans la bibliothèque, il ne le restera pas longtemps."); input()
 print(Fore.BLUE + character.nom + " : Alors nous devons entrer cette nuit."); input()
-print(Fore.RED + "Nathaniel : Il existe plusieurs moyens."); input()
+print(Fore.RED + "Nathaniel : Il existe plusieurs moyens."+Fore.RESET); input()
 
 #############################################################
 #                                                           #
@@ -1835,7 +1836,7 @@ print(Fore.WHITE + "Narrateur : Le groupe se dirige vers une porte secondaire. E
 print(Fore.LIGHTBLACK_EX + "Andy : Je voudrais signaler que je déteste les bibliothèques.")
 print(Fore.RED + "Nathaniel : Tu disais pourtant aimer les livres.")
 print(Fore.LIGHTBLACK_EX + "Andy : J'aime les livres qui ne sont pas protégés par des hommes armés.")
-print(Fore.WHITE + "Narrateur : Ils traversent une petite salle de lecture et barricadent la porte.")
+print(Fore.WHITE + "Narrateur : Ils traversent une petite salle de lecture et barricadent la porte."+ Fore.RESET)
 
 choix=int(input("Que faire des documents ?\n1 = Les emporter tous.\n2 = Ne prendre que le plan du sanctuaire.\n3 = Détruire les documents compromettants\n"))
 
@@ -1856,7 +1857,7 @@ elif choix == 3:
     print(Fore.RED + "Nathaniel : Alors nous trouverons un moyen de les protéger.")
 
 if choix==1 or choix==3:
-    req_EvilEnding=int(input("Souhaitez vous revenir sur votre décision ?\n1 = OUI\n2 = NON"))
+    req_EvilEnding=int(input(Fore.RESET + "Souhaitez vous revenir sur votre décision ?\n1 = OUI\n2 = NON"))
     if choix==1:
         print(Fore.BLUE + character.nom + " : Vous êtes vraiment sûr qu'on ne devrait pas les détruire ? Elles pourraient vraiment nous attirer des problèmes")
         print(Fore.RED + "Nathaniel : Oui, il faut impérativement que la vérité ne soit surtout pas détruite.")
@@ -1906,7 +1907,7 @@ print(Fore.YELLOW + "Ferdinand : Je ne suis pas fatigué.")
 print(Fore.WHITE + "Narrateur : Il bâille.")
 print(Fore.LIGHTBLACK_EX + "Andy : Impressionnant. Même ton corps ne croit pas à tes mensonges.")
 print(Fore.WHITE + "Narrateur : Le groupe se prépare pour la dernière étape de son voyage. Dans un coin sombre, Ethan sort discrètement le fragment noir qu'il avait récupéré dans la boulangerie.")
-print(Fore.MAGENTA + "Ethan, *à voix basse* : Encore un peu de patience.")
+print(Fore.MAGENTA + "Ethan, *à voix basse* : Encore un peu de patience."+ Fore.RESET)
 
 farm=2
 while farm!=1:
@@ -2055,7 +2056,7 @@ print(Fore.YELLOW + "Ferdinand : C'était une stratégie.")
 print(Fore.LIGHTBLACK_EX + "Andy : La stratégie du poing douloureux.")
 print(Fore.WHITE + "Narrateur : Le groupe rejoint un escalier qui descend vers le sanctuaire.") 
 
-choix=int(input("Comment réagit le character.nom à la trahison ?\n1 = « Je te ferai payer ce que tu as fait. »\n2 = « Il est encore temps de renoncer. »\n3 = « Tu n'as jamais été notre ami. »\n")) 
+choix=int(input(Fore.RESET + "Comment réagit le character.nom à la trahison ?\n1 = « Je te ferai payer ce que tu as fait. »\n2 = « Il est encore temps de renoncer. »\n3 = « Tu n'as jamais été notre ami. »\n")) 
 
 if choix == 1:
     print(Fore.BLUE + character.nom + " : Tu as trahi des gens qui te faisaient confiance. Je ne te laisserai pas utiliser cet artefact.")
@@ -2197,9 +2198,6 @@ print(Fore.LIGHTBLACK_EX + "Andy : Bon. Je retire tout ce que j'ai dit sur les p
 print(Fore.YELLOW + "Ferdinand : On ne peut pas abandonner maintenant !")
 print(Fore.BLUE + character.nom + " : Ensemble !")
 
-
-
-
 #############################################################
 #                                                           #
 #   Act 6 - Scène 9                                         #
@@ -2207,7 +2205,7 @@ print(Fore.BLUE + character.nom + " : Ensemble !")
 #                                                           #
 #############################################################
 
-print("Que ferai vous du coeur de Bedrock ?")
+print(Fore.RESET + "Que ferai vous du coeur de Bedrock ?")
 Print("1 : Détuitre le Coeur de Bedrock.")
 if Req_TrueEnding==1:
     print("2 : Convaincre Ethan de lâcher le Coeur")
@@ -2292,7 +2290,6 @@ elif ending == 3 and req_EvilEnding == 1:
 
 
 elif ending == 2:
-    print("Narrateur : Condition : Collecter les archives royales et choisir plusieurs fois de laisser une chance à Ethan.")
     print("Narrateur : Après la bataille, Nathaniel retrouve une lettre dans les affaires d'Ethan. Elle a été écrite par son père avant sa disparition.")
     print("Nathaniel : J'ai trouvé quelque chose.")
     print(character.nom + " : Qu'est-ce que c'est ?")
@@ -2324,5 +2321,12 @@ elif ending == 2:
     print("Andy : Parce que je me compte dedans. Je suis humble.")
     print("Nathaniel : C'est la chose la moins crédible que tu aies jamais dite.")
     print("Andy : Merci. Je travaille dur pour rester cohérent.")
-    print("Narrateur : Le groupe s'éloigne sur la route, tandis que le soleil se lève sur Monté Cristo.")
+
+# Crédits
+print("------------------------\n"
+    + "Développeur : Nathaniel\n"
+    + "Écriture de l'histoire et playtesteur : Andy\n"
+    + "Support moral : Ferdinand\n"
+    + "------------------------"
+    + "MERCI D'AVOIR JOUÉ !!!")
 
