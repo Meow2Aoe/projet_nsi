@@ -99,8 +99,9 @@ def fight():
             for k in List_player:
                 affichage_combat(k, enemi, List_player)
                 print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
-            cible=attack_enemi(enemi,List_player)
-            print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
+            if enemi.pv>0:    
+                cible=attack_enemi(enemi,List_player)
+                print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
         for i in List_player:
             i.xp+=enemi.xp
         lvlup()
@@ -490,7 +491,8 @@ def shop_heal():
             + potion_heal3.nom + " ("+ str(potion_heal3.prix) + ")\n"
             + potion_mana1.nom + " ("+ str(potion_mana1.prix) + ")\n"
             + potion_mana2.nom + " ("+ str(potion_mana2.prix) + ")\n"
-            + potion_mana3.nom + " ("+ str(potion_mana3.prix) + ")\n"))
+            + potion_mana3.nom + " ("+ str(potion_mana3.prix) + ")\n"
+            + "7 = Partir"))
             if achat==1:
                 quantity=int(input("Combien voulez vous en achetez ?\n"))
                 if i.argent>=potion_heal1.prix*quantity:
@@ -499,7 +501,7 @@ def shop_heal():
                     print("Vous avez achetés " + str(quantity) + " de fiole de soin ! (vous avez maintenant " + str(i.argent) + ")")
                 else:
                     print("Vous n'avez pas assez d'argent pour acheter ceci (vous avez maintenant " + str(i.argent) + ").")
-            if achat==2:
+            elif achat==2:
                 quantity=int(input("Combien voulez vous en achetez ?\n"))
                 if i.argent>=potion_heal2.prix*quantity:
                     potion_heal2.quantite+=quantity
@@ -507,7 +509,7 @@ def shop_heal():
                     print("Vous avez achetés " + str(quantity) + " de potion de soin ! (vous avez maintenant " + str(i.argent) + ")")
                 else:
                     print("Vous n'avez pas assez d'argent pour acheter ceci (vous avez maintenant " + str(i.argent) + ").")
-            if achat==3:
+            elif achat==3:
                 quantity=int(input("Combien voulez vous en achetez ?\n"))
                 if i.argent>=potion_heal3.prix*quantity:
                     potion_heal3.quantite+=quantity
@@ -515,7 +517,7 @@ def shop_heal():
                     print("Vous avez achetés " + str(quantity) + " de patch de soin ! (vous avez maintenant " + str(i.argent) + ")")
                 else:
                     print("Vous n'avez pas assez d'argent pour acheter ceci (vous avez maintenant " + str(i.argent) + ").")
-            if achat==4:
+            elif achat==4:
                 quantity=int(input("Combien voulez vous en achetez ?\n"))
                 if i.argent>=potion_mana1.prix*quantity:
                     potion_mana1.quantite+=quantity
@@ -523,7 +525,7 @@ def shop_heal():
                     print("Vous avez achetés " + str(quantity) + " de fiole de mana ! (vous avez maintenant " + str(i.argent) + ")")
                 else:
                     print("Vous n'avez pas assez d'argent pour acheter ceci (vous avez maintenant " + str(i.argent) + ").")
-            if achat==5:
+            elif achat==5:
                 quantity=int(input("Combien voulez vous en achetez ?\n"))
                 if i.argent>=potion_mana2.prix*quantity:
                     potion_mana2.quantite+=quantity
@@ -531,7 +533,7 @@ def shop_heal():
                     print("Vous avez achetés " + str(quantity) + " de potion de mana ! (vous avez maintenant " + str(i.argent) + ")")
                 else:
                     print("Vous n'avez pas assez d'argent pour acheter ceci (vous avez maintenant " + str(i.argent) + ").")
-            if achat==6:
+            elif achat==6:
                 quantity=int(input("Combien voulez vous en achetez ?\n"))
                 if i.argent>=potion_mana3.prix*quantity:
                     potion_mana3.quantite+=quantity
@@ -539,6 +541,8 @@ def shop_heal():
                     print("Vous avez achetés " + str(quantity) + " de fiole de soin ! (vous avez maintenant " + str(i.argent) + ")")
                 else:
                     print("Vous n'avez pas assez d'argent pour acheter ceci (vous avez maintenant " + str(i.argent) + ").")
+            elif achat==7:
+                pass
         finished=int(input("Mathieu le vendeur : Ce sera tout ?\n1 = OUI\n2 = NON\n"))
 
 # FONCTION POUR LE GAMEOVER (WIP)
@@ -567,8 +571,9 @@ def boss_fight(IsArnaudDead):
                 for k in List_player:
                     affichage_combat(k, enemi, List_player)
                     print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
-                cible,a,objet_vole_ce_tour,temp_objet=attack_arnaud(enemi,List_player,bp)
-                print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
+                if enemi.pv<0:
+                    cible,a,objet_vole_ce_tour,temp_objet=attack_arnaud(enemi,List_player,bp)
+                    print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
                 if objet_vole_ce_tour!=0:
                     objetprecedent=objet_vole_ce_tour
                 if objetprecedent!=None:
@@ -656,8 +661,8 @@ starter_cook=arme("Couteau à pain", 1, 5, 50)
 
 tier1_sword=arme("Katana de Yone", 1, 25,350)
 tier1_bow=arme("Arc à pouli", 1, 25, 350)
-tier1_staff=arme("", 1, 25, 350)
-tier1_music=arme("", 1, 25, 350)
+tier1_staff=arme("Sceptre de la trahison", 1, 25, 350)
+tier1_music=arme("Le triangle", 1, 25, 350)
 tier1_cook=arme("Couteau à beurre", 1, 25, 350)
 
 # tier 2 weapon
@@ -665,16 +670,16 @@ tier1_cook=arme("Couteau à beurre", 1, 25, 350)
 tier2_sword=arme("Rapière d'Arès", 1, 25,750)
 tier2_bow=arme("Arc de la déese d'Arthémis", 1, 25, 750)
 tier2_staff=arme("Aghanim's scepter", 1, 25, 750)
-tier2_music=arme("Harpe de Apollon", 1, 25, 750)
+tier2_music=arme("Harpe d'Apollon", 1, 25, 750)
 tier2_cook=arme("Dague cuisinière", 1, 25, 750)
 
 #ultimate weapon
 
-ultimate_sword=arme("...", 5, 50,1250)
+ultimate_sword=arme("Baguette de Pain Traditionnelle Française", 5, 50,1250)
 ultimate_bow=arme("M4A1", 5, 50, 1250)
 ultimate_staff=arme("", 5, 50, 1250)
 ultimate_music=arme("Méga Ukulele", 5, 50, 1250)
-ultimate_cook=arme("Baguette de Pain Traditionnelle Française", 5, 50, 1250)
+ultimate_cook=arme("Alan Food Challenge", 5, 50, 1250)
 Ferdi_sword=arme("L'épée de Fertiplouf", 10, 6969, 50)
 shadow_scythe=arme("Faux des ombres", 50, 100, 0)
 
@@ -953,7 +958,7 @@ if choix==1 or choix==2:
     print(Fore.BLUE + character.nom + " : Je crois que je préfère rester ici." + Fore.WHITE + "\nNarrateur : Les gardes dégainent leurs armes. "); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Bon, je voulais éviter d'en arriver là…" + Fore.RESET); input()
 
-    List_player=[character, Andy] ; diff=10
+    List_player=[character, Andy] ; diff=10 ; did_fight=1
     fight()
 
     print(Fore.WHITE + "Narrateur : Après plusieurs échanges, les gardes finissent par reculer. "); input()
@@ -1012,8 +1017,10 @@ if choix==2:
 if choix==3:
     print(Fore.BLUE + character.nom + " : Je préfère éviter les problèmes. Je ne suis pas un héros. "); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Bonne nouvelle : moi non plus. Je suis musicien. "); input()
-    print(Fore.BLUE + character.nom + " : Tu viens pourtant de combattre des gardes. "); input()
-    print(Fore.LIGHTBLACK_EX + "Andy : C'était une répétition.  Mais pour l'instant, je dois y aller, j’ai quelque chose à faire. Essaye de découvrir les environs avant que je ne revienne." + Fore.WHITE + "\nNarrateur : Andy décide de partir."+ Fore.RESET); input()
+    if did_fight==1:
+        print(Fore.BLUE + character.nom + " : Tu viens pourtant de combattre des gardes. "); input()
+        print(Fore.LIGHTBLACK_EX + "Andy : C'était une répétition.  Mais pour l'instant, je dois y aller, j’ai quelque chose à faire. Essaye de découvrir les environs avant que je ne revienne." + Fore.WHITE + "\nNarrateur : Andy décide de partir."+ Fore.RESET); input()
+    print(Fore.LIGHTBLACK_EX + "Andy : Mais pour l'instant, je dois y aller, j’ai quelque chose à faire. Essaye de découvrir les environs avant que je ne revienne." + Fore.WHITE + "\nNarrateur : Andy décide de partir."+ Fore.RESET); input()
 farm=1
 while farm!=2:
     freetime=int(input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n"))
