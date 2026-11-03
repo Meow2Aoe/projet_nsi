@@ -32,6 +32,7 @@ class mobs:
         self.degat=degat
         self.argent=argent
         self.pv=pv
+        self.pv_max=pv
         self.xp=xp
         self.mana=mana
 
