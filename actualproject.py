@@ -1031,12 +1031,12 @@ while farm!=2:
         armurerie()
     elif freetime==3:
         shop_heal()
-    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON"))
+    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n"))
 print(Fore.WHITE + "Narreteur : Après votre temps libre d'aller vous endormir dans une ruelle allumée par un lampadaire défectueux."); input()
 
 #############################################################
 #                                                           #
-#   Act 1 - Scène 4                                         #
+#   Act 1 - Scène 5                                         #
 #   le cri du marchand                                      #
 #                                                           #
 #############################################################
@@ -1044,7 +1044,7 @@ print(Fore.WHITE + "Narreteur : Après votre temps libre d'aller vous endormir d
 print(Fore.WHITE + "Narrateur : Le lendemain " + character.nom + " poursuit sa route. Les rues deviennent plus animées à mesure qu'il approche de la place du marché. Une voix puissante retentit au loin." ); input()
 print(Fore.CYAN + "Inconnu : JE VAIS TE FAIRE AVALER CETTE ÉPÉE ! "); input()
 print(Fore.BLUE + character.nom + " : ... Quel super début de journée..."); input()
-print("On voit un homme immense, un marchand terrorisé et une épée cassée en deux.");input()
+print(Fore.WHITE + "Narrateur : On voit un homme immense, un marchand terrorisé et une épée cassée en deux.");input()
 
 #############################################################
 #                                                           #
@@ -1468,7 +1468,7 @@ while farm!=1:
         armurerie()
     elif freetime==3:
         shop_heal()
-    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON"))
+    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n"))
 print(Fore.WHITE + "Narrateur : Après ce temps libre, les joyeux lurons allèrent dans une auberge pour la nuit avant de partir pour un très long voyage le lendemain."); input()
 
 #############################################################
@@ -1864,7 +1864,7 @@ elif choix == 3:
     print(Fore.RED + "Nathaniel : Alors nous trouverons un moyen de les protéger.")
 
 if choix==1 or choix==3:
-    req_EvilEnding=int(input(Fore.RESET + "Souhaitez vous revenir sur votre décision ?\n1 = OUI\n2 = NON"))
+    req_EvilEnding=int(input(Fore.RESET + "Souhaitez vous revenir sur votre décision ?\n1 = OUI\n2 = NON\n"))
     if choix==1:
         print(Fore.BLUE + character.nom + " : Vous êtes vraiment sûr qu'on ne devrait pas les détruire ? Elles pourraient vraiment nous attirer des problèmes")
         print(Fore.RED + "Nathaniel : Oui, il faut impérativement que la vérité ne soit surtout pas détruite.")
@@ -1926,7 +1926,7 @@ while farm!=1:
         armurerie()
     elif freetime==3:
         shop_heal()
-    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON"))
+    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n"))
 
 #############################################################
 #                                                           #
