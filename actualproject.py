@@ -564,7 +564,7 @@ def bossfightrdm(IsArnaudDead):
     if IsArnaudDead==0:
         enemi=Arnaud
     else:
-        enemi==Ethan_boss
+        enemi=Ethan_boss
     return enemi
 
 # FONCTION DU SYSTEME DE FIGHT CONTRE LES BOSS FINAUX
@@ -608,7 +608,7 @@ def boss_fight(IsArnaudDead):
     else:
         print("Vous ne pouvez pas vous battre car vous n'avez pas d'arme.")
         armurerie()
-        fight()
+        boos_fight(IsArnaudDead)
 
 # FONCTION ATTAQUE DU BOSS ARNAUD
 def attack_arnaud(enemi, List_player, bp):
