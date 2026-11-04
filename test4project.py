@@ -468,8 +468,9 @@ def attack_ethan(enemi, List_player):
     if enemi.pv<250:            # phase 3
         pass
 
-def gameover():
-    pass
+def gameover(character):
+    if character.vie<=0:
+        print("Grand Sage : Vous avez échouez à votre tâche, ")
 
 def shop_heal():
     print("-----------------------------------\nMathieu le vendeur : Bien le bonjour ! Qu'est ce qu'il vous faudrait ?")
