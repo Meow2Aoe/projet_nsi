@@ -856,7 +856,13 @@ print(Fore.LIGHTBLACK_EX + "Andy : Je préfère « génie incompris ». "); inpu
 print(Fore.BLUE + character.nom + " : Par qui ? "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Par tout le monde. C'est le principe." + Fore.WHITE + "\nNarrateur : Un court silence s'installe. Andy observe les vêtements poussiéreux de " + character.nom + "."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Tu viens de loin ? "); input()
-print(Fore.BLUE + character.nom + " : Assez loin. "); input()
+choix=int(input(Fore.RESET + "Qu'allez vous lui répondre ?\n1 =  « Je cherche simplement un endroit où dormir. »\n2 = « Je cherche quelque chose d'intéressant à vivre. »\n3 = « Ça ne te regarde pas. »\n"))
+if choix==1:
+    print("Andy : Dans ce cas, tu as choisi la mauvaise taverne. Ici, même les tables sont payantes.")
+if choix==2:
+    print(Fore.LIGHTBLACK_EX + "Andy : Excellent ! Tu viens de rencontrer l'homme le plus intéressant de cette pièce.")
+if choix==3:
+    print(Fore.LIGHTBLACK_EX + "Andy : Mystérieux, susceptible… On dirait le début d'une très mauvaise association.")
 print(Fore.LIGHTBLACK_EX + "Andy : Tu fuis quelqu'un ? "); input()
 print(Fore.BLUE + character.nom + " : Pourquoi cette question ? "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Parce que tu as la tête de quelqu'un qui a fui quelque chose."); input()
