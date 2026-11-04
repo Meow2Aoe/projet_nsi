@@ -1,3 +1,7 @@
+'''
+made with love
+'''
+
 from time import * ; from random import * ; from colorama import *
 totalheal=0
 a=0
@@ -319,13 +323,11 @@ def attack(k,enemi):
     return enemi
 
 def attack_enemi(enemi, List_player):
-    for i in List_player:
-        if i.vie<=0:
-            List_player.remove(i)
-        elif i.nom==character.nom and i.vie<0:
-            gameover()
     perso=choice(List_player)
     perso.vie-=5*enemi.degat
+    if perso.vie<=0:
+        List_player.remove(perso)
+        print(perso.nom + " est mort")
     return perso
 
 def rdm_enemi():
@@ -352,9 +354,10 @@ def fight():
         while totalpv(List_player)>0 and enemi.pv>0:
             for k in List_player:
                 affichage_combat(k, enemi, List_player)
-                print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
-            cible=attack_enemi(enemi,List_player)
-            print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
+                print(k.nom + " attaque  ->  il lui reste " + str(enemi.pv) + "pv\n")
+            if enemi.pv>0:
+                cible=attack_enemi(enemi,List_player)
+                print(enemi.nom + " attaque " + cible.nom + "  ->  " + str(cible.vie) + "pv.")
         for i in List_player:
             i.xp+=enemi.xp
         lvlup()
@@ -382,9 +385,10 @@ def boss_fight(IsArnaudDead):
             while totalpv(List_player)>0 and Arnaud.pv>0:
                 for k in List_player:
                     affichage_combat(k, enemi, List_player)
-                    print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
-                cible,a,objet_vole_ce_tour,temp_objet=attack_arnaud(enemi,List_player,bp)
-                print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
+                    print(k.nom + " attaque  ->  il lui reste " + str(enemi.pv) + "pv\n")
+                if enemi.pv>0:
+                    cible,a,objet_vole_ce_tour,temp_objet=attack_arnaud(enemi,List_player,bp)
+                    print(enemi.nom + " attaque " + cible.nom + "  ->  " + str(cible.vie) + "pv.")
                 if objet_vole_ce_tour!=0:   # bug car rend juste apres l'attaque + attaque deux fois jpp
                     objetprecedent=objet_vole_ce_tour
                 if objetprecedent!=None:
@@ -397,9 +401,12 @@ def boss_fight(IsArnaudDead):
             while totalpv(List_player)>0 and Ethan_boss.pv>0:
                 for k in List_player:
                     affichage_combat(k, enemi, List_player)
-                    print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
-                cible=attack_ethan(enemi,List_player,bp)
-                print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
+                    print(k.nom + " attaque  ->  il lui reste " + str(enemi.pv) + "pv\n")
+                if enemi.pv>0:
+                    cible,a=attack_ethan(enemi,List_player,bp)
+                    print(enemi.nom + " attaque " + cible.nom + "  ->  " + str(cible.vie) + "pv.")
+                if a==5 and Req_TrueEnding==1:
+                    break
         if totalpv(List_player)>0:
             for i in List_player:
                 i.xp+=enemi.xp
@@ -462,15 +469,40 @@ def attack_arnaud(enemi, List_player, bp):
 
 def attack_ethan(enemi, List_player):
     if 500<enemi.pv<=750:       # phase 1
-        pass
+        a=randint(1,2)
+        if a==1:
+            perso=choice(List_player)
+            perso.vie-=20*enemi.degat
+        elif a==2:
+            enemi.degat+=0.2
     if 250<enemi.pv<=500:       # phase 2
-        pass
+        a=randint(1,2)
+        if a==1:
+            for i in List_player:
+                i.vie-=20*enemi.degat
+        elif a==2:
+            enemi.degat+=0.3
     if enemi.pv<250:            # phase 3
-        pass
-
-def gameover(character):
+        a=randint(0,5)
+        if a==0:
+            perso=choice(List_player)
+            perso.vie-=50*enemi.degat
+        elif a==1:
+            print("Ethan : Aie !")
+        elif a==2:
+            print("Ethan : Je vais vous tuer !")
+        elif a==3:
+            print("Ethan : Vous allez me le payer !")
+        elif a==4:
+            print("Ethan : Vous ne pouvez pas gagner !")
+        elif a==5 and Req_TrueEnding == 1:
+            print("Ethan : Je me rend ! Ne m'attaquez plus pitié !")
+    return perso, a
+def gameover():
     if character.vie<=0:
-        print("Grand Sage : Vous avez échouez à votre tâche, ")
+        print("Vous êtes mort ! Malheureusement, il n'y a pas de checkpoint hihi skill issue !")
+        sleep(2)
+        exit()
 
 def shop_heal():
     print("-----------------------------------\nMathieu le vendeur : Bien le bonjour ! Qu'est ce qu'il vous faudrait ?")
@@ -734,9 +766,6 @@ def armurerie():
                     print("Vous n'avez pas assez d'argent pour acheter ceci")
                     shop=0
 
-while True:
-    List_player=[character] ; stade_equipe=3
-    fight()
 
 '''
 List_player=[character, Andy, Nath] ; stade_equipe=1

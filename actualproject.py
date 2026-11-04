@@ -1,4 +1,9 @@
+'''
+made with love
+'''
+
 from time import * ; from random import * ; from colorama import *
+
 class chara:
     '''
     Classe pour la création du personnage contenant son nom, sa classe, sa vie, son type de magie, son mana et son * de dégat, le nom de l'arme, sa dura, le niveau, son xp et son argent
@@ -20,7 +25,9 @@ class chara:
 
     def get_maxvie(self):
         return int(self.vie_base*(1+0.15*(self.lvl-1)))
-
+    def set_maxvie(self):
+        self.vie=self.get_maxvie()
+        return self.vie
 class mobs:
     '''
     Classe pour la création des mobs : nom, pv, race (abandonné tbh), son type de magie (aussi mdrr), * de degat, argent drop et xp drop
@@ -35,7 +42,6 @@ class mobs:
         self.pv_max=pv
         self.xp=xp
         self.mana=mana
-
 class arme:
     '''
     Classe pour la création des armes : nom de l'arme, son * de degat, la dura et le prix a l'armurie
@@ -45,7 +51,6 @@ class arme:
         self.degat=degat
         self.dura=durabilite
         self.prix=prix
-
 class objet:
     '''
     Classe pour la création des objets : nom de l'objet, sa quantité dans le sac a dos, le prix au vendeur, sa rareté et son ID
@@ -63,6 +68,7 @@ class objet:
 def lookup_arme(List_player):
     for i in List_player:
         if i.dura==0:
+            print("Vous ne pouvez pas vous battre car " + i.nom + " n'a plus d'arme.")
             return 0
     return 1
 
@@ -95,14 +101,14 @@ def fight():
     arme_equipe=lookup_arme(List_player)
     if arme_equipe==1:
         enemi=rdm_enemi()
-        print("\nUn " + str(enemi.nom) + " apparait et il a " + str(enemi.pv) + " PV")
+        print("\nUn " + str(enemi.nom) + " apparait et il a " + str(enemi.pv) + "pv.")
         while totalpv(List_player)>0 and enemi.pv>0:
             for k in List_player:
                 affichage_combat(k, enemi, List_player)
-                print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
-            if enemi.pv>0:    
+                print(k.nom + " attaque  ->  il lui reste " + str(enemi.pv) + "pv.\n")
+            if enemi.pv>0:
                 cible=attack_enemi(enemi,List_player)
-                print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
+                print(enemi.nom + " attaque " + cible.nom + "  ->  " + str(cible.vie) + "pv.")
         for i in List_player:
             i.xp+=enemi.xp
         lvlup()
@@ -257,13 +263,11 @@ def backpack(bp, k):
 
 # FONCTION POUR LES ATTAQUES ENEMIS
 def attack_enemi(enemi, List_player):
-    for i in List_player:
-        if i.vie<=0:
-            List_player.remove(i)
-        elif i.nom==character.nom and i.vie<0:
-            gameover()
     perso=choice(List_player)
     perso.vie-=5*enemi.degat
+    if perso.vie<=0:
+        List_player.remove(perso)
+        print(perso.nom + " est mort")
     return perso
 
 def lvlup():
@@ -546,19 +550,16 @@ def shop_heal():
                 pass
         finished=int(input("Mathieu le vendeur : Ce sera tout ?\n1 = OUI\n2 = NON\n"))
 
-# FONCTION POUR LE GAMEOVER (WIP)
+# FONCTION POUR LE GAMEOVER
 def gameover():
-    pass
+    if character.vie<=0:
+        print("Vous êtes mort ! Malheureusement, il n'y a pas de checkpoint hihi skill issue !")
+        sleep(2)
+        exit()
 
 ### boss fight ###
 
 # FONCTION POUR CHOISIR LE BOSS
-def bossfightrdm(IsArnaudDead):
-    if IsArnaudDead==0:
-        enemi=Arnaud
-    else:
-        enemi==Ethan_boss
-    return enemi
 
 # FONCTION DU SYSTEME DE FIGHT CONTRE LES BOSS FINAUX
 def boss_fight(IsArnaudDead):
@@ -572,15 +573,15 @@ def boss_fight(IsArnaudDead):
                 for k in List_player:
                     affichage_combat(k, enemi, List_player)
                     print(k.nom + " attaque  ->  " + str(enemi.pv) + "\n")
-                if enemi.pv<0:
-                    cible,a,objet_vole_ce_tour,temp_objet=attack_arnaud(enemi,List_player,bp)
-                    print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
                 if objet_vole_ce_tour!=0:
                     objetprecedent=objet_vole_ce_tour
                 if objetprecedent!=None:
                     objetprecedent=temp_objet
                     print("Vous avez récuperer vos objets")
                     objetprecedent=0
+                if enemi.pv<0:
+                    cible,a,objet_vole_ce_tour,temp_objet=attack_arnaud(enemi,List_player,bp)
+                    print(enemi.nom + " attaque " + cible.nom + " -> " + str(cible.vie) + "pv.")
                 if a==4:
                     break
         elif enemi.nom==Ethan_boss:
@@ -646,6 +647,38 @@ def attack_arnaud(enemi, List_player, bp):
             print("Monsieur Arnaud : Je me rend ! Ne m'attaquez plus !")
     return perso, a, objet_vole_ce_tour, temp_objet
 
+# FONCTION ATTAQUE DU BOSS ETHAN
+def attack_ethan(enemi, List_player):
+    if 500<enemi.pv<=750:       # phase 1
+        a=randint(1,2)
+        if a==1:
+            perso=choice(List_player)
+            perso.vie-=20*enemi.degat
+        elif a==2:
+            enemi.degat+=0.2
+    if 250<enemi.pv<=500:       # phase 2
+        a=randint(1,2)
+        if a==1:
+            for i in List_player:
+                i.vie-=20*enemi.degat
+        elif a==2:
+            enemi.degat+=0.3
+    if enemi.pv<250:            # phase 3
+        a=randint(0,5)
+        if a==0:
+            perso=choice(List_player)
+            perso.vie-=50*enemi.degat
+        elif a==1:
+            print("Ethan : Aie !")
+        elif a==2:
+            print("Ethan : Je vais vous tuer !")
+        elif a==3:
+            print("Ethan : Vous allez me le payer !")
+        elif a==4:
+            print("Ethan : Vous ne pouvez pas gagner !")
+        elif a==5 and Req_TrueEnding == 1:
+            print("Ethan : Je me rend ! Ne m'attaquez plus pitié !")
+    return perso, a
 
 ##########################################
 
@@ -736,7 +769,7 @@ a=0 ; temp="" ; totalheal=0 ; diff=1 ; List_player=[] ; list_ferdi=[Ferdi] ; buy
 #   quick contexte + "character creator "                   #
 #                                                           #
 #############################################################
-print("AVANT DE COMMENCER À JOUER / LIRE IMPÉRACTIVEMENT !!!\nPour passer au dialogue suivant appuyer sur Entrée.\nLors des choix bien mettre les chiffres indiquées sinon il faut tout recommencer SURTOUT LORS DES COMBATS !\n"); input("ENTRÉE POUR PASSER")
+print("AVANT DE COMMENCER À JOUER / LIRE IMPÉRACTIVEMENT !!!\nPour passer au dialogue suivant appuyer sur Entrée.\nLors des choix bien mettre les chiffres indiquées sinon il faut tout recommencer SURTOUT LORS DES COMBATS !\nIl y a beaucoup de textes donc il faut avoir un certain temps devant soit (et oui c'est un j-rpg (sorte de plutôt lmao))\nUtiliser un shell qui casse pas les couleurs de préférence (*tousse* fish-shell bullshit *tousse*)\n"); input("ENTRÉE POUR PASSER")
 
 print(Fore.WHITE + "Act 1 : Prologue : La rencontre")
 print(Fore.WHITE + "Narrateur : C'est une belle fin de journée d'été dans le grand royaume de Monté-Cristo, après une dure journée à vagabondé, vous êtes allé au bar, vous avez bus et vous avez finit par vous endormir.") ; input()
@@ -748,7 +781,7 @@ while temp!="oui":
     if temp!="oui":
         name=str(input(Fore.WHITE + "Entrez le nom du personnage : "))
 print(Fore.GREEN + "Grand Sage : Un nom très exotique, " + name + "... Enfin passons, aujourd'hui j'apparait dans votre inconscient pour vous offrir un pouvoir et vous permettre de sortir de votre routine.") ; input()
-print(Fore.GREEN + "Grand Sage : Tout d'abord, quel classe choissirez vous ?")
+print(Fore.GREEN + "Grand Sage : Tout d'abord, quel classeList_player choissirez vous ?")
 laclasse=int(input(Fore.WHITE +"\nChoississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n"))
 temp=""
 while temp!="oui":
@@ -807,7 +840,7 @@ print(Fore.GREEN + "Grand Sage : Bien, bien... " + character.nom + " votre nouve
 print(Fore.WHITE + "Narrateur : Écran noir. On entend des conversations, des rires, des verres qui s'entrechoquent et une luthe qui joue une mélodie un peu trop forte. Une voix résonne au loin.") ; input()
 print(Fore.CYAN + "Tavernier : Hé ! Toi ! Réveille-toi !" + Fore.WHITE + "\nNarrateur : Rien."); input()
 print(Fore.CYAN + "Tavernier : Je te préviens, si tu continues à dormir sur cette table, je te facture la nuit !" + Fore.WHITE + "\nNarrateur : " + character.nom + " ouvre lentement les yeux. "); input()
-print(Fore.BLUE + character.nom + " : … C'est déjà le matin ? "); input()
+print(Fore.BLUE + character.nom + " : ... C'est déjà le matin ? "); input()
 print(Fore.CYAN + "Tavernier : Non. C'est toujours hier soir. Tu as juste réussi à dormir pendant que tout le monde vivait sa vie. "); input()
 print(Fore.BLUE + character.nom + " : Ah." + Fore.WHITE + "\nNarrateur : " + character.nom + " tente de se redresser, puis se rassoit immédiatement. "); input()
 print(Fore.BLUE + character.nom +  " : Pourquoi j'ai l'impression qu'un troupeau de chevaux m'est passé sur le crâne ?" ); input()
@@ -862,7 +895,7 @@ if choix==1:
 if choix==2:
     print(Fore.LIGHTBLACK_EX + "Andy : Excellent ! Tu viens de rencontrer l'homme le plus intéressant de cette pièce.")
 if choix==3:
-    print(Fore.LIGHTBLACK_EX + "Andy : Mystérieux, susceptible… On dirait le début d'une très mauvaise association.")
+    print(Fore.LIGHTBLACK_EX + "Andy : Mystérieux, susceptible... On dirait le début d'une très mauvaise association.")
 print(Fore.LIGHTBLACK_EX + "Andy : Tu fuis quelqu'un ? "); input()
 print(Fore.BLUE + character.nom + " : Pourquoi cette question ? "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Parce que tu as la tête de quelqu'un qui a fui quelque chose."); input()
@@ -883,7 +916,7 @@ print(Fore.CYAN + "Villageois : Fermez les portes ! Les gardes d'Arnaud arrivent
 print(Fore.CYAN + "Tavernier : Encore ? "); input()
 print(Fore.CYAN + "Villageois : Ils arrêtent les gens sur la place ! Ils ont emmené le forgeron ce matin !"); input()
 print(Fore.CYAN + "Client : Qu'a-t-il fait ? "); input()
-print(Fore.CYAN + "Villageois : Il aurait refusé de fabriquer des armes pour les soldats. "); input()
+print(Fore.CYAN + "Villageois : Il aurait refusé de fabriqueList_playerr des armes pour les soldats. "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Ou alors il a fabriqué une épée trop courte. Je connais le problème."); input()
 print(Fore.BLUE + character.nom + " : Tu connais le forgeron ? "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Il m'a vendu une corde trop courte une fois. "); input()
@@ -892,7 +925,7 @@ print(Fore.LIGHTBLACK_EX + "Andy : Aucun. Mais je lui en veux encore.") ; input(
 print(Fore.CYAN + "Villageois : Ce n'est pas drôle ! Ils arrêtent tous ceux qui critiquent Monsieur Arnaud !" + Fore.WHITE + "\nNarrateur : Le sourire d'Andy s'efface légèrement. "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Ce n'est pas nouveau. "); input()
 print(Fore.BLUE + character.nom + " : Tu as l'air de bien connaître le sujet. "); input()
-print(Fore.LIGHTBLACK_EX + "Andy : Disons que certaines de mes chansons ont un public… particulier. "); input()
+print(Fore.LIGHTBLACK_EX + "Andy : Disons que certaines de mes chansons ont un public... particulier. "); input()
 print(Fore.BLUE + character.nom + " : Des fans ? "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Des gardes.") ; input()
 print(Fore.BLUE + character.nom + " : Ce ne sont pas des fans. "); input()
@@ -963,9 +996,10 @@ if choix==1 or choix==2:
     print(Fore.BLUE + character.nom + " : Je viens juste de me réveiller. Je n'ai pas encore eu le temps de m'opposer à qui que ce soit. "); input()
     print(Fore.CYAN + "Garde : Alors tu peux commencer par nous suivre. "); input()
     print(Fore.BLUE + character.nom + " : Je crois que je préfère rester ici." + Fore.WHITE + "\nNarrateur : Les gardes dégainent leurs armes. "); input()
-    print(Fore.LIGHTBLACK_EX + "Andy : Bon, je voulais éviter d'en arriver là…" + Fore.RESET); input()
+    print(Fore.LIGHTBLACK_EX + "Andy : Bon, je voulais éviter d'en arriver là..." + Fore.RESET); input()
 
     List_player=[character, Andy] ; diff=10 ; did_fight=1
+    Andy.set_maxvie() ; character.set_maxvie()
     fight()
 
     print(Fore.WHITE + "Narrateur : Après plusieurs échanges, les gardes finissent par reculer. "); input()
@@ -973,7 +1007,7 @@ if choix==1 or choix==2:
     print(Fore.LIGHTBLACK_EX + "Andy : Dites-lui que je prends les réservations pour mon prochain concert !"); input()
     print(Fore.BLUE + character.nom + " : Andy ! "); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Quoi ? Il faut bien faire de la publicité." + Fore.WHITE + "\nNarrateur : Les gardes s'enfuient. La taverne est en désordre. "); input()
-    print(Fore.CYAN + "Tavernier : Ma table… "); input()
+    print(Fore.CYAN + "Tavernier : Ma table..."); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Elle est morte en héros. "); input()
     print(Fore.CYAN + "Tavernier : C'était une table en chêne !") ; input()
     print(Fore.BLUE + character.nom + " : Je vais vous aider à la réparer. "); input()
@@ -993,7 +1027,7 @@ print(Fore.LIGHTBLACK_EX + "Andy : Parce que je chante mieux que je ne me bats. 
 print(Fore.BLUE + character.nom + " : Ce n'est pas une réponse." + Fore.WHITE + "\nNarrateur : Andy s'arrête devant une affiche représentant Arnaud, le visage grave et une main levée en signe de paix."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Tu sais ce que cette affiche dit ? « La paix exige l'obéissance. » "); input()
 print(Fore.BLUE + character.nom + " : C'est une drôle de définition de la paix."); input()
-print(Fore.LIGHTBLACK_EX + "Andy : Exactement. Il a commencé par promettre de protéger les gens. Maintenant, il veut qu'ils aient peur de parler. Si tu critiques ses taxes, tu es un traître. Si tu racontes l'histoire d'avant son règne, tu es un agitateur. Si tu chantes une chanson qu'il n'aime pas… "); input()
+print(Fore.LIGHTBLACK_EX + "Andy : Exactement. Il a commencé par promettre de protéger les gens. Maintenant, il veut qu'ils aient peur de parler. Si tu critiques ses taxes, tu es un traître. Si tu racontes l'histoire d'avant son règne, tu es un agitateur. Si tu chantes une chanson qu'il n'aime pas... "); input()
 print(Fore.BLUE + character.nom + " : Tu es Andy.") ; input()
 print(Fore.LIGHTBLACK_EX + "Andy : Voilà. Tu suis." + Fore.WHITE + "\nNarrateur : Andy baisse les yeux vers sa luthe."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je ne prétends pas pouvoir renverser un gouvernement avec trois accords et une voix magnifique. "); input()
@@ -1006,7 +1040,7 @@ print(Fore.LIGHTBLACK_EX + "Andy : Avec ma luthe, mon intelligence, mon charme e
 print(Fore.BLUE + character.nom +" : Tu cherches quelqu'un qui sait donner des coups ? "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je ne voudrais pas te mettre la pression. "); input()
 
-choix=int(input(Fore.WHITE + "CHOIX 2 — Quelle est la réponse du " + character.nom + " ?\n1 = « Je vais t'aider à faire tomber Arnaud. »\n2 = « Je t'accompagne jusqu'à la prochaine ville. »\n3 = « Je ne veux pas d'ennuis.\n"))
+choix=int(input(Fore.WHITE + "Quelle est la réponse du " + character.nom + " ?\n1 = « Je vais t'aider à faire tomber Arnaud. »\n2 = « Je t'accompagne jusqu'à la prochaine ville. »\n3 = « Je ne veux pas d'ennuis.\n"))
 
 if choix==1:
     print(Fore.BLUE + character.nom + " : D'accord. Je vais t'aider. Mais je ne suis pas ton garde du corps. "); input()
@@ -1034,6 +1068,8 @@ while farm!=2:
     if freetime==1:
         List_player=[character] ; diff=1 ; stade_equipe=3
         fight()
+        if randint(1,10)==1:
+            character.set_maxvie()
     elif freetime==2:
         armurerie()
     elif freetime==3:
@@ -1048,7 +1084,7 @@ print(Fore.WHITE + "Narreteur : Après votre temps libre d'aller vous endormir d
 #                                                           #
 #############################################################
 
-print(Fore.WHITE + "Narrateur : Le lendemain " + character.nom + " poursuit sa route. Les rues deviennent plus animées à mesure qu'il approche de la place du marché. Une voix puissante retentit au loin." ); input()
+print(Fore.WHITE + "Narrateur : Le lendemain, " + character.nom + " poursuit sa route. Les rues deviennent plus animées à mesure qu'il approche de la place du marché. Une voix puissante retentit au loin." ); input()
 print(Fore.CYAN + "Inconnu : JE VAIS TE FAIRE AVALER CETTE ÉPÉE ! "); input()
 print(Fore.BLUE + character.nom + " : ... Quel super début de journée..."); input()
 print(Fore.WHITE + "Narrateur : On voit un homme immense, un marchand terrorisé et une épée cassée en deux.");input()
@@ -1077,7 +1113,7 @@ print(Fore.CYAN + "Marchand : Tu as demandé un délai hier ! "); input()
 print(Fore.YELLOW + "Ferdinand : Je suis quelqu'un de constant. "); input()
 print(Fore.BLUE + character.nom + " : Tu pourrais simplement t'excuser. "); input()
 print(Fore.YELLOW + "Ferdinand : Je me suis excusé auprès du rocher. "); input()
-print(Fore.BLUE + character.nom + " : … Tu es sérieux ? "); input()
+print(Fore.BLUE + character.nom + " : ... Tu es sérieux ? "); input()
 print(Fore.YELLOW + "Ferdinand : Il ne m'a pas répondu. "); input()
 print(Fore.BLUE + character.nom + " : Peut-être qu'il attendait que tu lui offres une épée."); input()
 print(Fore.YELLOW + "Ferdinand : Maintenant que tu le dis, c'est possible." + Fore.WHITE + "\nNarrateur : Le marchand se prend la tête entre les mains.") ; input()
@@ -1097,6 +1133,16 @@ print(Fore.YELLOW + "Ferdinand : Merci. "); input()
 print(Fore.BLUE + character.nom + " : Ce n'était pas un compliment. "); input()
 print(Fore.YELLOW + "Ferdinand : Je prends ce que je peux. "); input()
 
+choix=int(input("Que dire à Ferdinand ?\n1 = « Tu dois être pratique pour atteindre les étagères. »\n2 = « Tu dois faire peur à beaucoup de monde. »\n3 = « Tu as surtout l'air de manquer de discrétion. »\n"))
+
+if choix==1:
+    print("Ferdinand : C'est vrai. Je n'ai plus besoin de demander de l'aide.")
+if choix==2:
+    print("Ferdinand : Seulement aux gens qui se mettent devant moi.")
+if choix==3:
+    print("Ferdinand : Je peux être discret.")
+    print("Narrateur : Il fait tomber un panier en se retournant")
+    print(character.nom + " : Impressionnant...")
 
 #############################################################
 #                                                           #
@@ -1127,16 +1173,16 @@ print(Fore.YELLOW + "Ferdinand : Alors je vais perturber sa paix." + Fore.WHITE 
 print(Fore.BLUE + character.nom + " : Tu ne peux pas simplement leur parler ? "); input()
 print(Fore.YELLOW + "Ferdinand : Bien sûr que si." + Fore.WHITE + "\nNarrateur : Ferdinand s'avance vers les gardes avec un grand sourire."); input()
 print(Fore.YELLOW + "Ferdinand : Bonjour. Pourriez-vous partir avant que je vous jette dans la fontaine ? "); input()
-print(Fore.BLUE + character.nom+ " : Ce n'est pas vraiment ce que j'appelle parler ! "); input()
+print(Fore.BLUE + character.nom + " : Ce n'est pas vraiment ce que j'appelle parler ! "); input()
 print(Fore.YELLOW + "Ferdinand : Pourtant, j'ai utilisé des mots. "); input()
 print(Fore.CYAN + "Garde : Attrapez-les ! "); input()
 
-choix=int(input("CHOIX 1 — Comment " + character.nom + " réagit-il ?\n1 = Prendre la défense du marchand\n2 = Prendre la défense de Ferdinand\n3 = Proposer un arrangement\n"))
+choix=int(input("Comment " + character.nom + " réagit-il ?\n1 = Prendre la défense du marchand\n2 = Prendre la défense de Ferdinand\n3 = Proposer un arrangement\n"))
 
 if choix==1:
     print(Fore.BLUE + character.nom+" : Ferdinand, tu dois payer. Tu ne peux pas casser les affaires des gens et partir comme si de rien n'était. "); input()
     print(Fore.YELLOW + "Ferdinand : Je ne comptais pas partir comme si de rien n'était. "); input()
-    print(Fore.BLUE + character.nom+" : Ah bon ? "); input()
+    print(Fore.BLUE + character.nom +" : Ah bon ? "); input()
     print(Fore.YELLOW + "Ferdinand : Je comptais partir en courant. "); input()
     print(Fore.BLUE + character.nom + " : Ça ne règle pas le problème. "); input()
     print(Fore.YELLOW + "Ferdinand : Je commence à comprendre pourquoi les gens ne t'invitent pas aux fêtes. "); input()
@@ -1146,7 +1192,7 @@ if choix==2:
     print(Fore.BLUE + character.nom+" : Il a peut-être une bonne raison. Laisse-lui une chance de s'expliquer."); input()
     print(Fore.CYAN + "Marchand : Sa bonne raison, c'est qu'il a la force de casser tout ce qu'il touche !"); input()
     print(Fore.YELLOW + "Ferdinand : Ce n'est pas vrai." + Fore.WHITE + "\nNarrateur : Il se retourne et heurte accidentellement un présentoir. Plusieurs paniers tombent."); input()
-    print(Fore.YELLOW + "Ferdinand : … La plupart du temps." + Fore.WHITE + "\nNarrateur : Le marchand appelle les gardes." + character.nom + " se retrouve entraîné dans le conflit."); input()
+    print(Fore.YELLOW + "Ferdinand : ... La plupart du temps." + Fore.WHITE + "\nNarrateur : Le marchand appelle les gardes." + character.nom + " se retrouve entraîné dans le conflit."); input()
 
 if choix==3:
     print(Fore.BLUE + character.nom +" : Ferdinand aide le marchand pendant quelques jours et sa dette sera réglée."); input()
@@ -1160,6 +1206,7 @@ if choix==3:
     print(Fore.WHITE + "Narrateur : Ferdinand part se caché et " + character.nom + "  se retrouve à combattre les gardes tout seul."); input()
 
 List_player=[character]; diff=11
+character.set_maxvie()
 fight()
 
 #############################################################
@@ -1187,15 +1234,25 @@ print(Fore.YELLOW + "Ferdinand : C'était différent. "); input()
 print(Fore.CYAN + "Marchand : En quoi ? "); input()
 print(Fore.YELLOW + "Ferdinand : Je ne t'ai pas arrêté. "); input()
 print(Fore.WHITE + "Narrateur : " + character.nom + " remarque une caisse près de l'étal. Un symbole y est gravé : un cercle noir traversé d'une ligne rouge. "); input()
-print(Fore.BLUE + character.nom + " : Ce symbole… Tu sais ce qu'il signifie ? "); input()
-print(Fore.WHITE + "Narrateur :Le marchand pâlit. "); input()
+print(Fore.BLUE + character.nom + " : Ce symbole... Tu sais ce qu'il signifie ? "); input()
+print(Fore.WHITE + "Narrateur : Le marchand pâlit. "); input()
 print(Fore.CYAN + "Marchand : Il était sur les caisses que les gardes ont emportées."); input()
 print(Fore.BLUE + character.nom +" : Où les ont-ils prises ? "); input()
 print(Fore.CYAN + "Marchand : Dans une vieille chapelle, à l'est de la ville. Ils ont aussi emmené un homme qui vivait là. "); input()
 print(Fore.YELLOW + "Ferdinand : Un prêtre ? "); input()
-print(Fore.CYAN + "Marchand : Je crois. Un homme calme, toujours habillé en Blanc et doré. Il s'appelait Nathaniel."); input()
+print(Fore.CYAN + "Marchand : Je crois. Un homme calme, toujours habillé en noir et blanc doré. Il s'appelait Nathaniel."); input()
 print(Fore.BLUE +character.nom+ " : Il est encore là-bas ? "); input()
 print(Fore.CYAN + "Marchand : Je l'ignore. Mais si vous voulez en savoir davantage, vous devriez vous rendre à la chapelle. "); input()
+
+choix=int(input("Quelle question poser au marchand ?\n1 = « Pourquoi ces objets intéressent-ils autant Arnaud ? »\n2 = « Combien paient-ils pour ces objets ? »\n3 = « Et vous, vous avez déjà essayé de leur vendre quelque chose ? »\n"))
+
+if choix==1:
+    print("Marchand : Je l'ignore, mais ses hommes semblent chercher quelque chose de très précis.")
+if choix==2:
+    print("Marchand : Assez pour que certains oublient leurs principes.")
+if choix==3:
+    print("Marchand : Je tiens à ma boutique. Et à ma tête, si possible...")
+
 print(Fore.WHITE + "Narrateur : Ferdinand croise les bras. "); input()
 print(Fore.YELLOW + "Ferdinand : Alors nous allons à la chapelle. "); input()
 print(Fore.BLUE + character.nom+ " : Nous ? "); input()
@@ -1203,12 +1260,12 @@ print(Fore.YELLOW + "Ferdinand : Tu m'as aidé. Tu as l'air honnête. Et tu semb
 print(Fore.BLUE + character.nom + " : Je n'ai pas besoin de quelqu'un qui menace les fontaines. "); input()
 print(Fore.YELLOW + "Ferdinand : Je peux aussi menacer les puits. "); input()
 
-choix=int(input("CHOIX 2 — " + character.nom + " accepte-t-il Ferdinand ?\n1 = L'accepter dans le groupe\n2 = Lui demander de régler sa dette d'abord\n"))
+choix=int(input(character.nom + " accepte-t-il Ferdinand ?\n1 = L'accepter dans le groupe\n2 = Lui demander de régler sa dette d'abord\n"))
 
 if choix==1:
-    print(Fore.BLUE +character.nom + " : D'accord. Mais tu m'écoutes quand je te dis de ne pas foncer tête baissée.") ; input()
+    print(Fore.BLUE + character.nom + " : D'accord. Mais tu m'écoutes quand je te dis de ne pas foncer tête baissée.") ; input()
     print(Fore.YELLOW + "Ferdinand : Marché conclu ! "); input()
-    print(Fore.BLUE +character.nom + " : Tu viens de serrer la main d'un inconnu sans discuter. "); input()
+    print(Fore.BLUE + character.nom + " : Tu viens de serrer la main d'un inconnu sans discuter. "); input()
     print(Fore.YELLOW + "Ferdinand : Tu m'as aidé. C'est suffisant. "); input()
     print(Fore.WHITE + "Narrateur : Ferdinand rejoint le groupe. Il promet de faire des efforts pour réfléchir avant d'agir."); input()
 
@@ -1225,32 +1282,44 @@ if choix==2:
 #                                                           #
 #############################################################
 
-print(Fore.BLUE +character.nom + " et Ferdinand quittent le marché. La foule s'écarte devant la carrure imposante du combattant. "); input()
-print(Fore.BLUE +character.nom + " : Tu es toujours aussi calme ? "); input()
+print(Fore.BLUE + character.nom + " et Ferdinand quittent le marché. La foule s'écarte devant la carrure imposante du combattant. "); input()
+print(Fore.BLUE + character.nom + " : Tu es toujours aussi calme ? "); input()
 print(Fore.YELLOW + "Ferdinand : Je suis très calme. "); input()
-print(Fore.BLUE +character.nom + " : Tu as menacé un marchand, défié des gardes et parlé de jeter des gens dans une fontaine. "); input()
+print(Fore.BLUE + character.nom + " : Tu as menacé un marchand, défié des gardes et parlé de jeter des gens dans une fontaine. "); input()
 print(Fore.YELLOW + "Ferdinand : Et je ne me suis énervé qu'une seule fois. "); input()
-print(Fore.BLUE +character.nom + " : Quand ? "); input()
+print(Fore.BLUE + character.nom + " : Quand ? "); input()
 print(Fore.YELLOW + "Ferdinand : Quand tu as parlé de la fontaine. Je préfère les puits. "); input()
 print(Fore.WHITE + "Narrateur : " + character.nom + " soupire"); input()
 print(Fore.YELLOW + "Ferdinand : Tu sais, je ne suis pas un mauvais gars. "); input()
-print(Fore.BLUE +character.nom + " : Je n'ai pas dit ça. "); input()
+print(Fore.BLUE + character.nom + " : Je n'ai pas dit ça. "); input()
 print(Fore.YELLOW + "Ferdinand : Les gens pensent souvent que parce que je suis grand, je dois être violent."); input()
-print(Fore.BLUE +character.nom + " : Tu viens de menacer trois personnes en moins de dix minutes. "); input()
+print(Fore.BLUE + character.nom + " : Tu viens de menacer trois personnes en moins de dix minutes. "); input()
 print(Fore.YELLOW + "Ferdinand : C'est un mauvais exemple." + Fore.WHITE + "\nNarrateur : Il se gratte la tête, gêné. "); input()
 print(Fore.YELLOW + "Ferdinand : Mais je n'aime pas voir les gens se faire écraser. Le marchand avait raison pour l'épée. Je lui devais de l'argent. J'aurais dû régler ça autrement. "); input()
-print(Fore.BLUE +character.nom + " : Tu pourrais commencer par t'excuser. "); input()
+print(Fore.BLUE + character.nom + " : Tu pourrais commencer par t'excuser. "); input()
 print(Fore.YELLOW + "Ferdinand : Je l'ai fait. "); input()
-print(Fore.BLUE +character.nom + " : Tu lui as dit que le rocher était mal placé. "); input()
+print(Fore.BLUE + character.nom + " : Tu lui as dit que le rocher était mal placé. "); input()
 print(Fore.YELLOW + "Ferdinand : C'était une excuse. "); input()
-print(Fore.BLUE +character.nom + " : C'était une accusation contre un rocher. "); input()
+print(Fore.BLUE + character.nom + " : C'était une accusation contre un rocher. "); input()
 print(Fore.WHITE + "Narrateur : Ferdinand réfléchit sérieusement.\n" + Fore.YELLOW + "Ferdinand : Tu es étonnamment difficile à convaincre. "); input()
+
+choix=int(input("Comment réagir à ses explications ?\n1 =  « Tu n'es peut-être pas aussi idiot que tu en as l'air. »\n2 = « Tu devrais apprendre à réfléchir avant d'agir. »\n3 = « Au moins, tu as de bonnes intentions... »\n"))
+
+if choix==1:
+    print("Ferdinand : Merci... Je crois.")
+if choix==2:
+    print("Ferdinand : J'y travaille. Mais c'est fatigant.")
+if choix==3:
+    print("Ferdinand : C'est déjà un bon début, non ?")
+    print(character.nom + " : En effet...")
+
+
 print(Fore.WHITE + "Narrateur : Au loin, les tours d'une vieille chapelle se dessinent à travers les arbres."); input()
-print(Fore.BLUE +character.nom + " : Allons voir ce que ce Nathaniel sait. "); input()
+print(Fore.BLUE + character.nom + " : Allons voir ce que ce Nathaniel sait. "); input()
 print(Fore.YELLOW + "Ferdinand : Et après ? "); input()
-print(Fore.BLUE +character.nom + " : Nous découvrirons ce qu'Arnaud cherche. "); input()
+print(Fore.BLUE + character.nom + " : Nous découvrirons ce qu'Arnaud cherche. "); input()
 print(Fore.YELLOW + "Ferdinand : Et ensuite, nous le frapperons ? "); input()
-print(Fore.BLUE +character.nom +" : Nous aviserons. "); input()
+print(Fore.BLUE + character.nom +" : Nous aviserons. "); input()
 print(Fore.YELLOW + "Ferdinand : J'aime bien les plans qui laissent de la place à l'improvisation."); input()
 
 #############################################################
@@ -1261,7 +1330,7 @@ print(Fore.YELLOW + "Ferdinand : J'aime bien les plans qui laissent de la place 
 #############################################################
 
 print(Fore.WHITE + "Narrateur : Lieu : Une chapelle abandonnée à l'est de la capitale de Monte Cristo. "); input()
-print(Fore.BLUE +character.nom + " et Ferdinand suivent un chemin étroit à travers les arbres. Le vent fait grincer les branches. La chapelle apparaît au sommet d'une petite colline.\nNarrateur : Son toit est abîmé, ses vitraux sont brisés et des traces de pas traversent la boue devant l'entrée. "); input()
+print(Fore.WHITE + "Narrateur : " + character.nom + " et Ferdinand suivent un chemin étroit à travers les arbres. Le vent fait grincer les branches. La chapelle apparaît au sommet d'une petite colline.\nNarrateur : Son toit est abîmé, ses vitraux sont brisés et des traces de pas traversent la boue devant l'entrée. "); input()
 print(Fore.YELLOW + "Ferdinand : Charmant." ); input()
 print(Fore.BLUE +character.nom + " : Tu trouves ? "); input()
 print(Fore.YELLOW + "Ferdinand : Il y a une porte. J'aime les endroits avec des portes. "); input()
@@ -1272,6 +1341,16 @@ print(Fore.BLUE +character.nom + " : C'est le même symbole que sur la caisse." 
 print(Fore.YELLOW + "Ferdinand : Alors nous sommes au bon endroit. "); input()
 print(Fore.BLUE +character.nom + " : Ou dans un piège. "); input()
 print(Fore.YELLOW + "Ferdinand : C'est souvent la même chose. "); input()
+
+choix=int(input("Comment entrer dans la chapelle ?\n1 = « Entrons discrètement. »\n2 = « Ferdinand, ouvre-nous ça. »\n"))
+
+if choix==1:
+    print("Ferdinand : Je peux être discret.")
+    print(character.nom + " : C'est précisément ce qui m'inquiète...")
+if choix==2:
+    print("Ferdinand : Enfin une mission à ma hauteur.")
+    print(character.nom + " : C'était simplement une façon de parler...")
+
 print(Fore.WHITE + "Narrateur : Des voix proviennent de l'intérieur. "); input()
 print(Fore.CYAN + "Garde : Où sont les documents ? "); input()
 print(Fore.RED + "Voix inconnue : Je vous ai déjà dit que vous ne les aurez pas. "); input()
@@ -1302,7 +1381,7 @@ print(Fore.RED + "Nathaniel : Je vous remercie de votre intervention, mais je cr
 print(Fore.BLUE + character.nom + " : Pourquoi ? "); input()
 print(Fore.RED + "Nathaniel : Parce qu'ils sont plus nombreux que nous. "); input()
 print(Fore.YELLOW + "Ferdinand : Enfin une remarque utile ! "); input()
-print(Fore.BLUE +character.nom + " : Tu aurais préféré qu'il dise qu'ils sont moins nombreux ? "); input()
+print(Fore.BLUE + character.nom + " : Tu aurais préféré qu'il dise qu'ils sont moins nombreux ? "); input()
 print(Fore.YELLOW + "Ferdinand : Cela aurait été encourageant. "); input()
 print(Fore.WHITE + "Narrateur : Andy arrive tranquillement entrain de manger du pain"); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je suis absent cinq minutes et vous trouvez déjà le moyen de vous faire tuer dans une chapelle. "); input()
@@ -1369,6 +1448,17 @@ print(Fore.LIGHTBLACK_EX + "Andy : Je vais noter ça. Ça ferait une excellente 
 print(Fore.RED + "Nathaniel : À condition de ne pas en faire un refrain de cinq minutes."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je ne promets rien.") ; input()
 
+choix=int(input("Qu'est ce que " + character.nom + " pensera de l'artéfact ?\n1 = « Il faut absolument le détruire. »\n2 = « Il pourrait être utile entre de bonnes mains. »\n3 = « Je commence à comprendre pourquoi Arnaud le veut. »\n"))
+
+if choix==1:
+    print("Nathaniel : C'est une possibilité, mais nous devons d'abord comprendre ses conséquences.")
+if choix==2:
+    print("Nathaniel : C'est précisément le genre de raisonnement qui peut devenir dangereux.")
+    pre_req_EvilEnding=1
+if choix==3:
+    print("Andy : Moi, je commence surtout à comprendre pourquoi nous avons besoin de vacances.")
+    print(character.nom + " : On vient à peine de commencer les recherches et tu veux déjà des vacances ?")
+
 #############################################################
 #                                                           #
 #   Act 3 - Scène 4                                         #
@@ -1384,6 +1474,16 @@ print(Fore.YELLOW + "Ferdinand : Tu peux le prouver ?"); input()
 print(Fore.RED + "Nathaniel : Pas encore. Mais une dernière référence mentionne un témoin : un ancien conseiller royal qui aurait survécu à la guerre."); input()
 print(Fore.BLUE + character.nom + " : Où est-il ?"); input()
 print(Fore.RED + "Nathaniel : Je l'ignore. Les archives ne donnent aucun nom, seulement un lieu : les anciennes archives de la capitale."); input()
+
+choix=int(input("Que faire de cette information ?\n1 = « Il faut retrouver ce témoin. »\n2 = « On devrait d'abord vérifier les archives. »\n3 = « Et si ce témoin est mort depuis quinze ans ? »\n"))
+
+if choix==1:
+    print("Nathaniel : C'est notre meilleure piste.")
+if choix==2:
+    print("Nathaniel : Une approche prudente. J'apprécie.")
+if choix==3:
+    print("Andy : Alors nous aurons fait tout ce chemin pour parler à un fantôme.")
+
 print(Fore.LIGHTBLACK_EX + "Andy : Donc nous devons aller dans un bâtiment rempli de gardes pour chercher des documents qu'on nous interdit de lire."); input()
 print(Fore.BLUE + character.nom + " : En résumé, oui."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je préfère les quêtes où l'objectif est de retrouver un chat."); input()
@@ -1452,7 +1552,7 @@ print(Fore.BLUE + character.nom + " : Non."); input()
 print(Fore.YELLOW + "Ferdinand : Pourquoi ?"); input()
 print(Fore.BLUE + character.nom + " : Parce qu'ils reviendraient à cinquante."); input()
 print(Fore.YELLOW + "Ferdinand : Je peux en combattre cinquante."); input()
-print(Fore.LIGHTBLACK_EX + "Andy : Et les cinquante et unième ?"); input()
+print(Fore.LIGHTBLACK_EX + "Andy : Et le cinquante et unième ?"); input()
 print(Fore.YELLOW + "Ferdinand : Je lui demanderai d'attendre son tour."); input()
 print(Fore.WHITE + "Narrateur : Nathaniel secoue la tête, amusé malgré lui."); input()
 print(Fore.RED + "Nathaniel : La boulangerie se trouve à une demi-journée de marche. Nous y trouverons peut-être les preuves dont nous avons besoin."); input()
@@ -1471,6 +1571,8 @@ while farm!=1:
     if freetime==1:
         List_player=[character,Andy,Nath] ; diff=2 ; stade_equipe=1
         fight()
+        if randint(1,10)==1:
+            character.set_maxvie() ; Andy.set_maxvie() ; Nath.set_maxvie()
     elif freetime==2:
         armurerie()
     elif freetime==3:
@@ -1571,7 +1673,7 @@ print(Fore.WHITE + "Narrateur : Il ouvre la boîte."); input()
 
 #############################################################
 #                                                           #
-#   Act 1 - Scène 3                                         #
+#   Act 4 - Scène 3                                         #
 #   les archives                                            #
 #                                                           #
 #############################################################
@@ -1697,11 +1799,13 @@ while farm!=1:
     if freetime==1:
         List_player=[character,Andy,Nath,Ethan] ; diff=2 ; stade_equipe=2
         fight()
+        if randint(1,10)==1:
+            character.set_maxvie() ; Andy.set_maxvie() ; Nath.set_maxvie() ; Ethan.set_maxvie() 
     elif freetime==2:
         armurerie()
     elif freetime==3:
         shop_heal()
-    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON"))
+    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n"))
 
 #############################################################
 #                                                           #
@@ -1743,7 +1847,7 @@ if choix == 1:
     print(Fore.BLUE + character.nom + " : Nous sommes des archivistes."); input()
     print(Fore.CYAN + "Garde : Vos autorisations ?"); input()
     print(Fore.WHITE + "Narrateur : Silence."); input()
-    print(Fore.LIGHTBLACK_EX + "Andy : Elles sont… archivées."); input()
+    print(Fore.LIGHTBLACK_EX + "Andy : Elles sont... archivées."); input()
     print(Fore.CYAN + "Garde : Vos noms ?"); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Les mêmes que sur nos autorisations."); input()
     print(Fore.CYAN + "Garde : Montrez-les."); input()
@@ -1870,17 +1974,18 @@ elif choix == 3:
     print(Fore.BLUE + character.nom + " : Et si ces documents permettent à Arnaud de nous retrouver ?")
     print(Fore.RED + "Nathaniel : Alors nous trouverons un moyen de les protéger.")
 
-if choix==1 or choix==3:
-    req_EvilEnding=int(input(Fore.RESET + "Souhaitez vous revenir sur votre décision ?\n1 = OUI\n2 = NON\n"))
-    if choix==1:
-        print(Fore.BLUE + character.nom + " : Vous êtes vraiment sûr qu'on ne devrait pas les détruire ? Elles pourraient vraiment nous attirer des problèmes")
-        print(Fore.RED + "Nathaniel : Oui, il faut impérativement que la vérité ne soit surtout pas détruite.")
-        print(Fore.LIGHTBLACK_EX + "Andy : fait comment bon te semble. Honnêtement tu peux en faire ce que tu veux ça ne changera pas ma musique.")
-        print(Fore.YELLOW + "Ferdinand : Ça pourrait faire du bon combustible pour la cheminer de l'auberge.")
-        print(Fore.MAGENTA + "Ethan : Moi je suis pour nous en débarrassez.")
-        print(Fore.WHITE + "Narrateur : " + character.nom + " n'a donc pas écoutez Nathaniel et à donc détruit les documents")
-    if choix==2:
-        print(Fore.WHITE + "Narrateur : " + character.nom + " décide de ne pas s'en débarraser et les donnes à Nathaniel.")
+if pre_req_EvilEnding==1:
+    if choix==1 or choix==3:
+        req_EvilEnding=int(input(Fore.RESET + "Souhaitez vous revenir sur votre décision ?\n1 = OUI\n2 = NON\n"))
+        if choix==1:
+            print(Fore.BLUE + character.nom + " : Vous êtes vraiment sûr qu'on ne devrait pas les détruire ? Elles pourraient vraiment nous attirer des problèmes")
+            print(Fore.RED + "Nathaniel : Oui, il faut impérativement que la vérité ne soit surtout pas détruite.")
+            print(Fore.LIGHTBLACK_EX + "Andy : fait comment bon te semble. Honnêtement tu peux en faire ce que tu veux ça ne changera pas ma musique.")
+            print(Fore.YELLOW + "Ferdinand : Ça pourrait faire du bon combustible pour la cheminer de l'auberge.")
+            print(Fore.MAGENTA + "Ethan : Moi je suis pour nous en débarrassez.")
+            print(Fore.WHITE + "Narrateur : " + character.nom + " n'a donc pas écoutez Nathaniel et à donc détruit les documents")
+        if choix==2:
+            print(Fore.WHITE + "Narrateur : " + character.nom + " décide de ne pas s'en débarraser et les donnes à Nathaniel.")
 
 
 #############################################################
@@ -1929,6 +2034,8 @@ while farm!=1:
     if freetime==1:
         List_player=[character,Andy,Nath,Ethan] ; diff=2 ; stade_equipe=2
         fight()
+        if randint(1,10)==1:
+            character.set_maxvie() ; Andy.set_maxvie() ; Nath.set_maxvie() ; Ethan.set_maxvie()
     elif freetime==2:
         armurerie()
     elif freetime==3:
@@ -2010,7 +2117,7 @@ print(Fore.WHITE + "Narrateur : Le groupe se retourne vers lui.")
 print(Fore.BLUE + character.nom + " : Quoi ?")
 print(Fore.WHITE + "Narrateur : Ethan baisse la tête. Lorsqu'il relève les yeux, son expression a changé.")
 print(Fore.MAGENTA + "Ethan : Je vous ai menti depuis le début.")
-print(Fore.LIGHTBLACK_EX + "Andy : … Je savais que tu étais mystérieux, mais je pensais que c'était juste une mauvaise habitude.")
+print(Fore.LIGHTBLACK_EX + "Andy : ... Je savais que tu étais mystérieux, mais je pensais que c'était juste une mauvaise habitude.")
 print(Fore.RED + "Nathaniel : Ethan. Que signifie tout cela ?")
 print(Fore.MAGENTA + "Ethan : Je n'ai jamais voulu simplement faire tomber Arnaud. Je voulais prendre sa place.")
 print(Fore.WHITE + "Narrateur : Le silence devient pesant.")
@@ -2183,11 +2290,12 @@ print(Fore.BLUE + character.nom + " : Pas maintenant !")
 print(Fore.WHITE + "Narrateur : Le combat commence.")
 
 List_player=[character,Andy,Nath]; stade_equipe=1
+character.set_maxvie() ; Andy.set_maxvie() ; Nath.set_maxvie()
 boss_fight(IsArnaudDead=0)
 
 
 print(Fore.WHITE + "Narrateur : Après un long combat, Arnaud finit par tomber à genoux. Son arme glisse sur le sol.")
-print(Fore.GREEN + "Monsieur Arnaud : Impossible… Vous n'êtes que des voyageurs.")
+print(Fore.GREEN + "Monsieur Arnaud : Impossible... Vous n'êtes que des voyageurs.")
 print(Fore.BLUE + character.nom + " : Et vous n'êtes qu'un homme.")
 print(Fore.GREEN + "Monsieur Arnaud : Ethan ! Fais ce que tu as à faire !")
 print(Fore.MAGENTA + "Ethan : Avec plaisir.")
@@ -2211,6 +2319,9 @@ print(Fore.WHITE + "Narrateur : Ethan lance une attaque puissante. Le groupe est
 print(Fore.LIGHTBLACK_EX + "Andy : Bon. Je retire tout ce que j'ai dit sur les petites aventures tranquilles.")
 print(Fore.YELLOW + "Ferdinand : On ne peut pas abandonner maintenant !")
 print(Fore.BLUE + character.nom + " : Ensemble !")
+
+character.set_maxvie() ; Andy.set_maxvie() ; Nath.set_maxvie()
+boss_fight(IsArnaudDead=1)
 
 #############################################################
 #                                                           #
@@ -2246,7 +2357,7 @@ if ending == 1:
     print(character.nom + " : Ce n'est pas le pouvoir qui donne un sens à ta vie.")
     print("Narrateur : Le " + character.nom + " frappe le Coeur. L'artefact se brise et sa lumière disparaît.")
     print("Narrateur : Le silence retombe dans la salle.")
-    print("Ethan : Tout ce que j'ai fait… pour rien…")
+    print("Ethan : Tout ce que j'ai fait... pour rien...")
     print("Narrateur : Ethan tombe à genoux. Arnaud, privé de son dernier avantage, est capturé.")
     # Espace
     print("Narrateur : Quelques semaines plus tard, les habitants de Monté Cristo se rassemblent sur la place du marché. Les archives prouvent les crimes d'Arnaud. Un conseil provisoire est établi pour reconstruire le royaume.")
@@ -2255,8 +2366,7 @@ if ending == 1:
     print("Andy : Ne gâche pas le moment.")
     print("Nathaniel : Le royaume devra apprendre à vivre sans tyran. Cela ne sera pas facile, mais c'est un début.")
     print(character.nom + " : La liberté ne se donne pas. Elle se protège.")
-    print("Narrateur : Ethan est arrêté et devra répondre de ses actes. Selon les choix du joueur, il peut avoir une chance de reconstruire sa vie ou rester enfermé pour ses crimes.")
-    print("Narrateur : La caméra montre le soleil se lever sur Monté Cristo.")
+    print("Narrateur : Ethan est arrêté et devra répondre de ses actes.")
 
 
 elif ending == 2 and Req_TrueEnding == 1:
@@ -2276,7 +2386,7 @@ elif ending == 2 and Req_TrueEnding == 1:
     # Espace
     print("Narrateur : Arnaud est arrêté. Ethan est placé sous surveillance et devra répondre de sa trahison. Le Coeur est enfermé dans un lieu protégé par plusieurs gardiens.")
     print("Narrateur : Le groupe quitte le château ensemble, mais Ethan marche derrière les autres, silencieux.")
-    print("Andy : Alors… quelqu'un connaît une bonne auberge ?")
+    print("Andy : Alors... quelqu'un connaît une bonne auberge ?")
     print("Ferdinand : Tant qu'il y a de quoi manger.")
     print("Nathaniel : Vous ne pensez jamais à autre chose ?")
     print(character.nom + " : Pour une fois, laissons le royaume respirer.")
@@ -2343,4 +2453,3 @@ print("------------------------\n"
     + "Support moral : Ferdinand\n"
     + "------------------------"
     + "MERCI D'AVOIR JOUÉ !!!")
-
