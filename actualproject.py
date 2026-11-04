@@ -560,6 +560,12 @@ def gameover():
 ### boss fight ###
 
 # FONCTION POUR CHOISIR LE BOSS
+def bossfightrdm(IsArnaudDead):
+    if IsArnaudDead==0:
+        enemi=Arnaud
+    else:
+        enemi==Ethan_boss
+    return enemi
 
 # FONCTION DU SYSTEME DE FIGHT CONTRE LES BOSS FINAUX
 def boss_fight(IsArnaudDead):
