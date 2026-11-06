@@ -104,7 +104,7 @@ def fight():
         print("\nUn " + str(enemi.nom) + " apparait et il a " + str(enemi.pv) + "pv.")
         while totalpv(List_player)>0 and enemi.pv>0:
             for k in List_player:
-                if enemi.pv0:
+                if enemi.pv>0:
                     affichage_combat(k, enemi, List_player)
                     print(k.nom + " attaque  ->  il lui reste " + str(enemi.pv) + "pv.\n")
             if enemi.pv>0:
@@ -153,7 +153,10 @@ def attack(k,enemi):
 def magie(k,enemi,List_player):
     if k==character:           # sorts du mc
         if character.magika==1:         # sorts de feu
-            sort=int(input("--------------------------\n1 = Boule de feu (-10 mana) /  2 = Agidyne (-20mana)\n--------------------------\n"))
+            sort=input("--------------------------\n1 = Boule de feu (-10 mana) /  2 = Agidyne (-20mana)\n--------------------------\n")
+            while not sort.isdigit():
+                sort=input("--------------------------\n1 = Boule de feu (-10 mana) /  2 = Agidyne (-20mana)\n--------------------------\n")    
+            sort=int(sort)
             if sort==1:
                 enemi.pv-=randint(5,10)*k.degat*k.lvl
                 k.mana-=10
@@ -164,7 +167,10 @@ def magie(k,enemi,List_player):
                     enemi.pv-=randint(7,15)*k.degat*k.lvl
                     k.mana-=20
         elif character.magika==2:       # sort d'eau
-            sort=int(input("--------------------------\n1 = Ébulition (-10 mana) /  2 = Hydrocanon (-20mana)\n--------------------------\n"))
+            sort=input("--------------------------\n1 = Ébulition (-10 mana) /  2 = Hydrocanon (-20mana)\n--------------------------\n")
+            while not sort.isdigit():
+                sort=input("--------------------------\n1 = Ébulition (-10 mana) /  2 = Hydrocanon (-20mana)\n--------------------------\n")
+            sort=int(sort)
             if sort==1:
                 enemi.pv-=randint(5,10)*k.degat*k.lvl
                 k.mana-=10
@@ -175,7 +181,10 @@ def magie(k,enemi,List_player):
                     enemi.pv=randint(7,15)*k.degat*k.lvl
                     k.mana-=20
         elif character.magika==3:       # sort de Terre
-            sort=int(input("--------------------------\n1 = Tectoclaque (-10 mana) /  2 = Séisme (-20mana)\n--------------------------\n"))
+            sort=input("--------------------------\n1 = Tectoclaque (-10 mana) /  2 = Séisme (-20mana)\n--------------------------\n")
+            while not sort.isdigit():
+                sort=input("--------------------------\n1 = Tectoclaque (-10 mana) /  2 = Séisme (-20mana)\n--------------------------\n")
+            sort=int(sort)
             if sort==1:
                 enemi.pv-=randint(5,10)*k.degat*k.lvl
                 k.mana-=10
@@ -186,7 +195,10 @@ def magie(k,enemi,List_player):
                     enemi.pv-=randint(7,15)*k.degat*k.lvl
                     k.mana-=20
         elif character.magika==4:       # sort Divin (BLESS DAMAGE AHH)
-            sort=int(input("--------------------------\n1 = Lumière Divine (-10 mana) /  2 = Lance Divine (-20mana)\n3 = Hamaon (-1 mana)\n--------------------------\n"))
+            sort=input("--------------------------\n1 = Lumière Divine (-10 mana) /  2 = Lance Divine (-20mana)\n3 = Hamaon (-1 mana)\n--------------------------\n")
+            while not sort.isdigit():
+                sort=input("--------------------------\n1 = Lumière Divine (-10 mana) /  2 = Lance Divine (-20mana)\n3 = Hamaon (-1 mana)\n--------------------------\n")
+            sort=int(sort)
             if sort==1:
                 enemi.pv-=randint(5,10)*k.degat*k.lvl
                 k.mana-=10
@@ -205,7 +217,10 @@ def magie(k,enemi,List_player):
                         enemi.pv-=6969
                         k.mana-=1
     elif k==Nath:         # sorts de Nath
-        sort=int(input("--------------------------\n1 = Glaive de Lumière (-10 mana) /  2 = Flèche de Lumière (-20mana) \n3 = Rejuvenate (-5mana)\n--------------------------\n"))
+        sort=input("--------------------------\n1 = Glaive de Lumière (-10 mana) /  2 = Flèche de Lumière (-20mana) \n3 = Rejuvenate (-5mana)\n--------------------------\n")
+        while not sort.isdigit():
+            sort=input("--------------------------\n1 = Glaive de Lumière (-10 mana) /  2 = Flèche de Lumière (-20mana) \n3 = Rejuvenate (-5mana)\n--------------------------\n")
+        sort=int(sort)
         if sort==1:
             enemi.pv-=randint(5,10)*k.degat*k.lvl
             k.mana-=10
@@ -220,7 +235,10 @@ def magie(k,enemi,List_player):
             enemi.mana-=stolen
             Nath.mana+=(stolen-5)
     elif k==Andy:          # sorts d'Andy
-        sort=int(input("--------------------------\n1 = Ébulition (-10 mana) /  2 = Hydrocanon (-20mana)\n--------------------------\n"))
+        sort=input("--------------------------\n1 = Ébulition (-10 mana) /  2 = Hydrocanon (-20mana)\n--------------------------\n")
+        while not sort.isdigit():
+            sort=input("--------------------------\n1 = Ébulition (-10 mana) /  2 = Hydrocanon (-20mana)\n--------------------------\n")   
+        sort=int(sort)
         if sort==1:
             enemi.pv-=randint(5,10)*k.degat*k.lvl
             k.mana-=10
@@ -231,7 +249,10 @@ def magie(k,enemi,List_player):
                 enemi.pv-=randint(7,15)*k.degat*k.lvl
                 k.mana-=20
     elif k==Ethan:          # sorts d'Éthan
-        sort=int(input("--------------------------\n1 = Boule de feu (-10 mana) /  2 = Tempête de Flamme (-20mana)\n--------------------------\n"))
+        sort=input("--------------------------\n1 = Boule de feu (-10 mana) /  2 = Tempête de Flamme (-20mana)\n--------------------------\n")
+        while not sort.isdigit():
+            sort=input("--------------------------\n1 = Boule de feu (-10 mana) /  2 = Tempête de Flamme (-20mana)\n--------------------------\n")
+        sort=int(sort)
         if sort==1:
             enemi.pv-=randint(5,10)*k.degat*k.lvl
             k.mana-=10
@@ -247,7 +268,10 @@ def backpack(bp, k):
     for i in bp:
         if i.quantite>=1:
             print(str(i.ID) + " = " + i.nom +" (" + str(i.quantite) +")")
-    choic=int(input("Choississez l'objet (son ID)"))
+    choic=input("Choississez l'objet (son ID)")
+    while not choic.isdigit():
+        choic=input("Choississez l'objet (son ID)")
+    choic=int(choic)
     for i in bp:
         if i.ID==choic and i.quantite>0:
             if i.ID==1:       # ID = 1 -> potion heal 1
@@ -495,13 +519,13 @@ def shop_heal():
         for i in List_player:
             achat=int(input("-----------------------------------\n"
             + i.nom + " (" + str(i.argent) + ")\n"
-            + potion_heal1.nom + " ("+ str(potion_heal1.prix) + ")\n"
-            + potion_heal2.nom + " ("+ str(potion_heal2.prix) + ")\n"
-            + potion_heal3.nom + " ("+ str(potion_heal3.prix) + ")\n"
-            + potion_mana1.nom + " ("+ str(potion_mana1.prix) + ")\n"
-            + potion_mana2.nom + " ("+ str(potion_mana2.prix) + ")\n"
-            + potion_mana3.nom + " ("+ str(potion_mana3.prix) + ")\n"
-            + "7 = Partir"))
+            + "1 = " + potion_heal1.nom + " ("+ str(potion_heal1.prix) + ")\n"
+            + "2 = " + potion_heal2.nom + " ("+ str(potion_heal2.prix) + ")\n"
+            + "3 = " + potion_heal3.nom + " ("+ str(potion_heal3.prix) + ")\n"
+            + "4 = " + potion_mana1.nom + " ("+ str(potion_mana1.prix) + ")\n"
+            + "5 = " + potion_mana2.nom + " ("+ str(potion_mana2.prix) + ")\n"
+            + "6 = " + potion_mana3.nom + " ("+ str(potion_mana3.prix) + ")\n"
+            + "7 = Partir\n"))
             if achat==1:
                 quantity=int(input("Combien voulez vous en achetez ?\n"))
                 if i.argent>=potion_heal1.prix*quantity:
@@ -770,7 +794,7 @@ bp=[potion_heal1, potion_heal2, potion_heal3, potion_mana1, potion_mana2, potion
 
 # variable stock
 
-a=0 ; temp="" ; totalheal=0 ; diff=1 ; List_player=[] ; list_ferdi=[Ferdi] ; buy=0 ; shop=0 ; stade_equipe=0 ; freetime = 0
+a=0 ; temp="" ; totalheal=0 ; diff=1 ; List_player=[] ; list_ferdi=[Ferdi] ; buy=0 ; shop=0 ; stade_equipe=0 ; freetime = 0 ; did_fight=0
 
 
 #############################################################
@@ -779,15 +803,16 @@ a=0 ; temp="" ; totalheal=0 ; diff=1 ; List_player=[] ; list_ferdi=[Ferdi] ; buy
 #   quick contexte + "character creator "                   #
 #                                                           #
 #############################################################
+
 print("AVANT DE COMMENCER À JOUER / LIRE IMPÉRACTIVEMENT !!!\nPour passer au dialogue suivant appuyer sur Entrée.\nLors des choix bien mettre les chiffres indiquées sinon il faut tout recommencer SURTOUT LORS DES COMBATS !\nIl y a beaucoup de textes donc il faut avoir un certain temps devant soit (et oui c'est un j-rpg (sorte de plutôt lmao))\nUtiliser un shell qui casse pas les couleurs de préférence (*tousse* fish-shell bullshit *tousse*)\n"); input("ENTRÉE POUR PASSER")
 
 print(Fore.WHITE + "Act 1 : Prologue : La rencontre")
 print(Fore.WHITE + "Narrateur : C'est une belle fin de journée d'été dans le grand royaume de Monté-Cristo, après une dure journée à vagabondé, vous êtes allé au bar, vous avez bus et vous avez finit par vous endormir.") ; input()
 print(Fore.WHITE + "Narrateur : Un grand sage apparait dans votre rêve et vous tend la main.\n")
 print(Fore.GREEN + "Grand Sage : Enchanté mon/ma cher(e)... Quel est ton nom ?")
-name=str(input(Fore.WHITE +"\nEntrez le nom du personnage : "))  
+name=str(input(Fore.WHITE +"Entrez le nom du personnage : "))  
 while temp!="oui":
-    temp=str(input(Fore.WHITE +"\nVotre nom est bien " + name + " ? (rentrez oui/non)\n"))
+    temp=str(input(Fore.WHITE +"Votre nom est bien " + name + " ? (rentrez oui/non)\n"))
     if temp!="oui":
         name=str(input(Fore.WHITE + "Entrez le nom du personnage : "))
 print(Fore.GREEN + "Grand Sage : Un nom très exotique, " + name + "... Enfin passons, aujourd'hui j'apparait dans votre inconscient pour vous offrir un pouvoir et vous permettre de sortir de votre routine.") ; input()
@@ -798,9 +823,9 @@ while not laclasse.isdigit():
 laclasse=int(laclasse)
 temp=""
 while temp!="oui":
-    temp=str(input(Fore.WHITE +"\nÊtes vous sûre de choisir " + str(laclasse) + " ? (rentrez oui/non)\n"))
+    temp=str(input(Fore.WHITE +"Êtes vous sûre de choisir " + str(laclasse) + " ? (rentrez oui/non)\n"))
     if temp!="oui":
-        laclasse=int(input(Fore.WHITE +"\nChoississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n"))
+        laclasse=int(input(Fore.WHITE +"Choississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n"))
 
 print(Fore.GREEN + "Grand Sage : Haha, très intéressant... Et enfin, je vous confère un des 4 types de magika, lequel choissirez vous ?\n")
 type=input(Fore.WHITE +"Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divine\n")
@@ -1087,9 +1112,13 @@ if choix==3:
         print(Fore.BLUE + character.nom + " : Tu viens pourtant de combattre des gardes. "); input()
         print(Fore.LIGHTBLACK_EX + "Andy : C'était une répétition.  Mais pour l'instant, je dois y aller, j’ai quelque chose à faire. Essaye de découvrir les environs avant que je ne revienne." + Fore.WHITE + "\nNarrateur : Andy décide de partir."+ Fore.RESET); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Mais pour l'instant, je dois y aller, j’ai quelque chose à faire. Essaye de découvrir les environs avant que je ne revienne." + Fore.WHITE + "\nNarrateur : Andy décide de partir."+ Fore.RESET); input()
+
 farm=1
 while farm!=2:
-    freetime=int(input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n"))
+    freetime=input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n")
+    while not freetime.isdigit():
+        freetime=input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n")
+    freetime=int(freetime)
     if freetime==1:
         List_player=[character] ; diff=1 ; stade_equipe=3
         fight()
@@ -1099,7 +1128,9 @@ while farm!=2:
         armurerie()
     elif freetime==3:
         shop_heal()
-    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n"))
+    while not farm.isdigit():
+        farm=input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n")
+    farm=int(farm)
 print(Fore.WHITE + "Narreteur : Après votre temps libre d'aller vous endormir dans une ruelle allumée par un lampadaire défectueux."); input()
 
 #############################################################
@@ -1611,7 +1642,10 @@ print(Fore.WHITE + "Narrateur : La porte se referme."); input()
 
 farm=2
 while farm!=1:
-    freetime=int(input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur."))
+    freetime=input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n")
+    while not freetime.isdigit():
+        freetime=input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n")
+    freetime=int(freetime)
     if freetime==1:
         List_player=[character,Andy,Nath] ; diff=2 ; stade_equipe=1
         fight()
@@ -1621,7 +1655,10 @@ while farm!=1:
         armurerie()
     elif freetime==3:
         shop_heal()
-    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n"))
+    farm=input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n")
+    while not farm.isdigit():
+        farm=input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n")
+    farm=int(farm)
 print(Fore.WHITE + "Narrateur : Après ce temps libre, les joyeux lurons allèrent dans une auberge pour la nuit avant de partir pour un très long voyage le lendemain."); input()
 
 #############################################################
@@ -1841,7 +1878,10 @@ print(Fore.MAGENTA + "Ethan, à voix basse : À bientôt papa..."); input()
 
 farm=2
 while farm!=1:
-    freetime=int(input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur."))
+    freetime=input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n")
+    while not freetime.isdigit():
+        freetime=input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n")
+    freetime=int(freetime)
     if freetime==1:
         List_player=[character,Andy,Nath,Ethan] ; diff=2 ; stade_equipe=2
         fight()
@@ -1851,7 +1891,9 @@ while farm!=1:
         armurerie()
     elif freetime==3:
         shop_heal()
-    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n"))
+    while not farm.isdigit():
+        farm=input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n")
+    farm=int(farm)
 
 #############################################################
 #                                                           #
@@ -2080,7 +2122,10 @@ print(Fore.MAGENTA + "Ethan, *à voix basse* : Encore un peu de patience."+ Fore
 
 farm=2
 while farm!=1:
-    freetime=int(input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur."))
+    freetime=input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n")
+    while not freetime.isdigit():
+        freetime=input("--------------------------\nQu'est ce que vous souhaitez faire ?\n1 = Allez battre des monstres.\n2 = Allez chez le forgeron.\n3 = Allez chez le vendeur.\n")
+    freetime=int(freetime)
     if freetime==1:
         List_player=[character,Andy,Nath,Ethan] ; diff=2 ; stade_equipe=2
         fight()
@@ -2090,7 +2135,9 @@ while farm!=1:
         armurerie()
     elif freetime==3:
         shop_heal()
-    farm=int(input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n"))
+    while not farm.isdigit():
+        farm=input("Voulez vous continuez de profiter de votre temps libre ?\n1 = OUI\n2 = NON\n")
+    farm=int(farm)
 
 #############################################################
 #                                                           #
