@@ -791,10 +791,10 @@ while temp!="oui":
     if temp!="oui":
         name=str(input(Fore.WHITE + "Entrez le nom du personnage : "))
 print(Fore.GREEN + "Grand Sage : Un nom très exotique, " + name + "... Enfin passons, aujourd'hui j'apparait dans votre inconscient pour vous offrir un pouvoir et vous permettre de sortir de votre routine.") ; input()
-print(Fore.GREEN + "Grand Sage : Tout d'abord, quel classeList_player choissirez vous ?")
-laclasse=input(Fore.WHITE +"\nChoississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n")
+print(Fore.GREEN + "Grand Sage : Tout d'abord, quel classe choissirez vous ?")
+laclasse=input(Fore.WHITE +"Choississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n")
 while not laclasse.isdigit():
-    laclasse=input(Fore.WHITE +"\nChoississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n")
+    laclasse=input(Fore.WHITE +"Choississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n")
 laclasse=int(laclasse)
 temp=""
 while temp!="oui":
@@ -853,7 +853,7 @@ print(Fore.GREEN + "Grand Sage : Bien, bien... " + character.nom + " votre nouve
 #                                                           #
 #############################################################
 
-print(Fore.WHITE + "Narrateur : Écran noir. On entend des conversations, des rires, des verres qui s'entrechoquent et une luthe qui joue une mélodie un peu trop forte. Une voix résonne au loin.") ; input()
+print(Fore.WHITE + "Narrateur : On entend des conversations, des rires, des verres qui s'entrechoquent et une luthe qui joue une mélodie un peu trop forte. Une voix résonne au loin.") ; input()
 print(Fore.CYAN + "Tavernier : Hé ! Toi ! Réveille-toi !" + Fore.WHITE + "\nNarrateur : Rien."); input()
 print(Fore.CYAN + "Tavernier : Je te préviens, si tu continues à dormir sur cette table, je te facture la nuit !" + Fore.WHITE + "\nNarrateur : " + character.nom + " ouvre lentement les yeux. "); input()
 print(Fore.BLUE + character.nom + " : ... C'est déjà le matin ? "); input()
