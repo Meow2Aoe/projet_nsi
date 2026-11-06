@@ -804,8 +804,11 @@ a=0 ; temp="" ; totalheal=0 ; diff=1 ; List_player=[] ; list_ferdi=[Ferdi] ; buy
 #                                                           #
 #############################################################
 
+
 print("AVANT DE COMMENCER À JOUER / LIRE IMPÉRACTIVEMENT !!!\nPour passer au dialogue suivant appuyer sur Entrée.\nLors des choix bien mettre les chiffres indiquées sinon il faut tout recommencer SURTOUT LORS DES COMBATS !\nIl y a beaucoup de textes donc il faut avoir un certain temps devant soit (et oui c'est un j-rpg (sorte de plutôt lmao))\nUtiliser un shell qui casse pas les couleurs de préférence (*tousse* fish-shell bullshit *tousse*)\n"); input("ENTRÉE POUR PASSER")
 
+print(Fore.GREEN + "Le nom du jeu est REAPER.4.4 !!"); input() # la seule ligne de code écrite par Ferdinand
+print(Fore.GREEN + "Bienvenu étranger"); input() # la seule ligne de code écrite par Andy + correction orthographique par Nathaniel
 print(Fore.WHITE + "Act 1 : Prologue : La rencontre")
 print(Fore.WHITE + "Narrateur : C'est une belle fin de journée d'été dans le grand royaume de Monté-Cristo, après une dure journée à vagabondé, vous êtes allé au bar, vous avez bus et vous avez finit par vous endormir.") ; input()
 print(Fore.WHITE + "Narrateur : Un grand sage apparait dans votre rêve et vous tend la main.\n")
