@@ -104,8 +104,9 @@ def fight():
         print("\nUn " + str(enemi.nom) + " apparait et il a " + str(enemi.pv) + "pv.")
         while totalpv(List_player)>0 and enemi.pv>0:
             for k in List_player:
-                affichage_combat(k, enemi, List_player)
-                print(k.nom + " attaque  ->  il lui reste " + str(enemi.pv) + "pv.\n")
+                if enemi.pv0:
+                    affichage_combat(k, enemi, List_player)
+                    print(k.nom + " attaque  ->  il lui reste " + str(enemi.pv) + "pv.\n")
             if enemi.pv>0:
                 cible=attack_enemi(enemi,List_player)
                 print(enemi.nom + " attaque " + cible.nom + "  ->  " + str(cible.vie) + "pv.")
@@ -129,7 +130,10 @@ def affichage_combat(k,enemi,List_player):
         print(character.nom + " : " + str(character.vie) + "pv / Nathaniel : " + str(Nath.vie) + "pv / Andy : " + str(Andy.vie) + "pv / Éthan : " + str(Ethan.vie) + "pv")
     elif stade_equipe==3:
         print(character.nom + " : " + str(character.vie) + "pv")
-    move=int(input("-------------------------------------\nTour de " + k.nom + " (" + str(k.mana) + " mana)" +"\n1 = attaque  /  2 = magie / 3 = Objet\n--------------------------------------\n"))
+    move=input("-------------------------------------\nTour de " + k.nom + " (" + str(k.mana) + " mana)" +"\n1 = attaque  /  2 = magie / 3 = Objet\n--------------------------------------\n")
+    while not move.isdigit():
+        move=input("-------------------------------------\nTour de " + k.nom + " (" + str(k.mana) + " mana)" +"\n1 = attaque  /  2 = magie / 3 = Objet\n--------------------------------------\n")
+    move=int(move)
     if move==1:
         attack(k,enemi)
     elif move==2:
@@ -781,14 +785,17 @@ print(Fore.WHITE + "Act 1 : Prologue : La rencontre")
 print(Fore.WHITE + "Narrateur : C'est une belle fin de journée d'été dans le grand royaume de Monté-Cristo, après une dure journée à vagabondé, vous êtes allé au bar, vous avez bus et vous avez finit par vous endormir.") ; input()
 print(Fore.WHITE + "Narrateur : Un grand sage apparait dans votre rêve et vous tend la main.\n")
 print(Fore.GREEN + "Grand Sage : Enchanté mon/ma cher(e)... Quel est ton nom ?")
-name=str(input(Fore.WHITE +"\nEntrez le nom du personnage : "))
+name=str(input(Fore.WHITE +"\nEntrez le nom du personnage : "))  
 while temp!="oui":
     temp=str(input(Fore.WHITE +"\nVotre nom est bien " + name + " ? (rentrez oui/non)\n"))
     if temp!="oui":
         name=str(input(Fore.WHITE + "Entrez le nom du personnage : "))
 print(Fore.GREEN + "Grand Sage : Un nom très exotique, " + name + "... Enfin passons, aujourd'hui j'apparait dans votre inconscient pour vous offrir un pouvoir et vous permettre de sortir de votre routine.") ; input()
 print(Fore.GREEN + "Grand Sage : Tout d'abord, quel classeList_player choissirez vous ?")
-laclasse=int(input(Fore.WHITE +"\nChoississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n"))
+laclasse=input(Fore.WHITE +"\nChoississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n")
+while not laclasse.isdigit():
+    laclasse=input(Fore.WHITE +"\nChoississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n")
+laclasse=int(laclasse)
 temp=""
 while temp!="oui":
     temp=str(input(Fore.WHITE +"\nÊtes vous sûre de choisir " + str(laclasse) + " ? (rentrez oui/non)\n"))
@@ -796,7 +803,10 @@ while temp!="oui":
         laclasse=int(input(Fore.WHITE +"\nChoississez votre classe :\n1 = Mêlée\n2 = Ranger\n3 = Mage\n"))
 
 print(Fore.GREEN + "Grand Sage : Haha, très intéressant... Et enfin, je vous confère un des 4 types de magika, lequel choissirez vous ?\n")
-type=int(input(Fore.WHITE +"Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divine\n"))
+type=input(Fore.WHITE +"Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divine\n")
+while not type.isdigit():
+    type=input(Fore.WHITE +"Choississez votre type de Magika :\n1 = Feu\n2 = Eau\n3 = Terre\n4 = Divine\n")
+type=int(type)
 temp=""
 while temp!="oui":
     temp=str(input(Fore.WHITE +"\nÊtes vous sûre de choisir " + str(type) + " ? (rentrez oui/non)\n"))
@@ -895,7 +905,10 @@ print(Fore.LIGHTBLACK_EX + "Andy : Je préfère « génie incompris ». "); inpu
 print(Fore.BLUE + character.nom + " : Par qui ? "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Par tout le monde. C'est le principe." + Fore.WHITE + "\nNarrateur : Un court silence s'installe. Andy observe les vêtements poussiéreux de " + character.nom + "."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Tu viens de loin ? "); input()
-choix=int(input(Fore.RESET + "Qu'allez vous lui répondre ?\n1 =  « Je cherche simplement un endroit où dormir. »\n2 = « Je cherche quelque chose d'intéressant à vivre. »\n3 = « Ça ne te regarde pas. »\n"))
+choix=input(Fore.RESET + "Qu'allez vous lui répondre ?\n1 =  « Je cherche simplement un endroit où dormir. »\n2 = « Je cherche quelque chose d'intéressant à vivre. »\n3 = « Ça ne te regarde pas. »\n")
+while not choix.isdigit():
+    choix=input(Fore.RESET + "Qu'allez vous lui répondre ?\n1 =  « Je cherche simplement un endroit où dormir. »\n2 = « Je cherche quelque chose d'intéressant à vivre. »\n3 = « Ça ne te regarde pas. »\n")
+choix=int(choix)
 if choix==1:
     print("Andy : Dans ce cas, tu as choisi la mauvaise taverne. Ici, même les tables sont payantes.")
 if choix==2:
@@ -946,8 +959,11 @@ print(Fore.BLUE + character.nom + " : Ton métier va nous faire arrêter. "); in
 print(Fore.LIGHTBLACK_EX + "Andy : Tu vois ? Tu comprends déjà les difficultés de la vie d'artiste." + Fore.WHITE + "\nNarrateur : Les coups deviennent plus violents. "); input()
 print(Fore.CYAN + "Garde : DERNIER AVERTISSEMENT !"); 
 
-choix=int(input(Fore.WHITE + "CHOIX 1 — Que choix ferait vous ?\n1 = Aider Andy à bloquer la porte.\n2 = Se cacher derrière le comptoir.\n3 = Fuir par la porte arrière.\n"))
-
+choix=input(Fore.WHITE + "CHOIX 1 — Que choix ferait vous ?\n1 = Aider Andy à bloquer la porte.\n2 = Se cacher derrière le comptoir.\n3 = Fuir par la porte arrière.\n")
+while not choix.isdigit():
+    choix=input(Fore.WHITE + "CHOIX 1 — Que choix ferait vous ?\n1 = Aider Andy à bloquer la porte.\n2 = Se cacher derrière le comptoir.\n3 = Fuir par la porte arrière.\n")    
+choix=int(choix)
+    
 if choix==1:
     print(Fore.BLUE + character.nom + " : Si on les laisse entrer, ils vont embarquer la moitié de la salle. "); input()
     print(Fore.LIGHTBLACK_EX + "Andy : Enfin quelqu'un qui comprend l'importance d'une bonne barricade !" + Fore.WHITE + "\nNarrateur : " + character.nom + " et Andy déplacent une table devant la porte. "); input()
@@ -1046,7 +1062,10 @@ print(Fore.LIGHTBLACK_EX + "Andy : Avec ma luthe, mon intelligence, mon charme e
 print(Fore.BLUE + character.nom +" : Tu cherches quelqu'un qui sait donner des coups ? "); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je ne voudrais pas te mettre la pression. "); input()
 
-choix=int(input(Fore.WHITE + "Quelle est la réponse du " + character.nom + " ?\n1 = « Je vais t'aider à faire tomber Arnaud. »\n2 = « Je t'accompagne jusqu'à la prochaine ville. »\n3 = « Je ne veux pas d'ennuis.\n"))
+choix=input(Fore.WHITE + "Quelle est la réponse du " + character.nom + " ?\n1 = « Je vais t'aider à faire tomber Arnaud. »\n2 = « Je t'accompagne jusqu'à la prochaine ville. »\n3 = « Je ne veux pas d'ennuis.\n")
+while not choix.isdigit():
+    choix=input(Fore.WHITE + "Quelle est la réponse du " + character.nom + " ?\n1 = « Je vais t'aider à faire tomber Arnaud. »\n2 = « Je t'accompagne jusqu'à la prochaine ville. »\n3 = « Je ne veux pas d'ennuis.\n")
+choix=int(choix)
 
 if choix==1:
     print(Fore.BLUE + character.nom + " : D'accord. Je vais t'aider. Mais je ne suis pas ton garde du corps. "); input()
@@ -1139,7 +1158,10 @@ print(Fore.YELLOW + "Ferdinand : Merci. "); input()
 print(Fore.BLUE + character.nom + " : Ce n'était pas un compliment. "); input()
 print(Fore.YELLOW + "Ferdinand : Je prends ce que je peux. "); input()
 
-choix=int(input("Que dire à Ferdinand ?\n1 = « Tu dois être pratique pour atteindre les étagères. »\n2 = « Tu dois faire peur à beaucoup de monde. »\n3 = « Tu as surtout l'air de manquer de discrétion. »\n"))
+choix=input("Que dire à Ferdinand ?\n1 = « Tu dois être pratique pour atteindre les étagères. »\n2 = « Tu dois faire peur à beaucoup de monde. »\n3 = « Tu as surtout l'air de manquer de discrétion. »\n")
+while not choix.isdigit():
+    choix=input("Que dire à Ferdinand ?\n1 = « Tu dois être pratique pour atteindre les étagères. »\n2 = « Tu dois faire peur à beaucoup de monde. »\n3 = « Tu as surtout l'air de manquer de discrétion. »\n")
+choix=int(choix)
 
 if choix==1:
     print("Ferdinand : C'est vrai. Je n'ai plus besoin de demander de l'aide.")
@@ -1183,8 +1205,10 @@ print(Fore.BLUE + character.nom + " : Ce n'est pas vraiment ce que j'appelle par
 print(Fore.YELLOW + "Ferdinand : Pourtant, j'ai utilisé des mots. "); input()
 print(Fore.CYAN + "Garde : Attrapez-les ! "); input()
 
-choix=int(input("Comment " + character.nom + " réagit-il ?\n1 = Prendre la défense du marchand\n2 = Prendre la défense de Ferdinand\n3 = Proposer un arrangement\n"))
-
+choix=input("Comment " + character.nom + " réagit-il ?\n1 = Prendre la défense du marchand\n2 = Prendre la défense de Ferdinand\n3 = Proposer un arrangement\n")
+while not choix.isdigit():
+     choix=input("Comment " + character.nom + " réagit-il ?\n1 = Prendre la défense du marchand\n2 = Prendre la défense de Ferdinand\n3 = Proposer un arrangement\n")
+choix=int(choix)
 if choix==1:
     print(Fore.BLUE + character.nom+" : Ferdinand, tu dois payer. Tu ne peux pas casser les affaires des gens et partir comme si de rien n'était. "); input()
     print(Fore.YELLOW + "Ferdinand : Je ne comptais pas partir comme si de rien n'était. "); input()
@@ -1250,8 +1274,10 @@ print(Fore.CYAN + "Marchand : Je crois. Un homme calme, toujours habillé en noi
 print(Fore.BLUE +character.nom+ " : Il est encore là-bas ? "); input()
 print(Fore.CYAN + "Marchand : Je l'ignore. Mais si vous voulez en savoir davantage, vous devriez vous rendre à la chapelle. "); input()
 
-choix=int(input("Quelle question poser au marchand ?\n1 = « Pourquoi ces objets intéressent-ils autant Arnaud ? »\n2 = « Combien paient-ils pour ces objets ? »\n3 = « Et vous, vous avez déjà essayé de leur vendre quelque chose ? »\n"))
-
+choix=input("Quelle question poser au marchand ?\n1 = « Pourquoi ces objets intéressent-ils autant Arnaud ? »\n2 = « Combien paient-ils pour ces objets ? »\n3 = « Et vous, vous avez déjà essayé de leur vendre quelque chose ? »\n")
+while not choix.isdigit():
+    choix=input("Quelle question poser au marchand ?\n1 = « Pourquoi ces objets intéressent-ils autant Arnaud ? »\n2 = « Combien paient-ils pour ces objets ? »\n3 = « Et vous, vous avez déjà essayé de leur vendre quelque chose ? »\n")
+choix=int(choix)
 if choix==1:
     print("Marchand : Je l'ignore, mais ses hommes semblent chercher quelque chose de très précis.")
 if choix==2:
@@ -1266,8 +1292,10 @@ print(Fore.YELLOW + "Ferdinand : Tu m'as aidé. Tu as l'air honnête. Et tu semb
 print(Fore.BLUE + character.nom + " : Je n'ai pas besoin de quelqu'un qui menace les fontaines. "); input()
 print(Fore.YELLOW + "Ferdinand : Je peux aussi menacer les puits. "); input()
 
-choix=int(input(character.nom + " accepte-t-il Ferdinand ?\n1 = L'accepter dans le groupe\n2 = Lui demander de régler sa dette d'abord\n"))
-
+choix=input(character.nom + " accepte-t-il Ferdinand ?\n1 = L'accepter dans le groupe\n2 = Lui demander de régler sa dette d'abord\n")
+while not choix.isdigit():
+    choix=input(character.nom + " accepte-t-il Ferdinand ?\n1 = L'accepter dans le groupe\n2 = Lui demander de régler sa dette d'abord\n")
+choix=int(choix)
 if choix==1:
     print(Fore.BLUE + character.nom + " : D'accord. Mais tu m'écoutes quand je te dis de ne pas foncer tête baissée.") ; input()
     print(Fore.YELLOW + "Ferdinand : Marché conclu ! "); input()
@@ -1309,8 +1337,10 @@ print(Fore.YELLOW + "Ferdinand : C'était une excuse. "); input()
 print(Fore.BLUE + character.nom + " : C'était une accusation contre un rocher. "); input()
 print(Fore.WHITE + "Narrateur : Ferdinand réfléchit sérieusement.\n" + Fore.YELLOW + "Ferdinand : Tu es étonnamment difficile à convaincre. "); input()
 
-choix=int(input("Comment réagir à ses explications ?\n1 =  « Tu n'es peut-être pas aussi idiot que tu en as l'air. »\n2 = « Tu devrais apprendre à réfléchir avant d'agir. »\n3 = « Au moins, tu as de bonnes intentions... »\n"))
-
+choix=input("Comment réagir à ses explications ?\n1 =  « Tu n'es peut-être pas aussi idiot que tu en as l'air. »\n2 = « Tu devrais apprendre à réfléchir avant d'agir. »\n3 = « Au moins, tu as de bonnes intentions... »\n")
+while not choix.isdigit():
+     choix=input("Comment réagir à ses explications ?\n1 =  « Tu n'es peut-être pas aussi idiot que tu en as l'air. »\n2 = « Tu devrais apprendre à réfléchir avant d'agir. »\n3 = « Au moins, tu as de bonnes intentions... »\n")
+choix=int(choix)
 if choix==1:
     print("Ferdinand : Merci... Je crois.")
 if choix==2:
@@ -1348,8 +1378,10 @@ print(Fore.YELLOW + "Ferdinand : Alors nous sommes au bon endroit. "); input()
 print(Fore.BLUE +character.nom + " : Ou dans un piège. "); input()
 print(Fore.YELLOW + "Ferdinand : C'est souvent la même chose. "); input()
 
-choix=int(input("Comment entrer dans la chapelle ?\n1 = « Entrons discrètement. »\n2 = « Ferdinand, ouvre-nous ça. »\n"))
-
+choix=input("Comment entrer dans la chapelle ?\n1 = « Entrons discrètement. »\n2 = « Ferdinand, ouvre-nous ça. »\n")
+while not choix.isdigit():
+     choix=input("Comment entrer dans la chapelle ?\n1 = « Entrons discrètement. »\n2 = « Ferdinand, ouvre-nous ça. »\n")
+choix=int(choix)
 if choix==1:
     print("Ferdinand : Je peux être discret.")
     print(character.nom + " : C'est précisément ce qui m'inquiète...")
@@ -1454,8 +1486,10 @@ print(Fore.LIGHTBLACK_EX + "Andy : Je vais noter ça. Ça ferait une excellente 
 print(Fore.RED + "Nathaniel : À condition de ne pas en faire un refrain de cinq minutes."); input()
 print(Fore.LIGHTBLACK_EX + "Andy : Je ne promets rien.") ; input()
 
-choix=int(input("Qu'est ce que " + character.nom + " pensera de l'artéfact ?\n1 = « Il faut absolument le détruire. »\n2 = « Il pourrait être utile entre de bonnes mains. »\n3 = « Je commence à comprendre pourquoi Arnaud le veut. »\n"))
-
+choix=input("Qu'est ce que " + character.nom + " pensera de l'artéfact ?\n1 = « Il faut absolument le détruire. »\n2 = « Il pourrait être utile entre de bonnes mains. »\n3 = « Je commence à comprendre pourquoi Arnaud le veut. »\n")
+while not choix.isdigit():
+     choix=input("Qu'est ce que " + character.nom + " pensera de l'artéfact ?\n1 = « Il faut absolument le détruire. »\n2 = « Il pourrait être utile entre de bonnes mains. »\n3 = « Je commence à comprendre pourquoi Arnaud le veut. »\n")
+choix=int(choix)
 if choix==1:
     print("Nathaniel : C'est une possibilité, mais nous devons d'abord comprendre ses conséquences.")
 if choix==2:
@@ -1481,8 +1515,10 @@ print(Fore.RED + "Nathaniel : Pas encore. Mais une dernière référence mention
 print(Fore.BLUE + character.nom + " : Où est-il ?"); input()
 print(Fore.RED + "Nathaniel : Je l'ignore. Les archives ne donnent aucun nom, seulement un lieu : les anciennes archives de la capitale."); input()
 
-choix=int(input("Que faire de cette information ?\n1 = « Il faut retrouver ce témoin. »\n2 = « On devrait d'abord vérifier les archives. »\n3 = « Et si ce témoin est mort depuis quinze ans ? »\n"))
-
+choix=input("Que faire de cette information ?\n1 = « Il faut retrouver ce témoin. »\n2 = « On devrait d'abord vérifier les archives. »\n3 = « Et si ce témoin est mort depuis quinze ans ? »\n")
+while not choix.isdigit():
+    choix=input("Que faire de cette information ?\n1 = « Il faut retrouver ce témoin. »\n2 = « On devrait d'abord vérifier les archives. »\n3 = « Et si ce témoin est mort depuis quinze ans ? »\n")
+choix=int(choix)
 if choix==1:
     print("Nathaniel : C'est notre meilleure piste.")
 if choix==2:
@@ -1521,8 +1557,10 @@ print(Fore.RED + "Nathaniel : Je vois cela."); input()
 print(Fore.WHITE + "Narrateur : Nathaniel observe le groupe."); input()
 print(Fore.RED + "Nathaniel : Vous savez que vous risquez votre vie en vous opposant à Arnaud. Pourquoi continuer ?"); input()
 
-choix = int(input("Quelle est votre motivation ?\n1 = « Personne ne devrait vivre sous la peur. »\n2 = « Je veux découvrir la vérité sur le royaume. »\n3 = « Je veux devenir assez puissant pour qu'on ne puisse plus me menacer. »\n"))
-
+choix = input("Quelle est votre motivation ?\n1 = « Personne ne devrait vivre sous la peur. »\n2 = « Je veux découvrir la vérité sur le royaume. »\n3 = « Je veux devenir assez puissant pour qu'on ne puisse plus me menacer. »\n")
+while not choix.isdigit():
+     choix = input("Quelle est votre motivation ?\n1 = « Personne ne devrait vivre sous la peur. »\n2 = « Je veux découvrir la vérité sur le royaume. »\n3 = « Je veux devenir assez puissant pour qu'on ne puisse plus me menacer. »\n")
+choix=int(choix)
 if choix == 1:
     print(Fore.BLUE + character.nom + " : Il fait arrêter des innocents. Quelqu'un doit l'arrêter."); input()
     print(Fore.RED + "Nathaniel : Une réponse simple. Mais parfois, les réponses simples sont les plus difficiles à suivre."); input()
@@ -1753,8 +1791,10 @@ print(Fore.MAGENTA + "Ethan : Vous ne devriez pas. Pas encore."); input()
 print(Fore.WHITE + "Narrateur : Cette réponse surprend le groupe."); input()
 print(Fore.MAGENTA + "Ethan : La confiance se mérite. Je vous propose de vous aider, et vous déciderez ensuite si j'ai ma place parmi vous."); input()
 
-choix = int(input("Faire confiance à Ethan ?\n1 = L'accepter immédiatement.\n2 = Lui demander de prouver sa loyauté.\n"))
-
+choix = input("Faire confiance à Ethan ?\n1 = L'accepter immédiatement.\n2 = Lui demander de prouver sa loyauté.\n")
+while not choix.isdigit():
+     choix = input("Faire confiance à Ethan ?\n1 = L'accepter immédiatement.\n2 = Lui demander de prouver sa loyauté.\n")
+choix=int(choix)
 if choix == 1:
     print(Fore.BLUE + character.nom + " : D'accord. Tu viens avec nous."); input()
     print(Fore.MAGENTA + "Ethan : Tu ne le regretteras pas."); input()
@@ -1843,8 +1883,10 @@ print(Fore.RED + "Nathaniel : Il existe plusieurs moyens."+Fore.RESET); input()
 #                                                           #
 #############################################################
 
-choix=int(input("Comment allez vous pénétrer dans la bibliothèque ?\n1 = Passer par l'entrée principale.\n2 = Utiliser les tunnels.\n"))
-
+choix=input("Comment allez vous pénétrer dans la bibliothèque ?\n1 = Passer par l'entrée principale.\n2 = Utiliser les tunnels.\n")
+while not choix.isdigit():
+     choix=input("Comment allez vous pénétrer dans la bibliothèque ?\n1 = Passer par l'entrée principale.\n2 = Utiliser les tunnels.\n")
+choix=int(choix)
 if choix == 1:
     print(Fore.BLUE + character.nom + " : Nous allons entrer par devant."); input()
     print(Fore.LIGHTBLACK_EX + "Andy : J'apprécie ton optimisme. Il est totalement déraisonnable, mais je l'apprécie."); input()
@@ -1962,8 +2004,10 @@ print(Fore.RED + "Nathaniel : Tu disais pourtant aimer les livres.")
 print(Fore.LIGHTBLACK_EX + "Andy : J'aime les livres qui ne sont pas protégés par des hommes armés.")
 print(Fore.WHITE + "Narrateur : Ils traversent une petite salle de lecture et barricadent la porte."+ Fore.RESET)
 
-choix=int(input("Que faire des documents ?\n1 = Les emporter tous.\n2 = Ne prendre que le plan du sanctuaire.\n3 = Détruire les documents compromettants\n"))
-
+choix=input("Que faire des documents ?\n1 = Les emporter tous.\n2 = Ne prendre que le plan du sanctuaire.\n3 = Détruire les documents compromettants\n")
+while not choix.isdigit():
+    choix=input("Que faire des documents ?\n1 = Les emporter tous.\n2 = Ne prendre que le plan du sanctuaire.\n3 = Détruire les documents compromettants\n")
+choix=int(choix)
 if choix == 1:
     print(Fore.BLUE + character.nom + " : Nous ne laissons aucune preuve derrière nous.")
     print(Fore.RED + "Nathaniel : Très bien. Mais cela nous ralentira.")
@@ -2183,8 +2227,10 @@ print(Fore.YELLOW + "Ferdinand : C'était une stratégie.")
 print(Fore.LIGHTBLACK_EX + "Andy : La stratégie du poing douloureux.")
 print(Fore.WHITE + "Narrateur : Le groupe rejoint un escalier qui descend vers le sanctuaire.") 
 
-choix=int(input(Fore.RESET + "Comment réagit le character.nom à la trahison ?\n1 = « Je te ferai payer ce que tu as fait. »\n2 = « Il est encore temps de renoncer. »\n3 = « Tu n'as jamais été notre ami. »\n")) 
-
+choix=input(Fore.RESET + "Comment réagit le character.nom à la trahison ?\n1 = « Je te ferai payer ce que tu as fait. »\n2 = « Il est encore temps de renoncer. »\n3 = « Tu n'as jamais été notre ami. »\n")
+while not choix.isdigit():
+     choix=input(Fore.RESET + "Comment réagit le character.nom à la trahison ?\n1 = « Je te ferai payer ce que tu as fait. »\n2 = « Il est encore temps de renoncer. »\n3 = « Tu n'as jamais été notre ami. »\n")
+choix=int(choix)
 if choix == 1:
     print(Fore.BLUE + character.nom + " : Tu as trahi des gens qui te faisaient confiance. Je ne te laisserai pas utiliser cet artefact.")
     print(Fore.LIGHTBLACK_EX + "Andy : Je suis avec toi. Et je tiens à préciser que je n'ai jamais aimé ses chaussures.")
