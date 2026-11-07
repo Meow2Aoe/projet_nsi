@@ -361,7 +361,7 @@ def armurerie():
                         character.arme=ultimate_sword.nom
                         character.dura=ultimate_sword.dura
                         character.degat=ultimate_sword.degat
-                        character.argent-=ultimate_sword_sword.prix
+                        character.argent-=ultimate_sword.prix
                     else:
                         print("Vous n'avez pas assez d'argent pour acheter ceci")
                         shop=0
@@ -663,7 +663,7 @@ def boss_fight(IsArnaudDead):
     else:
         print("Vous ne pouvez pas vous battre car vous n'avez pas d'arme.")
         armurerie()
-        boos_fight(IsArnaudDead)
+        boss_fight(IsArnaudDead)
 
 # FONCTION ATTAQUE DU BOSS ARNAUD
 def attack_arnaud(enemi, List_player, bp):
@@ -2464,7 +2464,7 @@ boss_fight(IsArnaudDead=1)
 #############################################################
 
 print(Fore.RESET + "Que ferai vous du coeur de Bedrock ?")
-Print("1 : Détuitre le Coeur de Bedrock.")
+print("1 : Détuitre le Coeur de Bedrock.")
 if Req_TrueEnding==1:
     print("2 : Convaincre Ethan de lâcher le Coeur")
 if req_EvilEnding==1:
