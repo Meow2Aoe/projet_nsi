@@ -807,6 +807,7 @@ cake=mobs('Gâteau Mutant', 250, 'esprit', 0, 200, 1.8, 135, 40)
 diff3=[Chevalier,mimik,garde,loup,cake]
 
 Arnaud=mobs("M. Arnaud", 1500, 'humain', 0, 1000, 1, 50000, 500)
+Ethan_boss=mobs("Éthan", 750, 'humain', 0, 500, 2, Ethan.argent/4, 100*Ethan.lvl)
 
 # objets
 
